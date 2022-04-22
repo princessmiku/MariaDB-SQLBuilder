@@ -60,10 +60,17 @@ Multiple connections allow multiple simultaneous queries. But more connections n
 
 The connection will always automatically run commit!
 
+---
+
 ## Usage
 
 It is possible to get the sql code, use at the end ``get_sql()`` instead of `execute` or `fetch`.<br>
 ``get_sql()`` will not use a connection
+
+#### What is the Result?
+The result tells you if a request or ``execute`` was successful.
+
+If you use fetch it will contain the result of the request or ``None`` 
 
 #### You only want to use SQL Builder and not a connection?
 
@@ -162,4 +169,24 @@ result = connection.table("myTable").delete().imSureImNotUseWhere(True).execute(
 result = connection.table("myTable").delete().get_sql()
 ```
 
+### Use Custom SQL
+
+````python
+from mariadb_sqlbuilder import Connect
+
+connection: Connect = Connect(...)
+
+# execute your own SQL, without receiving
+result = connection.execute("YourSQL")
+
+# execute your own SQL, with receiving
+result = connection.execute_fetch("YourSQL") # return with fetchOne
+result = connection.execute_fetch("YourSQL", many=True) # return with fetchMany
+
+# execute more than one SQL Statement
+result = connection.execute_script("YourSQLScript")
+
+````
+
+Not completely used but <br>
 Translated with www.DeepL.com/Translator (free version)
