@@ -35,7 +35,9 @@ again, this process usually does not take long.
 
 ## installing
 
-*coming soon*
+Install the package with pip and github
+
+``pip install git+https://github.com/princessmiku/MariaDB-SQLBuilder``
 
 ## Setup
 
