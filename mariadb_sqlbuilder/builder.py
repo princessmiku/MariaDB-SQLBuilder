@@ -72,7 +72,7 @@ class SelectBuilder:
         return result
 
     def get_sql(self) -> str:
-        return f"SELECT {self.column} FROM {self.tb.table}" \
+        return f"SELECT {self.column} FROM {self.tb.table} " \
             f"{'WHERE ' + ' AND '.join(self.__where_conditions) if self.__where_conditions else ''}"
 
 

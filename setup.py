@@ -9,7 +9,7 @@ setup(
     name='MariaDB-SQLBuilder',
     long_description=README,
     long_description_content_type="text/markdown",
-    version='0.0.1',
+    version='0.0.1a',
     packages=["mariadb_sqlbuilder"],
     url='https://github.com/princessmiku/MariaDB-SQLBuilder',
     license='MIT',
