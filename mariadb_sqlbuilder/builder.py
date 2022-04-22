@@ -57,8 +57,7 @@ class SelectBuilder:
         cursor = self.tb.connect.getAvailableCursor()
         result = executeOne(
             cursor,
-            f"SELECT {self.column} FROM {self.tb.table} "
-            f"{'WHERE ' + ' AND '.join(self.__where_conditions) if self.__where_conditions else ''}"
+            self.get_sql()
         )
         self.tb.connect.makeCursorAvailable(cursor)
         return result

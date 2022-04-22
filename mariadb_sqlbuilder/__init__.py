@@ -6,8 +6,6 @@
 import typing
 
 import mariadb
-import threading
-import sys
 import sqlparse
 
 from .builder import TableBuilder

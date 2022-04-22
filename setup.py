@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='MariaDB-SQLBuilder',
     version='0.0.1',
-    packages=[''],
+    packages=find_packages(include=['mariadb_sqlbuilder']),
     package_dir={'': 'mariadb_sqlbuilder'},
     url='https://github.com/princessmiku/MariaDB-SQLBuilder',
     license='MIT',
