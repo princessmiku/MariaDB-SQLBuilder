@@ -188,5 +188,6 @@ result = connection.execute_script("YourSQLScript")
 
 ````
 
+<br>
 Not completely used but <br>
 Translated with www.DeepL.com/Translator (free version)
