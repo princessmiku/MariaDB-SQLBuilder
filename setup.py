@@ -1,10 +1,16 @@
-from setuptools import setup, find_packages
+import pathlib
+from setuptools import setup
+HERE = pathlib.Path(__file__).parent
+
+README = (HERE / "README.md").read_text()
 
 setup(
     name='MariaDB-SQLBuilder',
+    long_description=README,
+    long_description_content_type="text/markdown",
     version='0.0.1',
-    packages=find_packages(include=['mariadb_sqlbuilder']),
     package_dir={'': 'mariadb_sqlbuilder'},
+    packages=["mariadb_sqlbuilder"],
     url='https://github.com/princessmiku/MariaDB-SQLBuilder',
     license='MIT',
     author='Miku',
