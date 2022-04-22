@@ -1,14 +1,17 @@
 from typing import Union
 
+from .baseBuilder import BaseBuilder
+from .joinBuilder import _JoinBuilder
 import builder
 
 
-class SelectBuilder:
+class SelectBuilder(BaseBuilder):
 
     def __init__(self, tb, column):
-        self.tb = tb
+        super().__init__(tb)
         self.column = column
         self.__where_conditions = []
+        self.__joins = []
 
     def where(self, column: str, value: Union[str, int]):
         if isinstance(value, int):
@@ -17,6 +20,11 @@ class SelectBuilder:
             self.__where_conditions.append(f"{column} = '{value}'")
         return self
 
+    def join(self, joinBuilder: _JoinBuilder):
+        joinBuilder.from_table = self.tb.table
+        print(joinBuilder.get_sql())
+        self.__joins.append(joinBuilder.get_sql())
+        return self
 
     def fetchone(self):
         cursor = self.tb.connect.getAvailableCursor()
@@ -38,4 +46,5 @@ class SelectBuilder:
 
     def get_sql(self) -> str:
         return f"SELECT {self.column} FROM {self.tb.table} " \
+               f"{' '.join(self.__joins) if self.__joins else ''} " \
             f"{'WHERE ' + ' AND '.join(self.__where_conditions) if self.__where_conditions else ''}"

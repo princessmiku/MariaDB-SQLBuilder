@@ -1,12 +1,13 @@
 from typing import Union
 
 import builder
+from builder.baseBuilder import BaseBuilder
 
 
-class DeleteBuilder:
+class DeleteBuilder(BaseBuilder):
 
     def __init__(self, tb):
-        self.tb = tb
+        super().__init__(tb)
         self.__where_conditions = []
         self.sureNotUseWhere = False
 

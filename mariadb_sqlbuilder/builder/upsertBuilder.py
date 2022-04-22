@@ -1,11 +1,13 @@
 from typing import Union
 
 import builder
+from builder.baseBuilder import BaseBuilder
 
 
-class UpsertBuilder:
+class UpsertBuilder(BaseBuilder):
 
     def __init__(self, tb):
+        super().__init__(tb)
         self.tb = tb
         self.__toSet = {}
 

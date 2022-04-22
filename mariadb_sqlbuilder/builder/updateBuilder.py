@@ -1,13 +1,13 @@
 from typing import Union
 
 import builder
+from builder.baseBuilder import BaseBuilder
 
 
-
-class UpdateBuilder:
+class UpdateBuilder(BaseBuilder):
 
     def __init__(self, tb):
-        self.tb = tb
+        super().__init__(tb)
         self.__toSet = {}
         self.__where_conditions = []
 
