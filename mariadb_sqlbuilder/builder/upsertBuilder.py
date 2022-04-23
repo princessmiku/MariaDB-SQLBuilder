@@ -1,6 +1,6 @@
 from typing import Union
 
-import builder
+from execution import executeFunctions
 from .baseBuilder import BaseBuilder
 
 
@@ -27,7 +27,7 @@ class UpsertBuilder(BaseBuilder):
 
     def execute(self) -> bool:
         cursor = self.tb.connect.getAvailableCursor()
-        result = builder.execute(
+        result = executeFunctions.execute(
             cursor,
             self.get_sql()
         )

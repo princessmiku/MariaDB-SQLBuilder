@@ -1,6 +1,6 @@
 from typing import Union
 
-import builder
+from execution import executeFunctions
 from .baseBuilder import BaseBuilder
 from .joinBuilder import _JoinBuilder
 
@@ -39,7 +39,7 @@ class SelectBuilder(BaseBuilder):
 
     def fetchone(self):
         cursor = self.tb.connect.getAvailableCursor()
-        result = builder.executeOne(
+        result = executeFunctions.executeOne(
             cursor,
             self.get_sql()
         )
@@ -48,7 +48,7 @@ class SelectBuilder(BaseBuilder):
 
     def fetchall(self):
         cursor = self.tb.connect.getAvailableCursor()
-        result = builder.executeAll(
+        result = executeFunctions.executeAll(
             cursor,
             self.get_sql()
         )
