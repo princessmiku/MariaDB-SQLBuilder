@@ -1,7 +1,7 @@
 from typing import Union
 
 import builder
-from builder.baseBuilder import BaseBuilder
+from .baseBuilder import BaseBuilder
 from .joinBuilder import _JoinBuilder
 
 

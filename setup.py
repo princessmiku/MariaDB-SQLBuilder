@@ -4,14 +4,14 @@ from setuptools import setup
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
-VERSION = '0.2.0'
+VERSION = '0.2.1'
 
 setup(
     name='MariaDB-SQLBuilder',
     long_description=README,
     long_description_content_type="text/markdown",
     version=VERSION,
-    packages=["mariadb_sqlbuilder"],
+    packages=["mariadb_sqlbuilder", "mariadb_sqlbuilder.builder"],
     url='https://github.com/princessmiku/MariaDB-SQLBuilder',
     license='MIT',
     author='Miku',
