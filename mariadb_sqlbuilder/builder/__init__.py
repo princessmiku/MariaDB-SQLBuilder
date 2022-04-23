@@ -5,7 +5,7 @@ from .insertBuilder import InsertBuilder
 from .upsertBuilder import UpsertBuilder
 from .deleteBuilder import DeleteBuilder
 
-echo_sql = True
+echo_sql = False
 
 
 def execute(cursor, sql: str):

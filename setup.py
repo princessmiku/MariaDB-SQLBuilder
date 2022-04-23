@@ -2,19 +2,32 @@ import pathlib
 from setuptools import setup
 
 HERE = pathlib.Path(__file__).parent
-
 README = (HERE / "README.md").read_text()
+
+VERSION = '0.0.2'
 
 setup(
     name='MariaDB-SQLBuilder',
     long_description=README,
     long_description_content_type="text/markdown",
-    version='0.0.1a',
+    version=VERSION,
     packages=["mariadb_sqlbuilder"],
     url='https://github.com/princessmiku/MariaDB-SQLBuilder',
     license='MIT',
     author='Miku',
     author_email='',
     description='MariaDB SQL Builder is a simple and thread safe way to use SQL. Use your own SQL or use the integrated SQL Builder tool.',
-    python_requires='>=3.6.0'
+    keywords=['python', 'database', 'mariadb', 'sql', 'builder', 'script builder', 'mariadb sql', 'orm'],
+    python_requires='>=3.6.0',
+    install_requires=[
+        "mariadb>=1.0.11",
+        "sqlparse>=0.4.2"
+    ],
+    classifiers=[
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+    ],
 )
