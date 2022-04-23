@@ -4,6 +4,11 @@ import builder
 from builder.baseBuilder import BaseBuilder
 
 
+# get the name of a table column
+def _getTCN(table: str, column: str) -> str:
+    return table + "." + column
+
+
 class UpsertBuilder(BaseBuilder):
 
     def __init__(self, tb):

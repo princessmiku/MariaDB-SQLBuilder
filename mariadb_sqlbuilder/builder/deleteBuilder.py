@@ -4,6 +4,11 @@ import builder
 from builder.baseBuilder import BaseBuilder
 
 
+# get the name of a table column
+def _getTCN(table: str, column: str) -> str:
+    return table + "." + column
+
+
 class DeleteBuilder(BaseBuilder):
 
     def __init__(self, tb):
@@ -13,9 +18,9 @@ class DeleteBuilder(BaseBuilder):
 
     def where(self, column: str, value: Union[str, int]):
         if isinstance(value, int):
-            self.__where_conditions.append(f"{column} = {value}")
+            self.__where_conditions.append(f"{_getTCN(self.tb.table, column)} = {value}")
         else:
-            self.__where_conditions.append(f"{column} = '{value}'")
+            self.__where_conditions.append(f"{_getTCN(self.tb.table, column)} = '{value}'")
         return self
 
     def imSureImNotUseWhere(self, imSure: bool = False):

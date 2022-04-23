@@ -6,6 +6,11 @@
 from abc import ABC, abstractmethod
 
 
+# get the name of a table column
+def _getTCN(table: str, column: str) -> str:
+    return table + "." + column
+
+
 class _JoinBuilder(ABC):
 
     def __init__(self):
@@ -30,7 +35,7 @@ class InnerJoinBuilder(_JoinBuilder):
 
     def get_sql(self) -> str:
         conditions = []
-        for con in self.conditions: conditions.append(f"{self.from_table}.{con[0]} = {self.table}.{con[1]}")
+        for con in self.conditions: conditions.append(f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
         return f"INNER JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
@@ -57,7 +62,7 @@ class LeftJoinBuilder(_JoinBuilder):
 
     def get_sql(self) -> str:
         conditions = []
-        for con in self.conditions: conditions.append(f"{self.from_table}.{con[0]} = {self.table}.{con[1]}")
+        for con in self.conditions: conditions.append(f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
         return f"Left JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
@@ -75,5 +80,5 @@ class RightJoinBuilder(_JoinBuilder):
 
     def get_sql(self) -> str:
         conditions = []
-        for con in self.conditions: conditions.append(f"{self.from_table}.{con[0]} = {self.table}.{con[1]}")
+        for con in self.conditions: conditions.append(f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
         return f"RIGHT JOIN {self.table} ON {' AND '.join(conditions)} "

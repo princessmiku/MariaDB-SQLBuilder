@@ -1,8 +1,13 @@
 from typing import Union
 
+import builder
 from .baseBuilder import BaseBuilder
 from .joinBuilder import _JoinBuilder
-import builder
+
+
+# get the name of a table column
+def _getTCN(table: str, column: str) -> str:
+    return table + "." + column
 
 
 class SelectBuilder(BaseBuilder):
@@ -15,14 +20,13 @@ class SelectBuilder(BaseBuilder):
 
     def where(self, column: str, value: Union[str, int]):
         if isinstance(value, int):
-            self.__where_conditions.append(f"{column} = {value}")
+            self.__where_conditions.append(f"{_getTCN(self.tb.table, column)} = {value}")
         else:
-            self.__where_conditions.append(f"{column} = '{value}'")
+            self.__where_conditions.append(f"{_getTCN(self.tb.table, column)} = '{value}'")
         return self
 
     def join(self, joinBuilder: _JoinBuilder):
         joinBuilder.from_table = self.tb.table
-        print(joinBuilder.get_sql())
         self.__joins.append(joinBuilder.get_sql())
         return self
 
