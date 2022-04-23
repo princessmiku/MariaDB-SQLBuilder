@@ -13,7 +13,7 @@ Currently, the Library can execute the following statements:
 
 **Table**
 
-`Select`, `Update`, `Insert`, `Upsert`, `Delete`
+`Select`, `Update`, `Insert`, `Upsert`, `Delete`, `Joins`
 
 These are also still currently equipped very simple, more functions will be added over time.
 
@@ -38,6 +38,9 @@ again, this process usually does not take long.
 Install the package with pip and github
 
 ``pip install git+https://github.com/princessmiku/MariaDB-SQLBuilder``
+
+Install the package with pip
+``pip install mariadb-sqlbuilder``
 
 ## Setup
 
@@ -110,6 +113,9 @@ result = connection.table("myTable").select("id, name, age, email").fetchall()
 result = connection.table("myTable").select("name, age, email").where("age", 25).fetchall()
 # Multiple where
 result = connection.table("myTable").select("name, age, email").where("age", 25).where("name", "Helgo").fetchall()
+
+# Use join (example)
+result = connection.table("myTable").select("name").join(InnerJoinBuilder("otherTable").condition("id", "otherId")).joinSelect("otherTable", "note").fetchall()
 ```
 
 The result is the same as a normal sql execute
@@ -126,6 +132,10 @@ result = connection.table("myTable").update().set("age", 25).set("name", "Helgo"
 
 # update with where statements
 result = connection.table("myTable").update().set("age", 25).where("id", 10).execute()
+
+# update with join
+
+result = connection.table("myTable").update().set("age", 26).join(InnerJoinBuilder("otherTable").condition("id", "otherId")).joinSet("otherTable", "note", "Birthday today").execute()
 
 ```
 
@@ -171,6 +181,52 @@ result = connection.table("myTable").delete().imSureImNotUseWhere(True).execute(
 result = connection.table("myTable").delete().get_sql()
 ```
 
+### Join
+
+There are four 4 join possibilities. These are all usable in `join` and are supported. <br>
+More than one condition are possible, but in the example it is illustrated with only one
+
+**Inner Join**
+````python
+from mariadb_sqlbuilder.builder.joinBuilder import InnerJoinBuilder
+
+# light
+join = InnerJoinBuilder("joinedTable")
+# with conditions
+join = InnerJoinBuilder("joinedTable").condition("mainTable", "joinedColumn")
+````
+
+**Cross Join**
+
+Cross join has no conditions
+
+````python
+from mariadb_sqlbuilder.builder.joinBuilder import CrossJoinBuilder
+
+# light
+join = CrossJoinBuilder("joinedTable")
+````
+
+**Left Join**
+````python
+from mariadb_sqlbuilder.builder.joinBuilder import LeftJoinBuilder
+
+# light
+join = LeftJoinBuilder("joinedTable")
+# with conditions
+join = LeftJoinBuilder("joinedTable").condition("mainTable", "joinedColumn")
+````
+
+**Right Join**
+````python
+from mariadb_sqlbuilder.builder.joinBuilder import RightJoinBuilder
+
+# light
+join = RightJoinBuilder("joinedTable")
+# with conditions
+join = RightJoinBuilder("joinedTable").condition("mainTable", "joinedColumn")
+````
+
 ### Use Custom SQL
 
 ````python
@@ -187,7 +243,6 @@ result = connection.execute_fetch("YourSQL", many=True) # return with fetchMany
 
 # execute more than one SQL Statement
 result = connection.execute_script("YourSQLScript")
-
 ````
 
 <br>
