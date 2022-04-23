@@ -1,6 +1,6 @@
 from typing import Union
 
-import builder
+from execution import executeFunctions
 from .baseBuilder import BaseBuilder
 
 
@@ -31,7 +31,7 @@ class DeleteBuilder(BaseBuilder):
         cursor = self.tb.connect.getAvailableCursor()
         if not self.__where_conditions and not self.sureNotUseWhere:
             raise PermissionError('You are not sure enough not to use where')
-        result = builder.execute(
+        result = executeFunctions.execute(
             cursor,
             self.get_sql()
         )
