@@ -11,7 +11,10 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     version=VERSION,
-    packages=find_packages(),
+    packages=["mariadb_sqlbuilder",
+              "mariadb_sqlbuilder.builder",
+              "mariadb_sqlbuilder.execution"
+              ],
     url='https://github.com/princessmiku/MariaDB-SQLBuilder',
     license='MIT',
     author='Miku',
