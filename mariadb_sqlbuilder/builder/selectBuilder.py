@@ -15,15 +15,8 @@ class SelectBuilder(BaseBuilder):
     def __init__(self, tb, column):
         super().__init__(tb)
         self.column = column.replace(", ", ",").split(",")
-        self.__where_conditions = []
         self.__joins = []
 
-    def where(self, column: str, value: Union[str, int]):
-        if isinstance(value, int):
-            self.__where_conditions.append(f"{_getTCN(self.tb.table, column)} = {value}")
-        else:
-            self.__where_conditions.append(f"{_getTCN(self.tb.table, column)} = '{value}'")
-        return self
 
     def join(self, joinBuilder: _JoinBuilder):
         joinBuilder.from_table = self.tb.table
@@ -58,4 +51,4 @@ class SelectBuilder(BaseBuilder):
     def get_sql(self) -> str:
         return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
                f"{' '.join(self.__joins) if self.__joins else ''} " \
-            f"{'WHERE ' + ' AND '.join(self.__where_conditions) if self.__where_conditions else ''}"
+            f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''}"

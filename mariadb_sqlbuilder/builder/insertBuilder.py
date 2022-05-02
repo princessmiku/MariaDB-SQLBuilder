@@ -1,3 +1,4 @@
+import abc
 from typing import Union
 
 from ..execution import executeFunctions
@@ -37,6 +38,9 @@ class InsertBuilder(BaseBuilder):
         )
         self.tb.connect.makeCursorAvailable(cursor)
         return result
+
+    def where(self, **kwargs):
+        raise NameError("Function 'where' is not in use here")
 
     def get_sql(self) -> str:
         return f"INSERT {'IGNORE ' if self.__ignore else ''}INTO " \
