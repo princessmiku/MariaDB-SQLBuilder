@@ -4,6 +4,7 @@ from .updateBuilder import UpdateBuilder
 from .insertBuilder import InsertBuilder
 from .upsertBuilder import UpsertBuilder
 from .deleteBuilder import DeleteBuilder
+from .existsBuilder import ExistsBuilder
 
 
 class TableBuilder:
@@ -26,4 +27,7 @@ class TableBuilder:
 
     def delete(self) -> DeleteBuilder:
         return DeleteBuilder(self)
+
+    def exists(self) -> ExistsBuilder:
+        return ExistsBuilder(self)
 
