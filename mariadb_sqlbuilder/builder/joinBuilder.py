@@ -24,6 +24,7 @@ class _JoinBuilder(ABC):
 
 class InnerJoinBuilder(_JoinBuilder):
 
+
     def __init__(self, table: str):
         super().__init__()
         self.table = table

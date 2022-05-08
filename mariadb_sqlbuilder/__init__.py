@@ -13,10 +13,11 @@ import sqlparse
 
 from .builder import TableBuilder
 
-__version__ = '0.2.1'
+__version__ = '0.3.0'
 
 
 class Connect:
+
 
     def __init__(self, *, host: str, user: str, password: str, port: int = 3306,
                  database: str, pool_name: str = "sqlbuilder_pool",
@@ -32,11 +33,14 @@ class Connect:
             database=database,
             autocommit=True
         )
-        self.cursors: list = []
+        self.connectionsList: list = []
+        self.cursors = []
         self.availableCursor: list = []
         i: int = 1
         while i <= pool_size:
             conn = self.connections.get_connection()
+            conn.auto_reconnect = True
+            self.connectionsList.append(conn)
             cursor = conn.cursor()
             self.cursors.append(cursor)
             self.availableCursor.append(cursor)
@@ -49,15 +53,30 @@ class Connect:
         while not self.availableCursor:
             pass
         cursor = self.availableCursor[0]
-        self.availableCursor.remove(cursor)
+        try:
+            self.availableCursor.remove(cursor)
+        except ValueError as e:
+            cursor = self.getAvailableCursor()
         return cursor
 
     def makeCursorAvailable(self, cursor):
+        conn = cursor.connection
+        cursor.close()
+        if cursor not in self.cursors: return
+        cursor = conn.cursor()
         self.availableCursor.append(cursor)
 
     def resetAvailableCursors(self):
         self.availableCursor = []
-        self.availableCursor += self.cursors
+        [cursor.close() for cursor in self.cursors]
+        [conn.reset() for conn in self.connectionsList]
+        listOfCursors = [conn.cursor() for conn in self.connectionsList]
+        self.cursors = listOfCursors.copy()
+        self.availableCursor = listOfCursors.copy()
+
+    def getActiveUsedCursorsCount(self) -> int:
+        return len(self.connectionsList) - len(self.availableCursor)
+
 
     def execute(self, sql: str) -> bool:
         """

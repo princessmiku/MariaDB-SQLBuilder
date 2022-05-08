@@ -34,6 +34,9 @@ class UpsertBuilder(BaseBuilder):
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
+    def where(self, **kwargs):
+        raise NameError("Function 'where' is not in use here")
+
     def get_sql(self) -> str:
         return f"INSERT INTO " \
             f"{self.tb.table} ({', '.join(self.__toSet.keys())}) VALUES ({', '.join(self.__toSet.values())})" \

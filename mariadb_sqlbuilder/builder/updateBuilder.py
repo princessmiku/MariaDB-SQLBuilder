@@ -15,8 +15,8 @@ class UpdateBuilder(BaseBuilder):
     def __init__(self, tb):
         super().__init__(tb)
         self.__toSet = {}
-        self.__where_conditions = []
         self.__joins = []
+        self.sureNotUseWhere = False
 
     def set(self, column, value: Union[str, int, None]):
         if isinstance(value, int):
@@ -26,6 +26,9 @@ class UpdateBuilder(BaseBuilder):
         else:
             self.__toSet[_getTCN(self.tb.table, column)] = f"'{str(value)}'"
         return self
+
+    def imSureImNotUseWhere(self, imSure: bool = False):
+        self.sureNotUseWhere = imSure
 
     def join(self, joinBuilder: _JoinBuilder):
         joinBuilder.from_table = self.tb.table
@@ -41,14 +44,10 @@ class UpdateBuilder(BaseBuilder):
             self.__toSet[_getTCN(joinTable, joinColumn)] = f"'{str(value)}'"
         return self
 
-    def where(self, column: str, value: Union[str, int]):
-        if isinstance(value, int):
-            self.__where_conditions.append(f"{_getTCN(self.tb.table, column)} = {value}")
-        else:
-            self.__where_conditions.append(f"{_getTCN(self.tb.table, column)} = '{value}'")
-        return self
 
     def execute(self) -> bool:
+        if not self._where_conditions and not self.sureNotUseWhere:
+            raise PermissionError('You are not sure enough not to use where')
         cursor = self.tb.connect.getAvailableCursor()
         result = executeFunctions.execute(
             cursor,
@@ -63,5 +62,5 @@ class UpdateBuilder(BaseBuilder):
                f"{' '.join(self.__joins) if self.__joins else ''} " \
                f"SET " \
             f"{', '.join(['%s = %s' % (key, value) for (key, value) in self.__toSet.items()])} " \
-            f"{'WHERE ' + ' AND '.join(self.__where_conditions) if self.__where_conditions else ''}"
+            f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''}"
 
