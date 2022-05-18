@@ -13,7 +13,7 @@ import sqlparse
 
 from .builder import TableBuilder
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 
 class Connect:
@@ -34,15 +34,15 @@ class Connect:
             autocommit=True
         )
         self.connectionsList: list = []
-        self.cursors = []
+        self.inUsingCursors = []
         self.availableCursor: list = []
+        self.isInReset = False
         i: int = 1
         while i <= pool_size:
-            conn = self.connections.get_connection()
+            conn: mariadb.connection = self.connections.get_connection()
             conn.auto_reconnect = True
             self.connectionsList.append(conn)
             cursor = conn.cursor()
-            self.cursors.append(cursor)
             self.availableCursor.append(cursor)
             i += 1
 
@@ -50,28 +50,37 @@ class Connect:
         return TableBuilder(self, name)
 
     def getAvailableCursor(self):
-        while not self.availableCursor:
+        while not self.availableCursor or self.isInReset:
             pass
         cursor = self.availableCursor[0]
         try:
             self.availableCursor.remove(cursor)
         except ValueError as e:
             cursor = self.getAvailableCursor()
+        self.inUsingCursors.append(cursor)
         return cursor
 
     def makeCursorAvailable(self, cursor):
+        try:
+            self.inUsingCursors.remove(cursor)
+        except ValueError:
+            cursor.close()
+            return
         conn = cursor.connection
         cursor.close()
-        if cursor not in self.cursors: return
         cursor = conn.cursor()
         self.availableCursor.append(cursor)
 
-    def resetAvailableCursors(self):
+    def resetAvailableCursors(self, notTheSaveWay: bool = False):
+        if not notTheSaveWay:
+            while len(self.inUsingCursors) > 0:
+                pass
+        self.isInReset = True
+        [cursor.close() for cursor in self.availableCursor]
         self.availableCursor = []
-        [cursor.close() for cursor in self.cursors]
+        self.inUsingCursors = []
         [conn.reset() for conn in self.connectionsList]
         listOfCursors = [conn.cursor() for conn in self.connectionsList]
-        self.cursors = listOfCursors.copy()
         self.availableCursor = listOfCursors.copy()
 
     def getActiveUsedCursorsCount(self) -> int:
