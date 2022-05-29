@@ -12,6 +12,7 @@ import mariadb
 import sqlparse
 
 from .builder import TableBuilder
+from .execution.executeFunctions import execute, executeOne, executeAll
 
 __version__ = '0.3.1'
 
@@ -19,9 +20,8 @@ __version__ = '0.3.1'
 class Connect:
 
 
-    def __init__(self, *, host: str, user: str, password: str, port: int = 3306,
-                 database: str, pool_name: str = "sqlbuilder_pool",
-                 pool_size: int = 3, pool_reset_connection: bool = False):
+    def __init__(self, host: str, user: str, password: str, database: str, port: int = 3306, pool_name: str = "sqlbuilder_pool",
+                 pool_size: int = 3, pool_reset_connection: bool = False, *args, **kwargs):
         self.connections = mariadb.ConnectionPool(
             pool_name=pool_name,
             pool_size=pool_size,
@@ -31,7 +31,9 @@ class Connect:
             user=user,
             password=password,
             database=database,
-            autocommit=True
+            autocommit=True,
+            *args,
+            **kwargs
         )
         self.connectionsList: list = []
         self.inUsingCursors = []
@@ -96,7 +98,7 @@ class Connect:
         :return:
         """
         cursor = self.getAvailableCursor()
-        result = builder.execute(cursor, sql)
+        result = execute(cursor, sql)
         self.makeCursorAvailable(cursor)
         return result
 
@@ -112,7 +114,7 @@ class Connect:
         statements: list[str] = sqlparse.split(sql_script)
         result = False
         for statement in statements:
-            result = builder.execute(cursor, statement)
+            result = execute(cursor, statement)
             if not result: break
         self.makeCursorAvailable(cursor)
         return result
@@ -126,8 +128,8 @@ class Connect:
         """
         cursor = self.getAvailableCursor()
         if many:
-            result = builder.executeAll(cursor, sql)
+            result = executeAll(cursor, sql)
         else:
-            result = builder.executeOne(cursor, sql)
+            result = executeOne(cursor, sql)
         self.makeCursorAvailable(cursor)
         return result
