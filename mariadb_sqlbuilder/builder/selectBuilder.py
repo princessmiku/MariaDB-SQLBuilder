@@ -1,32 +1,28 @@
 from typing import Union
 
 from ..execution import executeFunctions
-from .baseBuilder import BaseBuilder
-from .joinBuilder import _JoinBuilder
+from .baseBuilder import ConditionsBuilder, _getTCN
+from .joinBuilder import _JoinBuilder, BaseJoinExtension
 
 
-# get the name of a table column
-def _getTCN(table: str, column: str) -> str:
-    return table + "." + column
-
-
-class SelectBuilder(BaseBuilder):
+class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def __init__(self, tb, column):
-        super().__init__(tb)
-        self.column = column.replace(", ", ",").split(",")
-        self.__joins = []
-
-
-    def join(self, joinBuilder: _JoinBuilder):
-        joinBuilder.from_table = self.tb.table
-        self.__joins.append(joinBuilder.get_sql())
-        return self
+        ConditionsBuilder.__init__(self, tb)
+        BaseJoinExtension.__init__(self, tb)
+        self.column = [_getTCN(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
 
     def joinSelect(self, joinTable: str, column: str):
         column = column.replace(", ", ",").split(",")
         columns = []
         [columns.append(_getTCN(joinTable, c)) for c in column]
+        self.column += columns
+        return self
+
+    def columnSelect(self, column: str):
+        column = column.replace(", ", ",").split(",")
+        columns = []
+        [columns.append(_getTCN(self.tb.table, c)) for c in column]
         self.column += columns
         return self
 
@@ -50,5 +46,5 @@ class SelectBuilder(BaseBuilder):
 
     def get_sql(self) -> str:
         return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
-               f"{' '.join(self.__joins) if self.__joins else ''} " \
-            f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''}"
+               f"{' '.join(self._joins) if self._joins else ''} " \
+            f"{self._getWhereSQL()}"
