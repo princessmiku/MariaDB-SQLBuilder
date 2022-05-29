@@ -46,4 +46,4 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
     def get_sql(self) -> str:
         return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
                f"{' '.join(self.__joins) if self.__joins else ''} " \
-            f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''}"
+            f"{self._getWhereSQL()}"

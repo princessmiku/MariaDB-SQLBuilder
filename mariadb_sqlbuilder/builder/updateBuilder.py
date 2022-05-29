@@ -35,11 +35,10 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
-
     def get_sql(self) -> str:
         return f"UPDATE {self.tb.table} " \
                f"{' '.join(self.__joins) if self.__joins else ''} " \
                f"SET " \
             f"{', '.join(['%s = %s' % (key, value) for (key, value) in self.__toSet.items()])} " \
-            f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''}"
+            f"{self._getWhereSQL()}"
 

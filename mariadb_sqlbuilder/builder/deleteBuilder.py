@@ -27,5 +27,5 @@ class DeleteBuilder(ConditionsBuilder):
 
     def get_sql(self) -> str:
         return f"DELETE FROM {self.tb.table} " \
-            f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''}"
+            f"{self._getWhereSQL()}"
 
