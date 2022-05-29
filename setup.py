@@ -1,11 +1,10 @@
 import pathlib
 from setuptools import setup, find_packages
-from pkg_resources import get_distribution, DistributionNotFound
 
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
-VERSION = '0.3.2'
+VERSION = '0.4.0'
 
 setup(
     name='MariaDB-SQLBuilder',

@@ -14,7 +14,7 @@ class SelectBuilder(BaseBuilder):
 
     def __init__(self, tb, column):
         super().__init__(tb)
-        self.column = column.replace(", ", ",").split(",")
+        self.column = [_getTCN(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
         self.__joins = []
 
 
@@ -27,6 +27,13 @@ class SelectBuilder(BaseBuilder):
         column = column.replace(", ", ",").split(",")
         columns = []
         [columns.append(_getTCN(joinTable, c)) for c in column]
+        self.column += columns
+        return self
+
+    def columnSelect(self, column: str):
+        column = column.replace(", ", ",").split(",")
+        columns = []
+        [columns.append(_getTCN(self.tb.table, c)) for c in column]
         self.column += columns
         return self
 

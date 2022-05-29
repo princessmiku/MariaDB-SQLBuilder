@@ -14,7 +14,7 @@ import sqlparse
 from .builder import TableBuilder
 from .execution.executeFunctions import execute, executeOne, executeAll
 
-__version__ = '0.3.2'
+__version__ = '0.4.0'
 
 
 class Connect:
