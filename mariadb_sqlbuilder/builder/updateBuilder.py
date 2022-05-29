@@ -8,7 +8,8 @@ from .joinBuilder import BaseJoinExtension
 class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def __init__(self, tb):
-        super().__init__(tb)
+        ConditionsBuilder.__init__(self, tb)
+        BaseJoinExtension.__init__(self, tb)
         # check if variable already exists, else init it
         self.__toSet = {}
         self.sureNotUseWhere = False
@@ -37,7 +38,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def get_sql(self) -> str:
         return f"UPDATE {self.tb.table} " \
-               f"{' '.join(self.__joins) if self.__joins else ''} " \
+               f"{' '.join(self._joins) if self._joins else ''} " \
                f"SET " \
             f"{', '.join(['%s = %s' % (key, value) for (key, value) in self.__toSet.items()])} " \
             f"{self._getWhereSQL()}"

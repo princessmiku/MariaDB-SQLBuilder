@@ -24,11 +24,11 @@ class BaseJoinExtension:
 
     def __init__(self, tb):
         self.tb = tb
-        self.__joins = []
+        self._joins = []
 
     def join(self, joinBuilder: _JoinBuilder):
         joinBuilder.from_table = self.tb.table
-        self.__joins.append(joinBuilder.get_sql())
+        self._joins.append(joinBuilder.get_sql())
         return self
 
 

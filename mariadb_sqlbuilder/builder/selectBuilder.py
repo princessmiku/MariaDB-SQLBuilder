@@ -8,7 +8,8 @@ from .joinBuilder import _JoinBuilder, BaseJoinExtension
 class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def __init__(self, tb, column):
-        super().__init__(tb)
+        ConditionsBuilder.__init__(self, tb)
+        BaseJoinExtension.__init__(self, tb)
         self.column = [_getTCN(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
 
     def joinSelect(self, joinTable: str, column: str):
@@ -45,5 +46,5 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def get_sql(self) -> str:
         return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
-               f"{' '.join(self.__joins) if self.__joins else ''} " \
+               f"{' '.join(self._joins) if self._joins else ''} " \
             f"{self._getWhereSQL()}"
