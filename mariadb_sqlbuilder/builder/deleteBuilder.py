@@ -8,14 +8,14 @@ class DeleteBuilder(ConditionsBuilder):
 
     def __init__(self, tb):
         super().__init__(tb)
-        self.sureNotUseWhere = False
+        self.sureNotUseConditions = False
 
-    def imSureImNotUseWhere(self, imSure: bool = False):
-        self.sureNotUseWhere = imSure
+    def imSureImNotUseConditions(self, imSure: bool = False):
+        self.sureNotUseConditions = imSure
         return self
 
     def execute(self) -> bool:
-        if not self._where_conditions and not self.sureNotUseWhere:
+        if not self._where_conditions and not self.sureNotUseConditions:
             raise PermissionError('You are not sure enough not to use where')
         cursor = self.tb.connect.getAvailableCursor()
         result = executeFunctions.execute(
