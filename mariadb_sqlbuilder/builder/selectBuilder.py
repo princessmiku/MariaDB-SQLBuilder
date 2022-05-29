@@ -1,27 +1,15 @@
 from typing import Union
 
 from ..execution import executeFunctions
-from .baseBuilder import BaseBuilder
-from .joinBuilder import _JoinBuilder
+from .baseBuilder import ConditionsBuilder, _getTCN
+from .joinBuilder import _JoinBuilder, BaseJoinExtension
 
 
-# get the name of a table column
-def _getTCN(table: str, column: str) -> str:
-    return table + "." + column
-
-
-class SelectBuilder(BaseBuilder):
+class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def __init__(self, tb, column):
         super().__init__(tb)
         self.column = [_getTCN(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
-        self.__joins = []
-
-
-    def join(self, joinBuilder: _JoinBuilder):
-        joinBuilder.from_table = self.tb.table
-        self.__joins.append(joinBuilder.get_sql())
-        return self
 
     def joinSelect(self, joinTable: str, column: str):
         column = column.replace(", ", ",").split(",")

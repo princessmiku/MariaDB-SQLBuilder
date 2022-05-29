@@ -2,12 +2,7 @@ import abc
 from typing import Union
 
 from ..execution import executeFunctions
-from .baseBuilder import BaseBuilder
-
-
-# get the name of a table column
-def _getTCN(table: str, column: str) -> str:
-    return table + "." + column
+from .baseBuilder import BaseBuilder, _getTCN
 
 
 class InsertBuilder(BaseBuilder):

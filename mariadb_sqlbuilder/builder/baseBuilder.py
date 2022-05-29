@@ -8,8 +8,8 @@ def _getTCN(table: str, column: str) -> str:
 
 
 def _transformValueValid(value: Union[str, int]) -> str:
-    if isinstance(value, int): return str(value)
     if value is None: return "NULL"
+    elif isinstance(value, int): return str(value)
     else: return f"'{value}'"
 
 
@@ -17,11 +17,17 @@ class BaseBuilder(ABC):
 
     def __init__(self, tb):
         self.tb = tb
-        self._where_conditions = []
 
     @abstractmethod
     def get_sql(self) -> str:
         pass
+
+
+class ConditionsBuilder(BaseBuilder):
+
+    def __init__(self, tb):
+        super().__init__(tb)
+        self._where_conditions = []
 
     def where(self, column: str, value: Union[str, int], filter_operator: str = "="):
         self._where_conditions.append(f"{_getTCN(self.tb.table, column)} {filter_operator} {_transformValueValid(value)}")
@@ -71,6 +77,10 @@ class BaseBuilder(ABC):
         self._where_conditions.append(f"{_getTCN(self.tb.table, column)} IS FALSE")
         return self
 
-    def isNotTrue(self, column: str):
+    def isNotFalse(self, column: str):
         self._where_conditions.append(f"{_getTCN(self.tb.table, column)} IS NOT FALSE")
         return self
+
+    @abstractmethod
+    def get_sql(self) -> str:
+        pass

@@ -3,11 +3,10 @@ from typing import Union
 import mariadb
 
 from ..execution import executeFunctions
-from .baseBuilder import BaseBuilder
+from .baseBuilder import ConditionsBuilder
 
 
-class ExistsBuilder(BaseBuilder):
-
+class ExistsBuilder(ConditionsBuilder):
 
     def __init__(self, tb):
         super().__init__(tb)

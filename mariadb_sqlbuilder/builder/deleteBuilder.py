@@ -1,10 +1,10 @@
 from typing import Union
 
 from ..execution import executeFunctions
-from .baseBuilder import BaseBuilder
+from .baseBuilder import ConditionsBuilder
 
 
-class DeleteBuilder(BaseBuilder):
+class DeleteBuilder(ConditionsBuilder):
 
     def __init__(self, tb):
         super().__init__(tb)

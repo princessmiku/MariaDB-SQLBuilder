@@ -3,12 +3,10 @@
     https://mariadb.com/kb/en/joining-tables-with-join-clauses/
 
 """
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, ABCMeta
+from typing import Union
 
-
-# get the name of a table column
-def _getTCN(table: str, column: str) -> str:
-    return table + "." + column
+from .baseBuilder import _getTCN
 
 
 class _JoinBuilder(ABC):
@@ -22,22 +20,16 @@ class _JoinBuilder(ABC):
         pass
 
 
-class InnerJoinBuilder(_JoinBuilder):
+class BaseJoinExtension:
 
+    def __init__(self, tb):
+        self.tb = tb
+        self.__joins = []
 
-    def __init__(self, table: str):
-        super().__init__()
-        self.table = table
-        self.conditions = []
-
-    def condition(self, column_from_table: str, column_join_table: str):
-        self.conditions.append([column_from_table, column_join_table])
+    def join(self, joinBuilder: _JoinBuilder):
+        joinBuilder.from_table = self.tb.table
+        self.__joins.append(joinBuilder.get_sql())
         return self
-
-    def get_sql(self) -> str:
-        conditions = []
-        for con in self.conditions: conditions.append(f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
-        return f"INNER JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
 class CrossJoinBuilder(_JoinBuilder):
@@ -50,8 +42,7 @@ class CrossJoinBuilder(_JoinBuilder):
         return f"CROSS JOIN {self.table} "
 
 
-class LeftJoinBuilder(_JoinBuilder):
-
+class _ConditionsBuilder(_JoinBuilder):
     def __init__(self, table: str):
         super().__init__()
         self.table = table
@@ -60,24 +51,30 @@ class LeftJoinBuilder(_JoinBuilder):
     def condition(self, column_from_table: str, column_join_table: str):
         self.conditions.append([column_from_table, column_join_table])
         return self
+
+    @abstractmethod
+    def get_sql(self) -> str:
+        pass
+
+
+class InnerJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
         conditions = []
         for con in self.conditions: conditions.append(f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
+        return f"INNER JOIN {self.table} ON {' AND '.join(conditions)} "
+
+
+class LeftJoinBuilder(_ConditionsBuilder):
+
+    def get_sql(self) -> str:
+        conditions = []
+        for con in self.conditions: conditions.append(
+            f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
         return f"Left JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
-class RightJoinBuilder(_JoinBuilder):
-
-
-    def __init__(self, table: str):
-        super().__init__()
-        self.table = table
-        self.conditions = []
-
-    def condition(self, column_from_table: str, column_join_table: str):
-        self.conditions.append([column_from_table, column_join_table])
-        return self
+class RightJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
         conditions = []
