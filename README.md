@@ -2,6 +2,10 @@
 
 -----
 
+[![License - GNU LPGL version 2.1](https://img.shields.io/badge/License-GNU_LPGL_version_2.1-green)](https://opensource.org/licenses/LGPL-2.1)
+[![Python - ^3.6](https://img.shields.io/badge/Python-^3.6-blue)](https://www.python.org/)
+[![Downloads](https://pepy.tech/badge/mariadb-sqlbuilder)](https://pepy.tech/project/mariadb-sqlbuilder)
+
 Too lazy to write SQL? Then use the SQL Builder to make your life easier!
 
 MariaDB SQL Builder is a simple and thread safe way to use SQL.
