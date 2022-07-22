@@ -8,7 +8,7 @@
 
 Too lazy to write SQL? Then use the SQL Builder to make your life easier!
 
-MariaDB SQL Builder is a simple and thread safe way to use SQL.
+MariaDB SQL Builder is a simple way to use SQL.
 Use your own SQL or use the integrated SQL Builder tool.
 
 # [Install](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Installation)
