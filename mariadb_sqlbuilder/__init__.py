@@ -13,7 +13,7 @@ import mariadb
 from .execution.executeFunctions import execute, executeOne, executeAll, executeScript
 from .builder import TableBuilder
 
-__version__ = '0.4.2'
+__version__ = '0.5.0'
 
 
 class Connect:
