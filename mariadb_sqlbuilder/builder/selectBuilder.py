@@ -1,8 +1,9 @@
 from typing import Union
 
-from ..execution import executeFunctions
+from execution.executeFunctions import executeAll, executeOne
 from .baseBuilder import ConditionsBuilder, _getTCN
-from .joinBuilder import _JoinBuilder, BaseJoinExtension
+from .joinBuilder import BaseJoinExtension
+from .dict_converter import convert_to_dict_single, convert_to_dict_all
 
 
 class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
@@ -28,23 +29,29 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def fetchone(self):
         cursor = self.tb.connect.getAvailableCursor()
-        result = executeFunctions.executeOne(
+        result = executeOne(
             cursor,
             self.get_sql()
         )
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
+    def fetchone_json(self):
+        return convert_to_dict_single(self.tb.table, self.column, self.fetchone())
+
     def fetchall(self):
         cursor = self.tb.connect.getAvailableCursor()
-        result = executeFunctions.executeAll(
+        result = executeAll(
             cursor,
             self.get_sql()
         )
         self.tb.connect.makeCursorAvailable(cursor)
         return result
+
+    def fetchall_json(self):
+        return convert_to_dict_all(self.tb.table, self.column, self.fetchall())
 
     def get_sql(self) -> str:
         return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
                f"{' '.join(self._joins) if self._joins else ''} " \
-            f"{self._getWhereSQL()}"
+            f"{self._getWhereSQL()};"

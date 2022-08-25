@@ -1,6 +1,6 @@
 from typing import Union
 
-from ..execution import executeFunctions
+from execution.executeFunctions import execute as fExecute
 from .baseBuilder import ConditionsBuilder
 
 
@@ -16,16 +16,17 @@ class DeleteBuilder(ConditionsBuilder):
 
     def execute(self) -> bool:
         if not self._where_conditions and not self.sureNotUseConditions:
-            raise PermissionError('You are not sure enough not to use where')
+            raise PermissionError('Delete Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.getAvailableCursor()
-        result = executeFunctions.execute(
+        result = fExecute(
             cursor,
             self.get_sql()
         )
+        cursor._connection.commit()
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
     def get_sql(self) -> str:
         return f"DELETE FROM {self.tb.table} " \
-            f"{self._getWhereSQL()}"
+            f"{self._getWhereSQL()};"
 

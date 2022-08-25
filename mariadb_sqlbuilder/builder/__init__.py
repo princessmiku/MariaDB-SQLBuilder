@@ -1,4 +1,5 @@
 from typing import Union
+
 from .selectBuilder import SelectBuilder
 from .updateBuilder import UpdateBuilder
 from .insertBuilder import InsertBuilder

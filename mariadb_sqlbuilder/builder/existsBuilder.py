@@ -2,7 +2,7 @@ from typing import Union
 
 import mariadb
 
-from ..execution import executeFunctions
+from execution.executeFunctions import executeOne
 from .baseBuilder import ConditionsBuilder
 
 
@@ -23,7 +23,7 @@ class ExistsBuilder(ConditionsBuilder):
     def checkExists(self) -> bool:
         cursor = self.tb.connect.getAvailableCursor()
         try:
-            result = executeFunctions.executeOne(
+            result = executeOne(
                 cursor,
                 self.get_sql()
             )
@@ -35,4 +35,4 @@ class ExistsBuilder(ConditionsBuilder):
 
     def get_sql(self) -> str:
         return f"SELECT EXISTS(SELECT {', '.join(self.columnList) if self.columnList else '*'} FROM {self.tb.table} " \
-               f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''})"
+               f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''});"

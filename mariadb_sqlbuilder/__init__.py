@@ -6,13 +6,12 @@
     https://mariadb.com/kb/en/joining-tables-with-join-clauses/
 
 """
-import typing
+import sys
 
 import mariadb
-import sqlparse
 
+from .execution.executeFunctions import execute, executeOne, executeAll, executeScript
 from .builder import TableBuilder
-from .execution.executeFunctions import execute, executeOne, executeAll
 
 __version__ = '0.4.2'
 
@@ -31,7 +30,6 @@ class Connect:
             user=user,
             password=password,
             database=database,
-            autocommit=True,
             *args,
             **kwargs
         )
@@ -44,8 +42,7 @@ class Connect:
             conn: mariadb.connection = self.connections.get_connection()
             conn.auto_reconnect = True
             self.connectionsList.append(conn)
-            cursor = conn.cursor()
-            self.availableCursor.append(cursor)
+            self.availableCursor.append(conn.cursor())
             i += 1
 
     def table(self, name: str) -> TableBuilder:
@@ -88,36 +85,34 @@ class Connect:
     def getActiveUsedCursorsCount(self) -> int:
         return len(self.connectionsList) - len(self.availableCursor)
 
-
-    def execute(self, sql: str) -> bool:
+    def execute(self, sql: str, commit: bool = False) -> bool:
         """
         It will return only if it is successfully,
         only one statement.
         For more statements / a script use 'execute_script'
         :param sql:
+        :param commit
         :return:
         """
         cursor = self.getAvailableCursor()
-        result = execute(cursor, sql)
+        execute(cursor, sql)
+        if commit: cursor._connection.commit()
         self.makeCursorAvailable(cursor)
-        return result
 
-    def execute_script(self, sql_script: str) -> bool:
+    def execute_script(self, sql_script: str, commit: bool = False):
         """
         It will return only if it is complete successfully,
         it will break when a line is not successful.
-        Changes since then will be available, so be careful
         :param sql_script:
+        :param commit: commit changes?
         :return:
         """
         cursor = self.getAvailableCursor()
-        statements: list[str] = sqlparse.split(sql_script)
-        result = False
-        for statement in statements:
-            result = execute(cursor, statement)
-            if not result: break
+        executeScript(cursor, sql_script)
+        if commit:
+            cursor._connection.commit()
         self.makeCursorAvailable(cursor)
-        return result
+
 
     def execute_fetch(self, sql: str, many: bool = False):
         """
