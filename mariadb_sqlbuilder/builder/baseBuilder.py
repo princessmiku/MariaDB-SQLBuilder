@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, Tuple
 
 
 # get the name of a table column
@@ -35,12 +35,12 @@ class ConditionsBuilder(BaseBuilder):
         self._where_conditions.append(f"{_getTCN(self.tb.table, column)} {filter_operator} {_transformValueValid(value)}")
         return self
 
-    def whereIn(self, column: str, checkedList: tuple[str, int]):
+    def whereIn(self, column: str, checkedList: Tuple[str, int]):
         self.__checkIfORAND()
         self._where_conditions.append(f"{_getTCN(self.tb.table, column)} IN {str(checkedList)}")
         return self
 
-    def whereInNot(self, column: str, checkedList: tuple[str, int]):
+    def whereInNot(self, column: str, checkedList: Tuple[str, int]):
         self.__checkIfORAND()
         self._where_conditions.append(f"{_getTCN(self.tb.table, column)} NOT IN {str(checkedList)}")
         return self

@@ -16,5 +16,3 @@ def executeAll(cursor, sql: str):
     if echo_sql: print("EXECUTE WITH FETCHALL:", sql)
     cursor.execute(sql)
     return cursor.fetchall()
-
-
