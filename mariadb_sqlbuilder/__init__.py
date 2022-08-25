@@ -6,10 +6,9 @@
     https://mariadb.com/kb/en/joining-tables-with-join-clauses/
 
 """
-import typing
-
 import mariadb
 import sqlparse
+from typing import List
 
 from .builder import TableBuilder
 from .execution.executeFunctions import execute, executeOne, executeAll
@@ -31,7 +30,6 @@ class Connect:
             user=user,
             password=password,
             database=database,
-            autocommit=True,
             *args,
             **kwargs
         )
@@ -44,8 +42,7 @@ class Connect:
             conn: mariadb.connection = self.connections.get_connection()
             conn.auto_reconnect = True
             self.connectionsList.append(conn)
-            cursor = conn.cursor()
-            self.availableCursor.append(cursor)
+            self.availableCursor.append(conn.cursor())
             i += 1
 
     def table(self, name: str) -> TableBuilder:
@@ -88,7 +85,6 @@ class Connect:
     def getActiveUsedCursorsCount(self) -> int:
         return len(self.connectionsList) - len(self.availableCursor)
 
-
     def execute(self, sql: str) -> bool:
         """
         It will return only if it is successfully,
@@ -102,20 +98,22 @@ class Connect:
         self.makeCursorAvailable(cursor)
         return result
 
-    def execute_script(self, sql_script: str) -> bool:
+    def execute_script(self, sql_script: str, commit: bool = False) -> bool:
         """
         It will return only if it is complete successfully,
         it will break when a line is not successful.
-        Changes since then will be available, so be careful
         :param sql_script:
+        :param commit: commit changes?
         :return:
         """
         cursor = self.getAvailableCursor()
-        statements: list[str] = sqlparse.split(sql_script)
+        statements: List[str] = sqlparse.split(sql_script)
         result = False
         for statement in statements:
             result = execute(cursor, statement)
             if not result: break
+        if commit:
+            cursor._connection.commit()
         self.makeCursorAvailable(cursor)
         return result
 

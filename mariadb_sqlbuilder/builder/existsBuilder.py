@@ -35,4 +35,4 @@ class ExistsBuilder(ConditionsBuilder):
 
     def get_sql(self) -> str:
         return f"SELECT EXISTS(SELECT {', '.join(self.columnList) if self.columnList else '*'} FROM {self.tb.table} " \
-               f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''})"
+               f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''});"

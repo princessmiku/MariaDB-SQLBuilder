@@ -19,8 +19,9 @@ setup(
     license='LGPL 2.1',
     author='Miku',
     author_email='',
-    description='MariaDB SQL Builder is a simple way to use Maria SQL. Use your own SQL or use the integrated Maria SQL Builder tool.',
-    keywords=['python', 'database', 'mariadb', 'sql', 'builder', 'script builder', 'mariadb sql', 'orm'],
+    description='MariaDB SQL Builder is a simple way to use Maria SQL. '
+                'Use your own SQL or use the integrated Maria SQL Builder tool.',
+    keywords=['database', 'mariadb', 'sql', 'builder', 'script builder', 'mariadb sql', 'orm'],
     python_requires='>=3.7.0',
     install_requires=[
         "mariadb>=1.0.11",

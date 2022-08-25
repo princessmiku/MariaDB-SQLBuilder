@@ -21,6 +21,7 @@ class UpsertBuilder(BaseBuilder):
             cursor,
             self.get_sql()
         )
+        cursor._connection.commit()
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
@@ -28,4 +29,4 @@ class UpsertBuilder(BaseBuilder):
         return f"INSERT INTO " \
             f"{self.tb.table} ({', '.join(self.__toSet.keys())}) VALUES ({', '.join(self.__toSet.values())})" \
             f"ON DUPLICATE KEY UPDATE " \
-            f"{', '.join(['%s = %s' % (key, value) for (key, value) in self.__toSet.items()])}"
+            f"{', '.join(['%s = %s' % (key, value) for (key, value) in self.__toSet.items()])};"

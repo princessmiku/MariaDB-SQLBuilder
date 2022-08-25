@@ -28,12 +28,13 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def execute(self) -> bool:
         if not self._where_conditions and not self.sureNotUseConditions:
-            raise PermissionError('You are not sure enough not to use where')
+            raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.getAvailableCursor()
         result = executeFunctions.execute(
             cursor,
             self.get_sql()
         )
+        cursor._connection.commit()
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
@@ -42,5 +43,5 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
                f"{' '.join(self._joins) if self._joins else ''} " \
                f"SET " \
             f"{', '.join(['%s = %s' % (key, value) for (key, value) in self.__toSet.items()])} " \
-            f"{self._getWhereSQL()}"
+            f"{self._getWhereSQL()};"
 
