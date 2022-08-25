@@ -74,7 +74,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         Set values with a json, don't forget where
         :param json: dict with data example from select
-        :param pop: pop keys from the json, if you have joins in select that not should insert
+        :param pop: pop keys from the json, if you have keys inside that are not a table but a dict/list
         :return:
         """
         self.__jsonBuildings.append([json, pop])
