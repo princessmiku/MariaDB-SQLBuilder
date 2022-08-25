@@ -3,6 +3,7 @@ from typing import Union
 from ..execution import executeFunctions
 from .baseBuilder import ConditionsBuilder, _getTCN
 from .joinBuilder import _JoinBuilder, BaseJoinExtension
+from .dict_converter import convert_to_dict_single, convert_to_dict_many
 
 
 class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
@@ -35,6 +36,9 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
+    def fetchone_json(self):
+        return convert_to_dict_single(self.tb.table, self.column, self.fetchone())
+
     def fetchall(self):
         cursor = self.tb.connect.getAvailableCursor()
         result = executeFunctions.executeAll(
@@ -43,6 +47,9 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         )
         self.tb.connect.makeCursorAvailable(cursor)
         return result
+
+    def fetchall_json(self):
+        return convert_to_dict_many(self.tb.table, self.column, self.fetchall())
 
     def get_sql(self) -> str:
         return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
