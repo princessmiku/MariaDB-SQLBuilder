@@ -21,6 +21,11 @@ class InsertBuilder(BaseBuilder):
         self.__toSet[self.tb.table][column] = _transformValueValid(value)
         return self
 
+    def addJoinTable(self, table: str):
+        if self.__toSet.__contains__(table): return self
+        self.__toSet[table] = {}
+        return self
+
     def tableSet(self, table: str, column: str, value: Union[str, int, None]):
         """
         Insert data in other table in one insert
@@ -55,6 +60,7 @@ class InsertBuilder(BaseBuilder):
         key: str
         value: Dict[str, dict]
         for key, value in self.__toSet.items():
+            if not value: continue
             sql += f"INSERT {'IGNORE ' if self.__ignore else ''}INTO " \
                    f"{key} ({', '.join(value.keys())}) VALUES ({', '.join(value.values())});"
         return sql
@@ -64,7 +70,7 @@ class InsertBuilder(BaseBuilder):
             pop = []
         key: str
         value: any
-        join_keys = [x.table for x in self.__toSet.keys()]
+        join_keys = [x for x in self.__toSet.keys()]
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
