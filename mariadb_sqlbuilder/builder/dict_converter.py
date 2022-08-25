@@ -29,7 +29,7 @@ def convert_to_dict_single(mTb: str, columns: List[str], values: List[any]) -> D
     return result
 
 
-def convert_to_dict_many(mTb: str, columns: List[str], values: List[List[any]]) -> List[Dict[str, any]]:
+def convert_to_dict_all(mTb: str, columns: List[str], values: List[List[any]]) -> List[Dict[str, any]]:
     """
     Convert a multiple result to a list with the results as dict/json
     :param mTb: main table
