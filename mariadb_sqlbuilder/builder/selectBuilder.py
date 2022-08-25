@@ -1,8 +1,8 @@
 from typing import Union
 
-from ..execution import executeFunctions
+from execution.executeFunctions import executeAll, executeOne
 from .baseBuilder import ConditionsBuilder, _getTCN
-from .joinBuilder import _JoinBuilder, BaseJoinExtension
+from .joinBuilder import BaseJoinExtension
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
 
 
@@ -29,7 +29,7 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def fetchone(self):
         cursor = self.tb.connect.getAvailableCursor()
-        result = executeFunctions.executeOne(
+        result = executeOne(
             cursor,
             self.get_sql()
         )
@@ -41,7 +41,7 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def fetchall(self):
         cursor = self.tb.connect.getAvailableCursor()
-        result = executeFunctions.executeAll(
+        result = executeAll(
             cursor,
             self.get_sql()
         )

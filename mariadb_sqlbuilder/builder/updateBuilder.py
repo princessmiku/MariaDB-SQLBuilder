@@ -1,10 +1,9 @@
 from json import dumps
 from typing import Union, Dict, List
 
-from .dummy import TableBuilder
-from ..execution import executeFunctions
+from execution.executeFunctions import execute as fExecute
 from .baseBuilder import ConditionsBuilder, _getTCN, _transformValueValid
-from .joinBuilder import BaseJoinExtension, _ConditionsBuilder
+from .joinBuilder import BaseJoinExtension
 
 
 class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
@@ -34,13 +33,13 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         if not self._where_conditions and not self.sureNotUseConditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.getAvailableCursor()
-        result = executeFunctions.execute(
+        result = fExecute(
             cursor,
             self.get_sql()
         )
         if self.__subSets:
             for s in self.__subSets:
-                executeFunctions.execute(cursor, s.get_sql())
+                fExecute(cursor, s.get_sql())
         cursor._connection.commit()
         self.tb.connect.makeCursorAvailable(cursor)
         return result
@@ -56,18 +55,11 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         return sql
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):
-        """
-        Set values with a json, don't forget where
-        :param json: dict with data example from select
-        :param pop: pop keys from the json, if you have joins in select that not should insert
-        :return:
-        """
         if pop is None:
             pop = []
         key: str
         value: any
         join_keys = [x.table for x in self._joinBuilders]
-        print(join_keys)
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
@@ -79,5 +71,11 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         return self
 
     def set_json(self, json: Dict[str, any], pop: List[str] = None):
+        """
+        Set values with a json, don't forget where
+        :param json: dict with data example from select
+        :param pop: pop keys from the json, if you have joins in select that not should insert
+        :return:
+        """
         self.__jsonBuildings.append([json, pop])
         return self

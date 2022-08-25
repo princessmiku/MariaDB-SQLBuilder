@@ -1,4 +1,8 @@
+from json import dumps
 from typing import List, Dict
+
+from builder.baseBuilder import ConditionsBuilder
+from builder.joinBuilder import BaseJoinExtension
 
 
 def __loop_convert_to_dict(mTb: str, columns: List[List[str]], values: List[any]) -> Dict[str, any]:

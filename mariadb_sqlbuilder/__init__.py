@@ -6,12 +6,12 @@
     https://mariadb.com/kb/en/joining-tables-with-join-clauses/
 
 """
-import mariadb
-import sqlparse
-from typing import List
+import sys
 
+import mariadb
+
+from .execution.executeFunctions import execute, executeOne, executeAll, executeScript
 from .builder import TableBuilder
-from .execution.executeFunctions import execute, executeOne, executeAll
 
 __version__ = '0.4.2'
 
@@ -85,20 +85,21 @@ class Connect:
     def getActiveUsedCursorsCount(self) -> int:
         return len(self.connectionsList) - len(self.availableCursor)
 
-    def execute(self, sql: str) -> bool:
+    def execute(self, sql: str, commit: bool = False) -> bool:
         """
         It will return only if it is successfully,
         only one statement.
         For more statements / a script use 'execute_script'
         :param sql:
+        :param commit
         :return:
         """
         cursor = self.getAvailableCursor()
-        result = execute(cursor, sql)
+        execute(cursor, sql)
+        if commit: cursor._connection.commit()
         self.makeCursorAvailable(cursor)
-        return result
 
-    def execute_script(self, sql_script: str, commit: bool = False) -> bool:
+    def execute_script(self, sql_script: str, commit: bool = False):
         """
         It will return only if it is complete successfully,
         it will break when a line is not successful.
@@ -107,15 +108,11 @@ class Connect:
         :return:
         """
         cursor = self.getAvailableCursor()
-        statements: List[str] = sqlparse.split(sql_script)
-        result = False
-        for statement in statements:
-            result = execute(cursor, statement)
-            if not result: break
+        executeScript(cursor, sql_script)
         if commit:
             cursor._connection.commit()
         self.makeCursorAvailable(cursor)
-        return result
+
 
     def execute_fetch(self, sql: str, many: bool = False):
         """
