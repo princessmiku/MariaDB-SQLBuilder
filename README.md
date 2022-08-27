@@ -42,7 +42,7 @@ connection.table("myTable").insert().set("id", 10).set("age", 25).set("Name", "H
 ```
 
 # [Wiki](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki)
-For all Details and how to usw
+For all Details and how to use
 
 ## Functions
 
