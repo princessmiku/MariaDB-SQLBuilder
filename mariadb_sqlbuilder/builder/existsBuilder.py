@@ -2,7 +2,7 @@ from typing import Union
 
 import mariadb
 
-from execution.executeFunctions import executeOne
+from ..execution.executeFunctions import executeOne
 from .baseBuilder import ConditionsBuilder
 
 

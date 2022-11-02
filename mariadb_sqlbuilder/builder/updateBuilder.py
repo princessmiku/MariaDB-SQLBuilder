@@ -1,7 +1,7 @@
 from json import dumps
 from typing import Union, Dict, List
 
-from execution.executeFunctions import execute as fExecute
+from ..execution.executeFunctions import execute as fExecute
 from .baseBuilder import ConditionsBuilder, _getTCN, _transformValueValid
 from .joinBuilder import BaseJoinExtension
 

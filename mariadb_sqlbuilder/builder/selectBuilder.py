@@ -1,6 +1,6 @@
 from typing import Union
 
-from execution.executeFunctions import executeAll, executeOne
+from ..execution.executeFunctions import executeAll, executeOne
 from .baseBuilder import ConditionsBuilder, _getTCN
 from .joinBuilder import BaseJoinExtension
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
