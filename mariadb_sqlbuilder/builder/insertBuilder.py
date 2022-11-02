@@ -3,7 +3,7 @@ from json import dumps
 from typing import Union, Dict, List
 
 from .dummy import TableBuilder
-from execution.executeFunctions import executeScript
+from ..execution.executeFunctions import executeScript
 from .baseBuilder import BaseBuilder, _transformValueValid
 
 

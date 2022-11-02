@@ -1,7 +1,7 @@
 from json import dumps
 from typing import Union, Dict, List
 
-from execution.executeFunctions import executeScript
+from ..execution.executeFunctions import executeScript
 from .baseBuilder import BaseBuilder, _transformValueValid
 
 

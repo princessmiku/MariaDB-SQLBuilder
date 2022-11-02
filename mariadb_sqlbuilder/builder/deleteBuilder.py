@@ -1,6 +1,6 @@
 from typing import Union
 
-from execution.executeFunctions import execute as fExecute
+from ..execution.executeFunctions import execute as fExecute
 from .baseBuilder import ConditionsBuilder
 
 
