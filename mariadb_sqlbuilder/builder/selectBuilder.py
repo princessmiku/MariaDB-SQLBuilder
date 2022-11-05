@@ -12,7 +12,6 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         ConditionsBuilder.__init__(self, tb)
         BaseJoinExtension.__init__(self, tb)
         self.column = [_getTCN(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
-        self._noCache = False
 
     def joinSelect(self, joinTable: str, column: str):
         column = column.replace(", ", ",").split(",")
@@ -34,6 +33,7 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
             cursor,
             self.get_sql()
         )
+        cursor.connection.commit()
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
@@ -46,16 +46,15 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
             cursor,
             self.get_sql()
         )
+        cursor.connection.commit()
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
     def fetchall_json(self):
         return convert_to_dict_all(self.tb.table, self.column, self.fetchall())
 
-    def noCache(self):
-        self._noCache = True
 
     def get_sql(self) -> str:
-        return f"SELECT {'SQL_NO_CACHE ' if self._noCache else ''} {', '.join(self.column)} FROM {self.tb.table} " \
+        return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
                f"{' '.join(self._joins) if self._joins else ''} " \
             f"{self._getWhereSQL()};"
