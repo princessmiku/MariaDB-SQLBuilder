@@ -2,7 +2,6 @@ from typing import Union
 
 import mariadb
 
-from ..execution.executeFunctions import executeOne
 from .baseBuilder import ConditionsBuilder
 
 
@@ -20,10 +19,10 @@ class ExistsBuilder(ConditionsBuilder):
         self.columnList += columns.replace(", ", ",").split(",")
         return self
 
-    def checkExists(self) -> bool:
+    def check_exists(self) -> bool:
         cursor = self.tb.connect.getAvailableCursor()
         try:
-            result = executeOne(
+            result = cursor.execute(
                 cursor,
                 self.get_sql()
             )

@@ -1,8 +1,7 @@
 from json import dumps
 from typing import Union, Dict, List
 
-from ..execution.executeFunctions import executeScript
-from .baseBuilder import BaseBuilder, _transformValueValid
+from .baseBuilder import BaseBuilder, _transform_value_valid
 
 
 class UpsertBuilder(BaseBuilder):
@@ -16,15 +15,15 @@ class UpsertBuilder(BaseBuilder):
     def set(self, column: str, value: Union[str, int, None]):
         if not self.__toSet.__contains__(self.tb.table):
             self.__toSet[self.tb.table] = {}
-        self.__toSet[self.tb.table][column] = _transformValueValid(value)
+        self.__toSet[self.tb.table][column] = _transform_value_valid(value)
         return self
 
-    def addJoinTable(self, table: str):
+    def add_join_table(self, table: str):
         if self.__toSet.__contains__(table): return self
         self.__toSet[table] = {}
         return self
 
-    def tableSet(self, table: str, column: str, value: Union[str, int, None]):
+    def table_set(self, table: str, column: str, value: Union[str, int, None]):
         """
         Insert data in other table in one insert
         :param table:
@@ -34,13 +33,12 @@ class UpsertBuilder(BaseBuilder):
         """
         if not self.__toSet.__contains__(table):
             self.__toSet[table] = {}
-        self.__toSet[table][column] = _transformValueValid(value)
+        self.__toSet[table][column] = _transform_value_valid(value)
         return self
 
     def execute(self) -> bool:
         cursor = self.tb.connect.getAvailableCursor()
-        result = executeScript(
-            cursor,
+        result = cursor.executemany(
             self.get_sql()
         )
         cursor._connection.commit()
@@ -70,7 +68,7 @@ class UpsertBuilder(BaseBuilder):
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
-                    for subKey, subValue in value.items(): self.tableSet(key, subKey, subValue)
+                    for subKey, subValue in value.items(): self.table_set(key, subKey, subValue)
                 else:
                     self.set(key, dumps(value))
             else:

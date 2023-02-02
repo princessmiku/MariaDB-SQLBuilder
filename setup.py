@@ -13,7 +13,6 @@ setup(
     version=VERSION,
     packages=["mariadb_sqlbuilder",
               "mariadb_sqlbuilder.builder",
-              "mariadb_sqlbuilder.execution"
               ],
     url='https://github.com/princessmiku/MariaDB-SQLBuilder',
     license='LGPL 2.1',
@@ -24,13 +23,13 @@ setup(
     keywords=['database', 'mariadb', 'sql', 'builder', 'script builder', 'mariadb sql', 'orm'],
     python_requires='>=3.7.0',
     install_requires=[
-        "mariadb>=1.0.11",
-        "sqlparse>=0.4.2"
+        "mariadb>=1.1.5",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
 )

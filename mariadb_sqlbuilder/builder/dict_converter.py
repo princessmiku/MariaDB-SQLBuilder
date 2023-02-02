@@ -19,16 +19,16 @@ def __loop_convert_to_dict(mTb: str, columns: List[List[str]], values: List[any]
     return result
 
 
-def convert_to_dict_single(mTb: str, columns: List[str], values: List[any]) -> Dict[str, any]:
+def convert_to_dict_single(mtb: str, columns: List[str], values: List[any]) -> Dict[str, any]:
     """
     Convert a single result from fetch to a dict/json
-    :param mTb: main table
+    :param mtb: main table
     :param columns: list of all columns
     :param values:  list of the result
     :return: result as json
     """
     columns: List[List[str]] = [column.split(".") for column in columns]
-    result: Dict[str, any] = __loop_convert_to_dict(mTb, columns, values)
+    result: Dict[str, any] = __loop_convert_to_dict(mtb, columns, values)
 
     return result
 
