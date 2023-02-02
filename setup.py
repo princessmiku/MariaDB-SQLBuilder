@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
-VERSION = '0.5.2'
+VERSION = '1.0.0'
 
 setup(
     name='MariaDB-SQLBuilder',
