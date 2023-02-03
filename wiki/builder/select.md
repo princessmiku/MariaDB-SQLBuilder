@@ -18,8 +18,8 @@ conn.table("myTable").select("name, age, email")
 - [all of conditions builder](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Conditions)
 - [all of base join extention](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Base-Join-Extention)
 
-- `joinSelect(joinTable: str, column: str)` - Works like in step ["first"](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Select#first), it is only added to the existing column, but you have to specify the table of the join from which you want to select the column.
-- `columnSelect(column: str):` - Works like in step ["first"](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Select#first), it is only added to the existing column
+- `join_select(join_table: str, column: str)` - Works like in step ["first"](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Select#first), it is only added to the existing column, but you have to specify the table of the join from which you want to select the column.
+- `column_select(column: str):` - Works like in step ["first"](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Select#first), it is only added to the existing column
 
 # Endpoints
 
@@ -49,5 +49,5 @@ result = connection.table("myTable").select("name, age, email").where("age", 25)
 result = connection.table("myTable").select("name, age, email").where("age", 25).where("name", "Helgo").fetchall()
 
 # Use join (example)
-result = connection.table("myTable").select("name").join(InnerJoinBuilder("otherTable").condition("id", "otherId")).joinSelect("otherTable", "note").fetchall()
+result = connection.table("myTable").select("name").join(InnerJoinBuilder("otherTable").condition("id", "otherId")).join_select("otherTable", "note").fetchall()
 ```

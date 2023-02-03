@@ -8,8 +8,8 @@ connection: Connect = Connect(...)
 result = connection.execute("YourSQL")
 
 # execute your own SQL, with receiving
-result = connection.execute_fetch("YourSQL") # return with fetchOne
-result = connection.execute_fetch("YourSQL", many=True) # return with fetchMany
+result = connection.execute_fetchone("YourSQL") # return with fetchOne
+result = connection.execute_fetchall("YourSQL") # return with fetchMany
 
 # execute more than one SQL Statement
 result = connection.execute_script("YourSQLScript")

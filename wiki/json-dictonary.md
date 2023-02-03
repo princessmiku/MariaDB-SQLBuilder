@@ -5,3 +5,7 @@ It is recommended if you request data from the database and want to insert it ag
 **Note that when you insert a JSON into the database, all columns must be present. Otherwise there will be an error.**
 
 Note that with joins you have to specify the joins again with an insert. Otherwise it will try to write the data into a column in the table with the data.
+
+----------
+
+Do you want a easy way to load a class with your json data? Look on my other project -> [Clason](https://github.com/princessmiku/Clason)

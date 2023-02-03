@@ -10,8 +10,8 @@ connection.table("myTable").upsert()
 
 - [all of conditions builder](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Conditions)
 - `set(column: str, value: Union[str, int, None])` - set the data of a specific column
-- `tableSet(self, table: str, column: str, value: Union[str, int, None])` - set data in another table
-- `addJoinTable(self, table: str)` - only requierd if you use set json and want to set it in a other table.
+- `table_set(self, table: str, column: str, value: Union[str, int, None])` - set data in another table
+- `add_join_table(self, table: str)` - only requierd if you use set json and want to set it in a other table.
 - `set_json(self, json: Dict[str, any], pop: List[str] = None)` - set data with a json
 
 # Endpoints

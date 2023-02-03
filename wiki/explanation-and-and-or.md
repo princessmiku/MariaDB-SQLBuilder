@@ -17,11 +17,11 @@ It saves you the step of repeating `AND`.
 If you set the condition default to `or` you will see everywhere instead of `AND`, `OR`
 
 ```python
-conn.table("myTable").select("name, age, email").defaultOR().where("age", 20).where("name", "Benjamin").where("email", "benjamin@mail.com").fetchone()
+conn.table("myTable").select("name, age, email").default_or().where("age", 20).where("name", "Benjamin").where("email", "benjamin@mail.com").fetchone()
 ```
 What it really looks like
 ```python
-conn.table("myTable").select("name, age, email").defaultOR().where("age", 20).OR().where("name", "Benjamin").OR().where("email", "benjamin@mail.com").fetchone()
+conn.table("myTable").select("name, age, email").default_or().where("age", 20).OR().where("name", "Benjamin").OR().where("email", "benjamin@mail.com").fetchone()
 ```
 ## Change the AND/OR condition
 You can not only do everything with `and` `or`, but you can also address them separately to mix them.
@@ -36,8 +36,8 @@ It is possible to set also between the default, this affects only new conditions
 
 ### To AND
 
-- `defaultAND()`
+- `default_and()`
 
 ### To OR
 
-- `defaultOR()`
+- `default_or()`
