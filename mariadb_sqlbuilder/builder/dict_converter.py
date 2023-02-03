@@ -33,10 +33,10 @@ def convert_to_dict_single(mtb: str, columns: List[str], values: List[any]) -> D
     return result
 
 
-def convert_to_dict_all(mTb: str, columns: List[str], values: List[List[any]]) -> List[Dict[str, any]]:
+def convert_to_dict_all(mtb: str, columns: List[str], values: List[List[any]]) -> List[Dict[str, any]]:
     """
     Convert a multiple result to a list with the results as dict/json
-    :param mTb: main table
+    :param mtb: main table
     :param columns: list of all columns
     :param values: list with the list of results
     :return:
@@ -50,5 +50,5 @@ def convert_to_dict_all(mTb: str, columns: List[str], values: List[List[any]]) -
     value: any
     column: List[str]
     for v in values:
-        result.append(__loop_convert_to_dict(mTb, columns, v))
+        result.append(__loop_convert_to_dict(mtb, columns, v))
     return result

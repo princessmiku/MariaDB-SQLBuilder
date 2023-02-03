@@ -20,7 +20,7 @@ class ExistsBuilder(ConditionsBuilder):
         return self
 
     def check_exists(self) -> bool:
-        cursor = self.tb.connect.getAvailableCursor()
+        cursor = self.tb.connect.get_available_cursor()
         try:
             result = cursor.execute(
                 cursor,
@@ -29,7 +29,7 @@ class ExistsBuilder(ConditionsBuilder):
         except mariadb.OperationalError as e:
             if "Unknown column" in e.args[0]: result = (0,)
             else: raise mariadb.OperationalError(e)
-        self.tb.connect.makeCursorAvailable(cursor)
+        self.tb.connect.release_cursor(cursor)
         return bool(result[0])
 
     def get_sql(self) -> str:

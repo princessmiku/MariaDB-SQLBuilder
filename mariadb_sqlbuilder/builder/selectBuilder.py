@@ -42,13 +42,13 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         return convert_to_dict_single(self.tb.table, self.column, self.fetchone())
 
     def fetchall(self):
-        cursor = self.tb.connect.getAvailableCursor()
+        cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
             self.get_sql()
         )
         result = cursor.fetchall()
         cursor.connection.commit()
-        self.tb.connect.makeCursorAvailable(cursor)
+        self.tb.connect.release_cursor(cursor)
         return result
 
     def fetchall_json(self):

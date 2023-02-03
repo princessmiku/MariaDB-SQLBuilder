@@ -37,12 +37,12 @@ class UpsertBuilder(BaseBuilder):
         return self
 
     def execute(self) -> bool:
-        cursor = self.tb.connect.getAvailableCursor()
+        cursor = self.tb.connect.get_available_cursor()
         result = cursor.executemany(
             self.get_sql()
         )
         cursor._connection.commit()
-        self.tb.connect.makeCursorAvailable(cursor)
+        self.tb.connect.release_cursor(cursor)
         return result
 
     def get_sql(self) -> str:
