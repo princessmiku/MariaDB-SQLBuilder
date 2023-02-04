@@ -1,0 +1,18 @@
+name: Update Wiki
+
+on:
+  push:
+    paths:
+      - 'wiki/**'
+      - 'wiki/builder/**'
+    branches:
+      - master
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+    name: Update wiki
+    steps:
+    - uses: OrlovM/Wiki-Action@v1
+      with:
+        path: 'wiki'
+        token: ${{ secrets.GITHUB_TOKEN }}
