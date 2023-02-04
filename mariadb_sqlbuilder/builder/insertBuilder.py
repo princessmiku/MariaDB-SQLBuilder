@@ -43,7 +43,7 @@ class InsertBuilder(BaseBuilder):
 
     def execute(self) -> bool:
         cursor = self.tb.connect.get_available_cursor()
-        result = cursor.executeMany(
+        result = cursor.execute(
             self.get_sql()
         )
         cursor._connection.commit()

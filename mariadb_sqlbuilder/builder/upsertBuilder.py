@@ -36,14 +36,13 @@ class UpsertBuilder(BaseBuilder):
         self.__toSet[table][column] = _transform_value_valid(value)
         return self
 
-    def execute(self) -> bool:
+    def execute(self):
         cursor = self.tb.connect.get_available_cursor()
-        result = cursor.executemany(
+        cursor.execute(
             self.get_sql()
         )
         cursor._connection.commit()
         self.tb.connect.release_cursor(cursor)
-        return result
 
     def get_sql(self) -> str:
         for x in self.__jsonBuildings:

@@ -31,4 +31,3 @@ class TableBuilder:
 
     def exists(self) -> ExistsBuilder:
         return ExistsBuilder(self)
-

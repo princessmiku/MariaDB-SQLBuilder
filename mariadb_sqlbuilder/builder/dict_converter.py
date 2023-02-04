@@ -5,12 +5,12 @@ from .baseBuilder import ConditionsBuilder
 from .joinBuilder import BaseJoinExtension
 
 
-def __loop_convert_to_dict(mTb: str, columns: List[List[str]], values: List[any]) -> Dict[str, any]:
+def __loop_convert_to_dict(mtb: str, columns: List[List[str]], values: List[any]) -> Dict[str, any]:
     result: Dict[str, any] = {}
     value: any
     for column, value in zip(columns, values):
         if column[1] == "*": raise TypeError('Column * is not supported in this dict/json')
-        if column[0] != mTb:
+        if column[0] != mtb:
             if not result.__contains__(column[0]): result[column[0]] = {}
 
             result[column[0]][column[1]] = value

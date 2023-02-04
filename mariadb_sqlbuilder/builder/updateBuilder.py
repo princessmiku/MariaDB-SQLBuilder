@@ -28,11 +28,11 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.sureNotUseConditions = im_sure
         return self
 
-    def execute(self) -> bool:
+    def execute(self):
         if not self._where_conditions and not self.sureNotUseConditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.get_available_cursor()
-        result = cursor.execute(
+        cursor.execute(
             self.get_sql()
         )
         if self.__subSets:
@@ -40,7 +40,6 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
                 cursor.execute(s.get_sql())
         cursor._connection.commit()
         self.tb.connect.release_cursor(cursor)
-        return result
 
     def get_sql(self) -> str:
         for x in self.__jsonBuildings:

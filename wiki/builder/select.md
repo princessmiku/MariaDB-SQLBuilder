@@ -26,9 +26,6 @@ conn.table("myTable").select("name, age, email")
 - `fetchone()`
 - `fetchall()`
 - `get_sql()`
-
-_after update 0.5.0_
-
 - `fetchone_json()`
 - `fetchall_json()`
 
