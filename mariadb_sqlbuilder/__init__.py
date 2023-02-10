@@ -8,6 +8,7 @@
 """
 import mariadb
 
+from sqlscript.splitter import split_sql_script_in_parameters
 from .builder import TableBuilder
 
 
@@ -107,8 +108,10 @@ class Connect:
         :param commit: commit changes?
         :return:
         """
+        split_script = split_sql_script_in_parameters(sql_script)
         cursor = self.get_available_cursor()
-        cursor.executemany(sql_script)
+        for statement in split_script:
+            cursor.execute(statement)
         cursor._connection.commit()
         self.release_cursor(cursor)
 

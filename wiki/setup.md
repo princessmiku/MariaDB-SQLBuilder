@@ -22,4 +22,4 @@ With `pool_size` you can set how many connections the library should make (defau
 Multiple connections allow multiple simultaneous queries. But more connections need more performance
 
 ## Infos about commit
-The connection will always automatically run commit!
+The connection will always automatically run commit, if you use execute!
