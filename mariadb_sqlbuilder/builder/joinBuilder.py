@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod, ABCMeta
 from typing import Union
 
-from .baseBuilder import _getTCN
+from .baseBuilder import _get_tcn
 
 
 class _JoinBuilder(ABC):
@@ -24,13 +24,13 @@ class BaseJoinExtension:
 
     def __init__(self, tb):
         self.tb = tb
-        self._joinBuilders = []
+        self._join_builders = []
         self._joins = []
 
-    def join(self, joinBuilder: _JoinBuilder):
-        joinBuilder.from_table = self.tb.table
-        self._joinBuilders.append(joinBuilder)
-        self._joins.append(joinBuilder.get_sql())
+    def join(self, join_builder: _JoinBuilder):
+        join_builder.from_table = self.tb.table
+        self._join_builders.append(join_builder)
+        self._joins.append(join_builder.get_sql())
         return self
 
 
@@ -63,7 +63,7 @@ class InnerJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
         conditions = []
-        for con in self.conditions: conditions.append(f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
+        for con in self.conditions: conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
         return f"INNER JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
@@ -72,7 +72,7 @@ class LeftJoinBuilder(_ConditionsBuilder):
     def get_sql(self) -> str:
         conditions = []
         for con in self.conditions: conditions.append(
-            f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
+            f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
         return f"Left JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
@@ -80,5 +80,5 @@ class RightJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
         conditions = []
-        for con in self.conditions: conditions.append(f"{_getTCN(self.from_table, con[0])} = {_getTCN(self.table, con[1])}")
+        for con in self.conditions: conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
         return f"RIGHT JOIN {self.table} ON {' AND '.join(conditions)} "

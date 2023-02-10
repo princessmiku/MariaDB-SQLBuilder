@@ -6,18 +6,13 @@
     https://mariadb.com/kb/en/joining-tables-with-join-clauses/
 
 """
-import sys
-
 import mariadb
 
-from .execution.executeFunctions import execute, executeOne, executeAll, executeScript
+from sqlscript.splitter import split_sql_script_in_parameters
 from .builder import TableBuilder
-
-__version__ = '0.5.0'
 
 
 class Connect:
-
 
     def __init__(self, host: str, user: str, password: str, database: str, port: int = 3306, pool_name: str = "sqlbuilder_pool",
                  pool_size: int = 3, pool_reset_connection: bool = False, *args, **kwargs):
@@ -33,59 +28,65 @@ class Connect:
             *args,
             **kwargs
         )
-        self.connectionsList: list = []
-        self.inUsingCursors = []
-        self.availableCursor: list = []
-        self.isInReset = False
+        self.connections_list: list = []
+        self.in_using_cursors = []
+        self.available_cursor: list = []
+        self.__is_in_reset = False
         i: int = 1
         while i <= pool_size:
-            conn: mariadb.connection = self.connections.get_connection()
+            conn: mariadb.Connection = self.connections.get_connection()
             conn.auto_reconnect = True
-            self.connectionsList.append(conn)
-            self.availableCursor.append(conn.cursor())
+            self.connections_list.append(conn)
+            self.available_cursor.append(conn.cursor())
             i += 1
 
     def table(self, name: str) -> TableBuilder:
         return TableBuilder(self, name)
 
-    def getAvailableCursor(self):
-        while not self.availableCursor or self.isInReset:
+    def get_available_cursor(self):
+        while not self.available_cursor or self.is_in_reset:
             pass
-        cursor = self.availableCursor[0]
+        cursor = self.available_cursor[0]
         try:
-            self.availableCursor.remove(cursor)
+            self.available_cursor.remove(cursor)
         except ValueError as e:
-            cursor = self.getAvailableCursor()
-        self.inUsingCursors.append(cursor)
+            cursor = self.get_available_cursor()
+        self.in_using_cursors.append(cursor)
         return cursor
 
-    def makeCursorAvailable(self, cursor):
+    def release_cursor(self, cursor):
         try:
-            self.inUsingCursors.remove(cursor)
+            self.in_using_cursors.remove(cursor)
         except ValueError:
             cursor.close()
             return
         conn = cursor.connection
         cursor.close()
         cursor = conn.cursor()
-        self.availableCursor.append(cursor)
+        self.available_cursor.append(cursor)
 
-    def resetAvailableCursors(self, notTheSaveWay: bool = False):
-        if not notTheSaveWay:
-            while len(self.inUsingCursors) > 0:
+    @property
+    def is_in_reset(self):
+        return self.__is_in_reset
+
+    def reset_available_cursors(self, not_the_save_way: bool = False):
+        if not not_the_save_way:
+            while len(self.in_using_cursors) > 0:
                 pass
-        self.isInReset = True
-        [cursor.close() for cursor in self.availableCursor]
-        self.availableCursor = []
-        self.inUsingCursors = []
-        [conn.reset() for conn in self.connectionsList]
-        listOfCursors = [conn.cursor() for conn in self.connectionsList]
-        self.availableCursor = listOfCursors.copy()
+        self.__is_in_reset = True
+        for cursor in self.available_cursor: cursor.close()
+        self.available_cursor = []
+        self.in_using_cursors = []
+        for conn in self.connections_list: conn.reset()
+        list_of_cursors = []
+        for conn in self.connections_list: list_of_cursors.append(conn.cursor())
+        self.available_cursor = list_of_cursors.copy()
+        self.__is_in_reset = False
 
-    def getActiveUsedCursorsCount(self) -> int:
-        return len(self.connectionsList) - len(self.availableCursor)
+    def get_active_used_cursors_count(self) -> int:
+        return len(self.connections_list) - len(self.available_cursor)
 
-    def execute(self, sql: str, commit: bool = False) -> bool:
+    def execute(self, sql: str):
         """
         It will return only if it is successfully,
         only one statement.
@@ -94,12 +95,12 @@ class Connect:
         :param commit
         :return:
         """
-        cursor = self.getAvailableCursor()
-        execute(cursor, sql)
-        if commit: cursor._connection.commit()
-        self.makeCursorAvailable(cursor)
+        cursor = self.get_available_cursor()
+        cursor.execute(sql)
+        cursor._connection.commit()
+        self.release_cursor(cursor)
 
-    def execute_script(self, sql_script: str, commit: bool = False):
+    def execute_script(self, sql_script: str):
         """
         It will return only if it is complete successfully,
         it will break when a line is not successful.
@@ -107,24 +108,35 @@ class Connect:
         :param commit: commit changes?
         :return:
         """
-        cursor = self.getAvailableCursor()
-        executeScript(cursor, sql_script)
-        if commit:
-            cursor._connection.commit()
-        self.makeCursorAvailable(cursor)
+        split_script = split_sql_script_in_parameters(sql_script)
+        cursor = self.get_available_cursor()
+        for statement in split_script:
+            cursor.execute(statement)
+        cursor._connection.commit()
+        self.release_cursor(cursor)
 
-
-    def execute_fetch(self, sql: str, many: bool = False):
+    def execute_fetchone(self, sql: str):
         """
         Execute a statement with a return of the value
         :param sql:
         :param many:
         :return:
         """
-        cursor = self.getAvailableCursor()
-        if many:
-            result = executeAll(cursor, sql)
-        else:
-            result = executeOne(cursor, sql)
-        self.makeCursorAvailable(cursor)
+        cursor = self.get_available_cursor()
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        self.release_cursor(cursor)
+        return result
+
+    def execute_fetchmany(self, sql: str):
+        """
+        Execute a statement with a return of the value
+        :param sql:
+        :param many:
+        :return:
+        """
+        cursor = self.get_available_cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        self.release_cursor(cursor)
         return result

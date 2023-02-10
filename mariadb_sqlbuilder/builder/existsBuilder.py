@@ -2,7 +2,6 @@ from typing import Union
 
 import mariadb
 
-from ..execution.executeFunctions import executeOne
 from .baseBuilder import ConditionsBuilder
 
 
@@ -20,19 +19,23 @@ class ExistsBuilder(ConditionsBuilder):
         self.columnList += columns.replace(", ", ",").split(",")
         return self
 
-    def checkExists(self) -> bool:
-        cursor = self.tb.connect.getAvailableCursor()
+    def check_exists(self) -> bool:
+        cursor = self.tb.connect.get_available_cursor()
         try:
-            result = executeOne(
-                cursor,
+            cursor.execute(
                 self.get_sql()
             )
+            result = cursor.fetchone()
         except mariadb.OperationalError as e:
             if "Unknown column" in e.args[0]: result = (0,)
             else: raise mariadb.OperationalError(e)
-        self.tb.connect.makeCursorAvailable(cursor)
+        self.tb.connect.release_cursor(cursor)
+        if result is None:
+            return False
         return bool(result[0])
 
     def get_sql(self) -> str:
+        if not self.columnList and not self._where_conditions:
+            return f"SHOW TABLES LIKE '{self.tb.table}'"
         return f"SELECT EXISTS(SELECT {', '.join(self.columnList) if self.columnList else '*'} FROM {self.tb.table} " \
-               f"{'WHERE ' + ' AND '.join(self._where_conditions) if self._where_conditions else ''});"
+               f"{self._get_where_sql() if self._where_conditions else ''});"

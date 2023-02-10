@@ -1,7 +1,8 @@
 from typing import Union
 
-from ..execution.executeFunctions import executeAll, executeOne
-from .baseBuilder import ConditionsBuilder, _getTCN
+import mariadb
+
+from .baseBuilder import ConditionsBuilder, _get_tcn
 from .joinBuilder import BaseJoinExtension
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
 
@@ -11,28 +12,29 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
     def __init__(self, tb, column):
         ConditionsBuilder.__init__(self, tb)
         BaseJoinExtension.__init__(self, tb)
-        self.column = [_getTCN(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
+        self.column = [_get_tcn(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
 
-    def joinSelect(self, joinTable: str, column: str):
+    def join_select(self, join_table: str, column: str):
         column = column.replace(", ", ",").split(",")
         columns = []
-        [columns.append(_getTCN(joinTable, c)) for c in column]
+        [columns.append(_get_tcn(join_table, c)) for c in column]
         self.column += columns
         return self
 
-    def columnSelect(self, column: str):
+    def column_select(self, column: str):
         column = column.replace(", ", ",").split(",")
         columns = []
-        [columns.append(_getTCN(self.tb.table, c)) for c in column]
+        [columns.append(_get_tcn(self.tb.table, c)) for c in column]
         self.column += columns
         return self
 
     def fetchone(self):
         cursor = self.tb.connect.getAvailableCursor()
-        result = executeOne(
-            cursor,
+        cursor.execute(
             self.get_sql()
         )
+        result = cursor.fetchone()
+        cursor.connection.commit()
         self.tb.connect.makeCursorAvailable(cursor)
         return result
 
@@ -40,12 +42,13 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         return convert_to_dict_single(self.tb.table, self.column, self.fetchone())
 
     def fetchall(self):
-        cursor = self.tb.connect.getAvailableCursor()
-        result = executeAll(
-            cursor,
+        cursor = self.tb.connect.get_available_cursor()
+        cursor.execute(
             self.get_sql()
         )
-        self.tb.connect.makeCursorAvailable(cursor)
+        result = cursor.fetchall()
+        cursor.connection.commit()
+        self.tb.connect.release_cursor(cursor)
         return result
 
     def fetchall_json(self):
@@ -54,4 +57,4 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
     def get_sql(self) -> str:
         return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
                f"{' '.join(self._joins) if self._joins else ''} " \
-            f"{self._getWhereSQL()};"
+            f"{self._get_where_sql()};"
