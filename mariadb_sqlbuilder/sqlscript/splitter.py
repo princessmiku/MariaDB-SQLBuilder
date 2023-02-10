@@ -1,24 +1,24 @@
-import re
 import shlex
 from typing import List
 
 
 def split_sql_script_in_parameters(sql_script: str) -> List[str]:
+    if not sql_script:
+        return []
+
     split_sql = shlex.split(sql_script, posix=False)
-    parameters = [[]]
+    parameters = []
+    current_parameters = []
     for x in split_sql:
         if x.startswith(("'", '\'', '"', "\"")):
-            parameters[-1].append(x)
+            current_parameters.append(x)
         elif x.__contains__(";"):
             s_x = x.split(";")
-            parameters[-1].append(s_x[0] + ";")
+            current_parameters.append(s_x[0] + ";")
+            parameters.append(" ".join(current_parameters).strip())
+            current_parameters = []
             if s_x[1]:
-                parameters.append([s_x[1]])
-            else:
-                parameters.append([])
+                current_parameters.append(s_x[1])
         else:
-            parameters[-1].append(x)
-    if not parameters[-1]:
-        parameters.pop(-1)
-    parameters = [" ".join(x) for x in parameters]
+            current_parameters.append(x)
     return parameters
