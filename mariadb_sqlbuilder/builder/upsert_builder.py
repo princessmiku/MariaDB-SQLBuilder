@@ -1,15 +1,14 @@
-import abc
 from json import dumps
 from typing import Union, Dict, List
 
-from .baseBuilder import BaseBuilder, _transform_value_valid
+from .base_builder import BaseBuilder, _transform_value_valid
 
 
-class InsertBuilder(BaseBuilder):
+class UpsertBuilder(BaseBuilder):
 
     def __init__(self, tb, **kwargs):
         super().__init__(tb, **kwargs)
-        self.__ignore = False
+        self.tb = tb
         self.__toSet = {}
         self.__jsonBuildings = []
 
@@ -37,29 +36,26 @@ class InsertBuilder(BaseBuilder):
         self.__toSet[table][column] = _transform_value_valid(value)
         return self
 
-    def ignore(self, _ignore: bool = True):
-        self.__ignore = _ignore
-        return self
-
-    def execute(self) -> bool:
+    def execute(self):
         cursor = self.tb.connect.get_available_cursor()
-        result = cursor.execute(
+        cursor.execute(
             self.get_sql()
         )
         cursor._connection.commit()
         self.tb.connect.release_cursor(cursor)
-        return result
 
     def get_sql(self) -> str:
         for x in self.__jsonBuildings:
             self.__set_json(x[0], x[1])
         sql = ""
-        key: str
-        value: Dict[str, dict]
-        for key, value in self.__toSet.items():
-            if not value: continue
-            sql += f"INSERT {'IGNORE ' if self.__ignore else ''}INTO " \
-                   f"{key} ({', '.join(value.keys())}) VALUES ({', '.join(value.values())});"
+        _key: str
+        _value: Dict[str, dict]
+        for _key, _value in self.__toSet.items():
+
+            sql += f"INSERT INTO " \
+                   f"{_key} ({', '.join(_value.keys())}) VALUES ({', '.join(_value.values())})" \
+                   f"ON DUPLICATE KEY UPDATE " \
+                   f"{', '.join(['%s = %s' % (key, value) for (key, value) in _value.items()])};"
         return sql
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):

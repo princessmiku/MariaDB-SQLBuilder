@@ -1,8 +1,8 @@
 from json import dumps
 from typing import Union, Dict, List
 
-from .baseBuilder import ConditionsBuilder, _get_tcn, _transform_value_valid
-from .joinBuilder import BaseJoinExtension
+from .base_builder import ConditionsBuilder, _get_tcn, _transform_value_valid
+from .join_builder import BaseJoinExtension
 
 
 class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):

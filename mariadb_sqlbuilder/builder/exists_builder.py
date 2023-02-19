@@ -2,7 +2,7 @@ from typing import Union
 
 import mariadb
 
-from .baseBuilder import ConditionsBuilder
+from .base_builder import ConditionsBuilder
 
 
 class ExistsBuilder(ConditionsBuilder):

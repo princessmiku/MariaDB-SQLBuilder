@@ -1,11 +1,11 @@
 from typing import Union
 
-from .selectBuilder import SelectBuilder
-from .updateBuilder import UpdateBuilder
-from .insertBuilder import InsertBuilder
-from .upsertBuilder import UpsertBuilder
-from .deleteBuilder import DeleteBuilder
-from .existsBuilder import ExistsBuilder
+from .select_builder import SelectBuilder
+from .update_builder import UpdateBuilder
+from .insert_builder import InsertBuilder
+from .upsert_builder import UpsertBuilder
+from .delete_builder import DeleteBuilder
+from .exists_builder import ExistsBuilder
 
 
 class TableBuilder:

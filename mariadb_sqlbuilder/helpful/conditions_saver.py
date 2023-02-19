@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from builder.baseBuilder import ConditionsBuilder
+from builder.base_builder import ConditionsBuilder
 
 
 class _DummyTB:
@@ -16,7 +16,7 @@ class _DummyTB:
 class ConditionsSaver(ConditionsBuilder):
 
     def __init__(self, table: str, **kwargs):
-        super().__init__(_DummyTB(table))
+        super().__init__(_DummyTB(table), **kwargs)
 
     def get_sql(self) -> str:
         return self._get_where_sql()

@@ -1,6 +1,6 @@
 from typing import Union
 
-from .baseBuilder import ConditionsBuilder
+from .base_builder import ConditionsBuilder
 
 
 class DeleteBuilder(ConditionsBuilder):

@@ -2,8 +2,8 @@ from typing import Union
 
 import mariadb
 
-from .baseBuilder import ConditionsBuilder, _get_tcn
-from .joinBuilder import BaseJoinExtension
+from .base_builder import ConditionsBuilder, _get_tcn
+from .join_builder import BaseJoinExtension
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
 
 
