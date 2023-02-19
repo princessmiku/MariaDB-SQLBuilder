@@ -15,6 +15,7 @@ setup(
         "mariadb_sqlbuilder",
         "mariadb_sqlbuilder.builder",
         "mariadb_sqlbuilder.sqlscript",
+        "mariadb_sqlbuilder.helpful",
     ],
     url='https://github.com/princessmiku/MariaDB-SQLBuilder',
     license='LGPL 2.1',
