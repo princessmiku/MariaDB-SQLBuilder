@@ -6,8 +6,8 @@ from .baseBuilder import BaseBuilder, _transform_value_valid
 
 class UpsertBuilder(BaseBuilder):
 
-    def __init__(self, tb):
-        super().__init__(tb)
+    def __init__(self, tb, **kwargs):
+        super().__init__(tb, **kwargs)
         self.tb = tb
         self.__toSet = {}
         self.__jsonBuildings = []

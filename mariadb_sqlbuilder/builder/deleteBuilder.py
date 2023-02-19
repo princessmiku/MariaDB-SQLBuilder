@@ -5,8 +5,8 @@ from .baseBuilder import ConditionsBuilder
 
 class DeleteBuilder(ConditionsBuilder):
 
-    def __init__(self, tb):
-        super().__init__(tb)
+    def __init__(self, tb, **kwargs):
+        super().__init__(tb, **kwargs)
         self.sureNotUseConditions = False
 
     def im_sure_im_not_use_conditions(self, im_sure: bool = True):

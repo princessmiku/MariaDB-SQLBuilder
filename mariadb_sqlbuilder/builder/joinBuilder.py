@@ -22,7 +22,7 @@ class _JoinBuilder(ABC):
 
 class BaseJoinExtension:
 
-    def __init__(self, tb):
+    def __init__(self, tb, **kwargs):
         self.tb = tb
         self._join_builders = []
         self._joins = []
@@ -36,7 +36,7 @@ class BaseJoinExtension:
 
 class CrossJoinBuilder(_JoinBuilder):
 
-    def __init__(self, table: str):
+    def __init__(self, table: str, **kwargs):
         super().__init__()
         self.table = table
 

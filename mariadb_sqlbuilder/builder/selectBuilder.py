@@ -9,9 +9,9 @@ from .dict_converter import convert_to_dict_single, convert_to_dict_all
 
 class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
 
-    def __init__(self, tb, column):
-        ConditionsBuilder.__init__(self, tb)
-        BaseJoinExtension.__init__(self, tb)
+    def __init__(self, tb, column, **kwargs):
+        ConditionsBuilder.__init__(self, tb, **kwargs)
+        BaseJoinExtension.__init__(self, tb, **kwargs)
         self.column = [_get_tcn(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
 
     def join_select(self, join_table: str, column: str):

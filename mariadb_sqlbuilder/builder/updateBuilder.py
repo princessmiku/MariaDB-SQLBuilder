@@ -7,9 +7,9 @@ from .joinBuilder import BaseJoinExtension
 
 class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
 
-    def __init__(self, tb):
-        ConditionsBuilder.__init__(self, tb)
-        BaseJoinExtension.__init__(self, tb)
+    def __init__(self, tb, **kwargs):
+        ConditionsBuilder.__init__(self, tb, **kwargs)
+        BaseJoinExtension.__init__(self, tb, **kwargs)
         # check if variable already exists, else init it
         self.__toSet = {}
         self.sureNotUseConditions = False
