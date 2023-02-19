@@ -1,11 +1,11 @@
 from typing import Union
 
-from .selectBuilder import SelectBuilder
-from .updateBuilder import UpdateBuilder
-from .insertBuilder import InsertBuilder
-from .upsertBuilder import UpsertBuilder
-from .deleteBuilder import DeleteBuilder
-from .existsBuilder import ExistsBuilder
+from .select_builder import SelectBuilder
+from .update_builder import UpdateBuilder
+from .insert_builder import InsertBuilder
+from .upsert_builder import UpsertBuilder
+from .delete_builder import DeleteBuilder
+from .exists_builder import ExistsBuilder
 
 
 class TableBuilder:
@@ -14,20 +14,20 @@ class TableBuilder:
         self.connect = connect
         self.table = table
 
-    def select(self, column: str) -> SelectBuilder:
-        return SelectBuilder(self, column)
+    def select(self, column: str, **kwargs) -> SelectBuilder:
+        return SelectBuilder(self, column, **kwargs)
 
-    def update(self) -> UpdateBuilder:
-        return UpdateBuilder(self)
+    def update(self, **kwargs) -> UpdateBuilder:
+        return UpdateBuilder(self, **kwargs)
 
-    def insert(self) -> InsertBuilder:
-        return InsertBuilder(self)
+    def insert(self, **kwargs) -> InsertBuilder:
+        return InsertBuilder(self, **kwargs)
 
-    def upsert(self) -> UpsertBuilder:
-        return UpsertBuilder(self)
+    def upsert(self, **kwargs) -> UpsertBuilder:
+        return UpsertBuilder(self, **kwargs)
 
-    def delete(self) -> DeleteBuilder:
-        return DeleteBuilder(self)
+    def delete(self, **kwargs) -> DeleteBuilder:
+        return DeleteBuilder(self, **kwargs)
 
-    def exists(self) -> ExistsBuilder:
-        return ExistsBuilder(self)
+    def exists(self, **kwargs) -> ExistsBuilder:
+        return ExistsBuilder(self, **kwargs)

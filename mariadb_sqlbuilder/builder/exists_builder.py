@@ -2,13 +2,13 @@ from typing import Union
 
 import mariadb
 
-from .baseBuilder import ConditionsBuilder
+from .base_builder import ConditionsBuilder
 
 
 class ExistsBuilder(ConditionsBuilder):
 
-    def __init__(self, tb):
-        super().__init__(tb)
+    def __init__(self, tb, **kwargs):
+        super().__init__(tb, **kwargs)
         self.columnList = []
 
     def column(self, column: str):

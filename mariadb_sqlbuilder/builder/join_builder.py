@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod, ABCMeta
 from typing import Union
 
-from .baseBuilder import _get_tcn
+from .base_builder import _get_tcn
 
 
 class _JoinBuilder(ABC):
@@ -22,7 +22,7 @@ class _JoinBuilder(ABC):
 
 class BaseJoinExtension:
 
-    def __init__(self, tb):
+    def __init__(self, tb, **kwargs):
         self.tb = tb
         self._join_builders = []
         self._joins = []
@@ -36,7 +36,7 @@ class BaseJoinExtension:
 
 class CrossJoinBuilder(_JoinBuilder):
 
-    def __init__(self, table: str):
+    def __init__(self, table: str, **kwargs):
         super().__init__()
         self.table = table
 

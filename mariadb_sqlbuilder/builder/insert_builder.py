@@ -2,13 +2,13 @@ import abc
 from json import dumps
 from typing import Union, Dict, List
 
-from .baseBuilder import BaseBuilder, _transform_value_valid
+from .base_builder import BaseBuilder, _transform_value_valid
 
 
 class InsertBuilder(BaseBuilder):
 
-    def __init__(self, tb):
-        super().__init__(tb)
+    def __init__(self, tb, **kwargs):
+        super().__init__(tb, **kwargs)
         self.__ignore = False
         self.__toSet = {}
         self.__jsonBuildings = []

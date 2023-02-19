@@ -1,15 +1,15 @@
 from json import dumps
 from typing import Union, Dict, List
 
-from .baseBuilder import ConditionsBuilder, _get_tcn, _transform_value_valid
-from .joinBuilder import BaseJoinExtension
+from .base_builder import ConditionsBuilder, _get_tcn, _transform_value_valid
+from .join_builder import BaseJoinExtension
 
 
 class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
 
-    def __init__(self, tb):
-        ConditionsBuilder.__init__(self, tb)
-        BaseJoinExtension.__init__(self, tb)
+    def __init__(self, tb, **kwargs):
+        ConditionsBuilder.__init__(self, tb, **kwargs)
+        BaseJoinExtension.__init__(self, tb, **kwargs)
         # check if variable already exists, else init it
         self.__toSet = {}
         self.sureNotUseConditions = False
