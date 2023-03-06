@@ -12,7 +12,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         BaseJoinExtension.__init__(self, tb, **kwargs)
         # check if variable already exists, else init it
         self.__toSet = {}
-        self.sureNotUseConditions = False
+        self.sure_not_use_conditions = False
         self.__subSets = []
         self.__jsonBuildings = []
 
@@ -25,25 +25,25 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         return self
 
     def im_sure_im_not_use_conditions(self, im_sure: bool = True):
-        self.sureNotUseConditions = im_sure
+        self.sure_not_use_conditions = im_sure
         return self
 
     def execute(self):
-        if not self._where_conditions and not self.sureNotUseConditions:
+        if not self._where_conditions and not self.sure_not_use_conditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
             self.get_sql()
         )
         if self.__subSets:
-            for s in self.__subSets:
-                cursor.execute(s.get_sql())
+            for subset in self.__subSets:
+                cursor.execute(subset.get_sql())
         cursor._connection.commit()
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:
-        for x in self.__jsonBuildings:
-            self.__set_json(x[0], x[1])
+        for element in self.__jsonBuildings:
+            self.__set_json(element[0], element[1])
         sql = f"UPDATE {self.tb.table} " \
               f"{' '.join(self._joins) if self._joins else ''} " \
               f"SET " \
@@ -60,8 +60,9 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
-                    for subKey, subValue in value.items():
-                        self.join_set(key, subKey, subValue)
+                    for sub_key, sub_value in value.items():
+                        self.join_set(key, sub_key, sub_value)
+
                 else:
                     self.set(key, dumps(value))
             else:

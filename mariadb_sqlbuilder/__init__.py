@@ -50,7 +50,7 @@ class Connect:
         cursor = self.available_cursor[0]
         try:
             self.available_cursor.remove(cursor)
-        except ValueError as e:
+        except ValueError:
             cursor = self.get_available_cursor()
         self.in_using_cursors.append(cursor)
         return cursor
