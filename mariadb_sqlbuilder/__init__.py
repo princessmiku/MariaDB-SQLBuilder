@@ -12,7 +12,7 @@ from sqlscript.splitter import split_sql_script_in_parameters
 from .builder import TableBuilder
 
 
-class Connect:
+class Connector:
 
     def __init__(self, host: str, user: str, password: str, database: str, port: int = 3306, pool_name: str = "sqlbuilder_pool",
                  pool_size: int = 3, pool_reset_connection: bool = False, *args, **kwargs):
