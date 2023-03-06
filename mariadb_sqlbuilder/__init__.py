@@ -14,7 +14,8 @@ from .builder import TableBuilder
 
 class Connect:
 
-    def __init__(self, host: str, user: str, password: str, database: str, port: int = 3306, pool_name: str = "sqlbuilder_pool",
+    def __init__(self, host: str, user: str, password: str, database: str, port: int = 3306,
+                 pool_name: str = "sqlbuilder_pool",
                  pool_size: int = 3, pool_reset_connection: bool = False, *args, **kwargs):
         self.connections = mariadb.ConnectionPool(
             pool_name=pool_name,
@@ -74,12 +75,15 @@ class Connect:
             while len(self.in_using_cursors) > 0:
                 pass
         self.__is_in_reset = True
-        for cursor in self.available_cursor: cursor.close()
+        for cursor in self.available_cursor:
+            cursor.close()
         self.available_cursor = []
         self.in_using_cursors = []
-        for conn in self.connections_list: conn.reset()
+        for conn in self.connections_list:
+            conn.reset()
         list_of_cursors = []
-        for conn in self.connections_list: list_of_cursors.append(conn.cursor())
+        for conn in self.connections_list:
+            list_of_cursors.append(conn.cursor())
         self.available_cursor = list_of_cursors.copy()
         self.__is_in_reset = False
 

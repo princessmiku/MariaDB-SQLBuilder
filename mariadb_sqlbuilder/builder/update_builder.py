@@ -60,7 +60,9 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
-                    for sub_key, sub_value in value.items(): self.join_set(key, sub_key, sub_value)
+                    for sub_key, sub_value in value.items():
+                        self.join_set(key, sub_key, sub_value)
+
                 else:
                     self.set(key, dumps(value))
             else:

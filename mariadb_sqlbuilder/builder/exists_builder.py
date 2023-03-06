@@ -27,8 +27,10 @@ class ExistsBuilder(ConditionsBuilder):
             )
             result = cursor.fetchone()
         except mariadb.OperationalError as err:
-            if "Unknown column" in err.args[0]: result = (0,)
-            else: raise mariadb.OperationalError(err)
+            if "Unknown column" in err.args[0]:
+                result = (0,)
+            else:
+                raise mariadb.OperationalError(err)
         self.tb.connect.release_cursor(cursor)
         if result is None:
             return False

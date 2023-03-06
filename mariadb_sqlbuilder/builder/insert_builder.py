@@ -20,7 +20,8 @@ class InsertBuilder(BaseBuilder):
         return self
 
     def add_join_table(self, table: str):
-        if self.__toSet.__contains__(table): return self
+        if self.__toSet.__contains__(table):
+            return self
         self.__toSet[table] = {}
         return self
 
@@ -57,7 +58,8 @@ class InsertBuilder(BaseBuilder):
         key: str
         value: Dict[str, dict]
         for key, value in self.__toSet.items():
-            if not value: continue
+            if not value:
+                continue
             sql += f"INSERT {'IGNORE ' if self.__ignore else ''}INTO " \
                    f"{key} ({', '.join(value.keys())}) VALUES ({', '.join(value.values())});"
         return sql
@@ -71,7 +73,8 @@ class InsertBuilder(BaseBuilder):
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
-                    for sub_key, sub_value in value.items(): self.table_set(key, sub_key, sub_value)
+                    for sub_key, sub_value in value.items():
+                        self.table_set(key, sub_key, sub_value)
                 else:
                     self.set(key, dumps(value))
             else:
