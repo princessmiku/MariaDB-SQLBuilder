@@ -13,4 +13,5 @@ class Connect:
     def table(self, name: str) -> TableBuilder:
         return TableBuilder(self, name)
 
-
+    def get_available_cursor(self):
+        raise NotImplementedError("This function is only available with a active connection")
