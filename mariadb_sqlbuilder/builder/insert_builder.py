@@ -71,7 +71,7 @@ class InsertBuilder(BaseBuilder):
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
-                    for subKey, subValue in value.items(): self.table_set(key, subKey, subValue)
+                    for sub_key, sub_value in value.items(): self.table_set(key, sub_key, sub_value)
                 else:
                     self.set(key, dumps(value))
             else:
