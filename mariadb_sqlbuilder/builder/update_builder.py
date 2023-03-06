@@ -36,14 +36,14 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
             self.get_sql()
         )
         if self.__subSets:
-            for s in self.__subSets:
-                cursor.execute(s.get_sql())
+            for subset in self.__subSets:
+                cursor.execute(subset.get_sql())
         cursor._connection.commit()
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:
-        for x in self.__jsonBuildings:
-            self.__set_json(x[0], x[1])
+        for element in self.__jsonBuildings:
+            self.__set_json(element[0], element[1])
         sql = f"UPDATE {self.tb.table} " \
               f"{' '.join(self._joins) if self._joins else ''} " \
               f"SET " \

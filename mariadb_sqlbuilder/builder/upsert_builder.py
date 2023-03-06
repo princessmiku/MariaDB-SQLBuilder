@@ -45,8 +45,8 @@ class UpsertBuilder(BaseBuilder):
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:
-        for x in self.__jsonBuildings:
-            self.__set_json(x[0], x[1])
+        for element in self.__jsonBuildings:
+            self.__set_json(element[0], element[1])
         sql = ""
         _key: str
         _value: Dict[str, dict]
