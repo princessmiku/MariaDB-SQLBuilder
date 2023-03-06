@@ -12,7 +12,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         BaseJoinExtension.__init__(self, tb, **kwargs)
         # check if variable already exists, else init it
         self.__toSet = {}
-        self.sureNotUseConditions = False
+        self.sure_not_use_conditions = False
         self.__subSets = []
         self.__jsonBuildings = []
 
@@ -25,11 +25,11 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         return self
 
     def im_sure_im_not_use_conditions(self, im_sure: bool = True):
-        self.sureNotUseConditions = im_sure
+        self.sure_not_use_conditions = im_sure
         return self
 
     def execute(self):
-        if not self._where_conditions and not self.sureNotUseConditions:
+        if not self._where_conditions and not self.sure_not_use_conditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
