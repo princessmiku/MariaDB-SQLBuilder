@@ -1,6 +1,5 @@
 from typing import List, Dict
 
-from .base_builder import ConditionsBuilder
 from .join_builder import BaseJoinExtension
 
 
