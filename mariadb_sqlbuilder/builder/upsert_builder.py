@@ -19,7 +19,8 @@ class UpsertBuilder(BaseBuilder):
         return self
 
     def add_join_table(self, table: str):
-        if self.__toSet.__contains__(table): return self
+        if self.__toSet.__contains__(table):
+            return self
         self.__toSet[table] = {}
         return self
 
@@ -67,7 +68,8 @@ class UpsertBuilder(BaseBuilder):
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
-                    for subKey, subValue in value.items(): self.table_set(key, subKey, subValue)
+                    for subKey, subValue in value.items():
+                        self.table_set(key, subKey, subValue)
                 else:
                     self.set(key, dumps(value))
             else:
