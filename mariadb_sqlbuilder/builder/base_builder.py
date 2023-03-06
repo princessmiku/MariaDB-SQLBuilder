@@ -8,9 +8,12 @@ def _get_tcn(table: str, column: str) -> str:
 
 
 def _transform_value_valid(value: Union[str, int]) -> str:
-    if value is None: return "NULL"
-    elif isinstance(value, int): return str(value)
-    else: return f"'{value}'"
+    if value is None:
+        return "NULL"
+    elif isinstance(value, int):
+        return str(value)
+    else:
+        return f"'{value}'"
 
 
 class BaseBuilder(ABC):
@@ -103,20 +106,28 @@ class ConditionsBuilder(BaseBuilder):
         return self
 
     def __check_if_or_and(self):
-        if not self.__conditions: return
-        if self.__conditions[-1] not in ["AND", "OR"]: self.__conditions.append(self.__default_condition)
+        if not self.__conditions:
+            return
+        if self.__conditions[-1] not in ["AND", "OR"]:
+            self.__conditions.append(self.__default_condition)
 
     def OR(self):
-        if not self.__conditions: return
-        elif self.__conditions[-1] == "OR": return
-        elif self.__conditions[-1] == "AND": self.__conditions.pop(-1)
+        if not self.__conditions:
+            return
+        elif self.__conditions[-1] == "OR":
+            return
+        elif self.__conditions[-1] == "AND":
+            self.__conditions.pop(-1)
         self.__conditions.append("OR")
         return self
 
     def AND(self):
-        if not self.__conditions: return
-        elif self.__conditions[-1] == "AND": return
-        elif self.__conditions[-1] == "OR": self.__conditions.pop(-1)
+        if not self.__conditions:
+            return
+        elif self.__conditions[-1] == "AND":
+            return
+        elif self.__conditions[-1] == "OR":
+            self.__conditions.pop(-1)
         self.__conditions.append("AND")
         return self
 
@@ -135,7 +146,8 @@ class ConditionsBuilder(BaseBuilder):
         return self.__conditions.copy()
 
     def _get_where_sql(self) -> str:
-        if not self.__conditions: return ""
+        if not self.__conditions:
+            return ""
         return "WHERE " + " ".join(self.__conditions)
 
     @abstractmethod
