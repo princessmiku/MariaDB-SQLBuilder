@@ -1,5 +1,3 @@
-from typing import Union
-
 import mariadb
 
 from .base_builder import ConditionsBuilder, _get_tcn
