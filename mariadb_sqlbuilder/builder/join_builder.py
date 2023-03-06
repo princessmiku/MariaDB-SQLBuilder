@@ -63,7 +63,8 @@ class InnerJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
         conditions = []
-        for con in self.conditions: conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
+        for con in self.conditions:
+            conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
         return f"INNER JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
@@ -71,7 +72,8 @@ class LeftJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
         conditions = []
-        for con in self.conditions: conditions.append(
+        for con in self.conditions:
+            conditions.append(
             f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
         return f"Left JOIN {self.table} ON {' AND '.join(conditions)} "
 
@@ -80,5 +82,6 @@ class RightJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
         conditions = []
-        for con in self.conditions: conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
+        for con in self.conditions:
+            conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
         return f"RIGHT JOIN {self.table} ON {' AND '.join(conditions)} "
