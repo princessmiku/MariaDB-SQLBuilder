@@ -1,7 +1,5 @@
 from typing import List, Dict
 
-from .join_builder import BaseJoinExtension
-
 
 def __loop_convert_to_dict(mtb: str, columns: List[List[str]], values: List[any]) -> Dict[str, any]:
     result: Dict[str, any] = {}
