@@ -51,8 +51,8 @@ class InsertBuilder(BaseBuilder):
         return result
 
     def get_sql(self) -> str:
-        for x in self.__jsonBuildings:
-            self.__set_json(x[0], x[1])
+        for element in self.__jsonBuildings:
+            self.__set_json(element[0], element[1])
         sql = ""
         key: str
         value: Dict[str, dict]
@@ -71,7 +71,7 @@ class InsertBuilder(BaseBuilder):
         for key, value in json.items():
             if isinstance(value, dict):
                 if join_keys.__contains__(key) and not pop.__contains__(key):
-                    for subKey, subValue in value.items(): self.table_set(key, subKey, subValue)
+                    for sub_key, sub_value in value.items(): self.table_set(key, sub_key, sub_value)
                 else:
                     self.set(key, dumps(value))
             else:
