@@ -1,10 +1,11 @@
 First Step install it -> [click me](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Installation)
 
 # Code
+
 ````python
 import mariadb_sqlbuilder
 
-connection = mariadb_sqlbuilder.Connect(
+connection = mariadb_sqlbuilder.Connector(
     host="HostIP/URL",
     user="User",
     password="Password",
@@ -12,8 +13,8 @@ connection = mariadb_sqlbuilder.Connect(
     port=3306,  # not required
     pool_name='mypool',  # not required
     pool_size=3,  # not required
-    pool_reset_connection=False # not required
-    
+    pool_reset_connection=False  # not required
+
 )
 ````
 

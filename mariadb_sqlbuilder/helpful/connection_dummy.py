@@ -1,7 +1,7 @@
 from mariadb_sqlbuilder import TableBuilder
 
 
-class Connect:
+class Connector:
 
     def __init__(self, info_print: bool = True):
         if info_print:

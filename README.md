@@ -21,14 +21,15 @@ Installation with pip + github
 ``pip install git+https://github.com/princessmiku/MariaDB-SQLBuilder``
 
 # [Setup](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Setup)
+
 ````python
 import mariadb_sqlbuilder
 
-connection = mariadb_sqlbuilder.Connect(
+connection = mariadb_sqlbuilder.Connector(
     host="HostIP/URL",
     user="User",
     password="Password",
-    database="DatabaseToConnect" 
+    database="DatabaseToConnect"
 )
 ````
 
