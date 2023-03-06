@@ -4,7 +4,6 @@
 
 """
 from abc import ABC, abstractmethod, ABCMeta
-from typing import Union
 
 from .base_builder import _get_tcn
 
