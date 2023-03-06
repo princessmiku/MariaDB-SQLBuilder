@@ -3,7 +3,7 @@
     https://mariadb.com/kb/en/joining-tables-with-join-clauses/
 
 """
-from abc import ABC, abstractmethod, ABCMeta
+from abc import ABC, abstractmethod
 
 from .base_builder import _get_tcn
 
