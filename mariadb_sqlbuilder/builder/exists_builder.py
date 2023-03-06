@@ -9,14 +9,14 @@ class ExistsBuilder(ConditionsBuilder):
 
     def __init__(self, tb, **kwargs):
         super().__init__(tb, **kwargs)
-        self.columnList = []
+        self.column_list = []
 
     def column(self, column: str):
-        self.columnList.append(column)
+        self.column_list.append(column)
         return self
 
     def columns(self, columns: str):
-        self.columnList += columns.replace(", ", ",").split(",")
+        self.column_list += columns.replace(", ", ",").split(",")
         return self
 
     def check_exists(self) -> bool:
@@ -35,7 +35,7 @@ class ExistsBuilder(ConditionsBuilder):
         return bool(result[0])
 
     def get_sql(self) -> str:
-        if not self.columnList and not self._where_conditions:
+        if not self.column_list and not self._where_conditions:
             return f"SHOW TABLES LIKE '{self.tb.table}'"
-        return f"SELECT EXISTS(SELECT {', '.join(self.columnList) if self.columnList else '*'} FROM {self.tb.table} " \
+        return f"SELECT EXISTS(SELECT {', '.join(self.column_list) if self.column_list else '*'} FROM {self.tb.table} " \
                f"{self._get_where_sql() if self._where_conditions else ''});"
