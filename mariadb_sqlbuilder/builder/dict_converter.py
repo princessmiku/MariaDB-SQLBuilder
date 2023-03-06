@@ -1,4 +1,3 @@
-from json import dumps
 from typing import List, Dict
 
 from .base_builder import ConditionsBuilder
