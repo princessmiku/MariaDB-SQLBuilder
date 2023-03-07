@@ -47,7 +47,8 @@ class Connector:
     def get_available_cursor(self):
         """
         Function for the functionality of execute and fetching.
-        The function is used to always give a cursor to an execution and let it wait as long as none is available
+        The function is used to always give a cursor to an execution
+        and let it wait as long as none is available
         :return:
         """
         while not self.available_cursor or self.is_in_reset:
@@ -55,14 +56,15 @@ class Connector:
         cursor = self.available_cursor[0]
         try:
             self.available_cursor.remove(cursor)
-        except ValueError as e:
+        except ValueError as err:
             cursor = self.get_available_cursor()
         self.in_using_cursors.append(cursor)
         return cursor
 
     def release_cursor(self, cursor):
         """
-        If an execution finish, it releases a cursor and make it available for other executions.
+        If an execution finish, it releases a cursor and make it
+        available for other executions.
         :param cursor:
         :return:
         """
@@ -79,7 +81,8 @@ class Connector:
     @property
     def is_in_reset(self) -> bool:
         """
-        Get the internal variable if the cursors for the execution currently in reset
+        Get the internal variable if the cursors for
+        the execution currently in reset
         :return:
         """
         return self.__is_in_reset
@@ -87,7 +90,8 @@ class Connector:
     def reset_available_cursors(self, not_the_save_way: bool = False):
         """
         In case of problems with the cursors, you can reset them.
-        :param not_the_save_way: Whether to wait until all actions have been performed. Default = False
+        :param not_the_save_way: Whether to wait until all actions
+        have been performed. Default = False
         :return:
         """
         if not not_the_save_way:
