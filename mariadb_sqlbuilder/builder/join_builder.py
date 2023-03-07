@@ -16,6 +16,10 @@ class _JoinBuilder(ABC):
 
     @abstractmethod
     def get_sql(self) -> str:
+        """
+        Abstract method that should be implemented by the subclasses.
+        :return:
+        """
         pass
 
 
@@ -27,6 +31,11 @@ class BaseJoinExtension:
         self._joins = []
 
     def join(self, join_builder: _JoinBuilder):
+        """
+        Adds a join statement to the query.
+        :param join_builder:
+        :return:
+        """
         join_builder.from_table = self.tb.table
         self._join_builders.append(join_builder)
         self._joins.append(join_builder.get_sql())
@@ -36,10 +45,19 @@ class BaseJoinExtension:
 class CrossJoinBuilder(_JoinBuilder):
 
     def __init__(self, table: str, **kwargs):
+        """
+        Adds a join statement to the query.
+        :param table:
+        :param kwargs:
+        """
         super().__init__()
         self.table = table
 
     def get_sql(self) -> str:
+        """
+        Builds the SQL query for the CROSS JOIN statement.
+        :return:
+        """
         return f"CROSS JOIN {self.table} "
 
 
@@ -50,17 +68,31 @@ class _ConditionsBuilder(_JoinBuilder):
         self.conditions = []
 
     def condition(self, column_from_table: str, column_join_table: str):
+        """
+        Adds a join condition to the query.
+        :param column_from_table:
+        :param column_join_table:
+        :return:
+        """
         self.conditions.append([column_from_table, column_join_table])
         return self
 
     @abstractmethod
     def get_sql(self) -> str:
+        """
+        Abstract method that should be implemented by the subclasses.
+        :return:
+        """
         pass
 
 
 class InnerJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
+        """
+        Builds the SQL query for the INNER JOIN statement.
+        :return:
+        """
         conditions = []
         for con in self.conditions:
             conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
@@ -70,6 +102,10 @@ class InnerJoinBuilder(_ConditionsBuilder):
 class LeftJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
+        """
+        Returns a string representation of the left join operation between the two tables.
+        :return:
+        """
         conditions = []
         for con in self.conditions:
             conditions.append(
@@ -80,6 +116,10 @@ class LeftJoinBuilder(_ConditionsBuilder):
 class RightJoinBuilder(_ConditionsBuilder):
 
     def get_sql(self) -> str:
+        """
+        Returns a string representation of the right join operation between the two tables.
+        :return:
+        """
         conditions = []
         for con in self.conditions:
             conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
