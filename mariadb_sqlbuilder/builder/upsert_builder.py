@@ -13,12 +13,23 @@ class UpsertBuilder(BaseBuilder):
         self.__jsonBuildings = []
 
     def set(self, column: str, value: Union[str, int, None]):
+        """
+        Set a column value for the current table.
+        :param column:
+        :param value:
+        :return:
+        """
         if not self.__toSet.__contains__(self.tb.table):
             self.__toSet[self.tb.table] = {}
         self.__toSet[self.tb.table][column] = _transform_value_valid(value)
         return self
 
     def add_join_table(self, table: str):
+        """
+        Add a join table to the UpsertBuilder object.
+        :param table:
+        :return:
+        """
         if self.__toSet.__contains__(table):
             return self
         self.__toSet[table] = {}
@@ -26,7 +37,7 @@ class UpsertBuilder(BaseBuilder):
 
     def table_set(self, table: str, column: str, value: Union[str, int, None]):
         """
-        Insert data in other table in one insert
+        Set a column value for a specific table.
         :param table:
         :param column:
         :param value:
@@ -38,6 +49,10 @@ class UpsertBuilder(BaseBuilder):
         return self
 
     def execute(self):
+        """
+        Execute the UpsertBuilder object's SQL query and commit the changes.
+        :return:
+        """
         cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
             self.get_sql()
@@ -46,6 +61,10 @@ class UpsertBuilder(BaseBuilder):
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:
+        """
+        Get the SQL query string for the UpsertBuilder object.
+        :return:
+        """
         for element in self.__jsonBuildings:
             self.__set_json(element[0], element[1])
         sql = ""
@@ -60,6 +79,12 @@ class UpsertBuilder(BaseBuilder):
         return sql
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):
+        """
+        Set column values using a JSON object.
+        :param json:
+        :param pop:
+        :return:
+        """
         if pop is None:
             pop = []
         key: str
@@ -78,7 +103,7 @@ class UpsertBuilder(BaseBuilder):
 
     def set_json(self, json: Dict[str, any], pop: List[str] = None):
         """
-        Set values with a json, don't forget where
+        Set values with a json.
         :param json: dict with data example from select
         :param pop: pop keys from the json, if you have keys inside that are not a table but a dict/list
         :return:
