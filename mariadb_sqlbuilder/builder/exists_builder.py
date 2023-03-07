@@ -55,5 +55,7 @@ class ExistsBuilder(ConditionsBuilder):
         """
         if not self.column_list and not self._where_conditions:
             return f"SHOW TABLES LIKE '{self.tb.table}'"
-        return f"SELECT EXISTS(SELECT {', '.join(self.column_list) if self.column_list else '*'} FROM {self.tb.table} " \
+        return f"SELECT EXISTS(SELECT " \
+               f"{', '.join(self.column_list) if self.column_list else '*'} " \
+               f"FROM {self.tb.table} " \
                f"{self._get_where_sql() if self._where_conditions else ''});"

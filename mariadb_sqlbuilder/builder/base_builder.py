@@ -84,7 +84,9 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} LIKE {_transform_value_valid(value)}")
+        self.__conditions.append(
+            f"{_get_tcn(self.tb.table, column)} LIKE {_transform_value_valid(value)}"
+        )
         return self
 
     def like_not(self, column: str, value: Union[str, int]):
@@ -95,7 +97,9 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} NOT LIKE {_transform_value_valid(value)}")
+        self.__conditions.append(
+            f"{_get_tcn(self.tb.table, column)} NOT LIKE {_transform_value_valid(value)}"
+        )
         return self
 
     def between(self, column: str, value1: Union[str, int], value2: Union[str, int]):
@@ -107,8 +111,11 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} BETWEEN {_transform_value_valid(value1)} AND "
-                                      f"{_transform_value_valid(value2)}")
+        self.__conditions.append(
+            f"{_get_tcn(self.tb.table, column)} "
+            f"BETWEEN {_transform_value_valid(value1)} "
+            f"AND {_transform_value_valid(value2)}"
+        )
         return self
 
     def between_not(self, column: str, value1: Union[str, int], value2: Union[str, int]):
@@ -120,8 +127,11 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} NOT BETWEEN {_transform_value_valid(value1)} "
-                                      f"AND {_transform_value_valid(value2)}")
+        self.__conditions.append(
+            f"{_get_tcn(self.tb.table, column)} "
+            f"NOT BETWEEN {_transform_value_valid(value1)} "
+            f"AND {_transform_value_valid(value2)}"
+        )
         return self
 
     def is_not_null(self, column: str):
@@ -186,7 +196,8 @@ class ConditionsBuilder(BaseBuilder):
 
     def __check_if_or_and(self):
         """
-        Checks if the last added condition is either "AND" or "OR" and adds the default condition if not.
+        Checks if the last added condition is either "AND" or "OR"
+        and adds the default condition if not.
         :return:
         """
         if not self.__conditions:

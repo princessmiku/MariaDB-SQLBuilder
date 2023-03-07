@@ -105,7 +105,8 @@ class UpsertBuilder(BaseBuilder):
         """
         Set values with a json.
         :param json: dict with data example from select
-        :param pop: pop keys from the json, if you have keys inside that are not a table but a dict/list
+        :param pop: pop keys from the json,
+        if you have keys inside that are not a table but a dict/list
         :return:
         """
         self.__jsonBuildings.append([json, pop])

@@ -95,7 +95,9 @@ class InnerJoinBuilder(_ConditionsBuilder):
         """
         conditions = []
         for con in self.conditions:
-            conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
+            conditions.append(
+                f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}"
+            )
         return f"INNER JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
@@ -122,5 +124,7 @@ class RightJoinBuilder(_ConditionsBuilder):
         """
         conditions = []
         for con in self.conditions:
-            conditions.append(f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
+            conditions.append(
+                f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}"
+            )
         return f"RIGHT JOIN {self.table} ON {' AND '.join(conditions)} "
