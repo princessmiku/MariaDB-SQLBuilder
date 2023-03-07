@@ -37,9 +37,19 @@ class Connector:
             i += 1
 
     def table(self, name: str) -> TableBuilder:
+        """
+        Get the functions for building the sql in the selected table
+        :param name: table name
+        :return:
+        """
         return TableBuilder(self, name)
 
     def get_available_cursor(self):
+        """
+        Function for the functionality of execute and fetching.
+        The function is used to always give a cursor to an execution and let it wait as long as none is available
+        :return:
+        """
         while not self.available_cursor or self.is_in_reset:
             pass
         cursor = self.available_cursor[0]
@@ -51,6 +61,11 @@ class Connector:
         return cursor
 
     def release_cursor(self, cursor):
+        """
+        If an execution finish, it releases a cursor and make it available for other executions.
+        :param cursor:
+        :return:
+        """
         try:
             self.in_using_cursors.remove(cursor)
         except ValueError:
@@ -62,10 +77,19 @@ class Connector:
         self.available_cursor.append(cursor)
 
     @property
-    def is_in_reset(self):
+    def is_in_reset(self) -> bool:
+        """
+        Get the internal variable if the cursors for the execution currently in reset
+        :return:
+        """
         return self.__is_in_reset
 
     def reset_available_cursors(self, not_the_save_way: bool = False):
+        """
+        In case of problems with the cursors, you can reset them.
+        :param not_the_save_way: Whether to wait until all actions have been performed. Default = False
+        :return:
+        """
         if not not_the_save_way:
             while len(self.in_using_cursors) > 0:
                 pass
@@ -80,6 +104,10 @@ class Connector:
         self.__is_in_reset = False
 
     def get_active_used_cursors_count(self) -> int:
+        """
+        Get a count of current used coursers
+        :return:
+        """
         return len(self.connections_list) - len(self.available_cursor)
 
     def execute(self, sql: str):
