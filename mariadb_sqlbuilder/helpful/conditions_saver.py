@@ -10,6 +10,10 @@ class _DummyTB:
 
     @property
     def table(self):
+        """
+        Returns the dummy table name
+        :return:
+        """
         return self.__table
 
 
@@ -19,4 +23,8 @@ class ConditionsSaver(ConditionsBuilder):
         super().__init__(_DummyTB(table), **kwargs)
 
     def get_sql(self) -> str:
+        """
+        Get the sql script that was generated
+        :return:
+        """
         return self._get_where_sql()
