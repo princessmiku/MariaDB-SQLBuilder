@@ -11,6 +11,12 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         self.column = [_get_tcn(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
 
     def join_select(self, join_table: str, column: str):
+        """
+        Adds a JOIN clause to the SELECT query with the provided table and column.
+        :param join_table:
+        :param column:
+        :return:
+        """
         column = column.replace(", ", ",").split(",")
         columns = []
         [columns.append(_get_tcn(join_table, c)) for c in column]
@@ -18,6 +24,11 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         return self
 
     def column_select(self, column: str):
+        """
+        Adds additional columns to the SELECT query.
+        :param column:
+        :return:
+        """
         column = column.replace(", ", ",").split(",")
         columns = []
         [columns.append(_get_tcn(self.tb.table, c)) for c in column]
@@ -25,6 +36,10 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         return self
 
     def fetchone(self):
+        """
+        Executes the SELECT query and returns the first row of the result.
+        :return:
+        """
         cursor = self.tb.connect.getAvailableCursor()
         cursor.execute(
             self.get_sql()
@@ -35,9 +50,17 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         return result
 
     def fetchone_json(self):
+        """
+        Executes the SELECT query and returns the first row of the result in a JSON format.
+        :return:
+        """
         return convert_to_dict_single(self.tb.table, self.column, self.fetchone())
 
     def fetchall(self):
+        """
+        Executes the SELECT query and returns all the rows of the result.
+        :return:
+        """
         cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
             self.get_sql()
@@ -48,9 +71,17 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         return result
 
     def fetchall_json(self):
+        """
+        Executes the SELECT query and returns all the rows of the result in a JSON format.
+        :return:
+        """
         return convert_to_dict_all(self.tb.table, self.column, self.fetchall())
 
     def get_sql(self) -> str:
+        """
+        Builds the SELECT query and returns it as a string.
+        :return:
+        """
         return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
                f"{' '.join(self._joins) if self._joins else ''} " \
             f"{self._get_where_sql()};"
