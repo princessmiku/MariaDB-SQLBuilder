@@ -38,7 +38,7 @@ class Connector:
 
     def table(self, name: str) -> TableBuilder:
         """
-        Get the functions for building the sql in the selected table
+        Get the functions for building the sql in the selected table.
         :param name: table name
         :return:
         """
@@ -120,7 +120,6 @@ class Connector:
         only one statement.
         For more statements / a script use 'execute_script'
         :param sql:
-        :param commit
         :return:
         """
         cursor = self.get_available_cursor()
@@ -133,7 +132,6 @@ class Connector:
         It will return only if it is complete successfully,
         it will break when a line is not successful.
         :param sql_script:
-        :param commit: commit changes?
         :return:
         """
         split_script = split_sql_script_in_parameters(sql_script)
@@ -147,7 +145,6 @@ class Connector:
         """
         Execute a statement with a return of the value
         :param sql:
-        :param many:
         :return:
         """
         cursor = self.get_available_cursor()
@@ -160,7 +157,6 @@ class Connector:
         """
         Execute a statement with a return of the value
         :param sql:
-        :param many:
         :return:
         """
         cursor = self.get_available_cursor()
