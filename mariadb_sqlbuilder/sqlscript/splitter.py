@@ -3,6 +3,11 @@ from typing import List
 
 
 def split_sql_script_in_parameters(sql_script: str) -> List[str]:
+    """
+    Split a complete sql statement string in a list of statements
+    :param sql_script:
+    :return:
+    """
     if not sql_script:
         return []
 

@@ -17,18 +17,40 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.__jsonBuildings = []
 
     def set(self, column, value: Union[str, int, None]):
+        """
+        Set a value for a column in the table to update.
+        :param column:
+        :param value:
+        :return:
+        """
         self.__toSet[_get_tcn(self.tb.table, column)] = _transform_value_valid(value)
         return self
 
     def join_set(self, join_table: str, join_column: str, value: [Union[str, int, None]]):
+        """
+        Set a value for a column in a join table.
+        :param join_table:
+        :param join_column:
+        :param value:
+        :return:
+        """
         self.__toSet[_get_tcn(join_table, join_column)] = _transform_value_valid(value)
         return self
 
     def im_sure_im_not_use_conditions(self, im_sure: bool = True):
+        """
+        Set a flag to indicate that the where conditions are not needed.
+        :param im_sure:
+        :return:
+        """
         self.sure_not_use_conditions = im_sure
         return self
 
     def execute(self):
+        """
+        Execute the update statement.
+        :return:
+        """
         if not self._where_conditions and not self.sure_not_use_conditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.get_available_cursor()
@@ -42,6 +64,10 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:
+        """
+        Get the SQL statement to execute.
+        :return:
+        """
         for element in self.__jsonBuildings:
             self.__set_json(element[0], element[1])
         sql = f"UPDATE {self.tb.table} " \
@@ -52,6 +78,12 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         return sql
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):
+        """
+        Set values from a json object.
+        :param json:
+        :param pop:
+        :return:
+        """
         if pop is None:
             pop = []
         key: str
@@ -71,7 +103,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
 
     def set_json(self, json: Dict[str, any], pop: List[str] = None):
         """
-        Set values with a json, don't forget where
+        Set values with a json object.
         :param json: dict with data example from select
         :param pop: pop keys from the json, if you have keys inside that are not a table but a dict/list
         :return:

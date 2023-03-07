@@ -13,12 +13,23 @@ class InsertBuilder(BaseBuilder):
         self.__jsonBuildings = []
 
     def set(self, column: str, value: Union[str, int, None]):
+        """
+        Set the value for a column in the table.
+        :param column:
+        :param value:
+        :return:
+        """
         if not self.__toSet.__contains__(self.tb.table):
             self.__toSet[self.tb.table] = {}
         self.__toSet[self.tb.table][column] = _transform_value_valid(value)
         return self
 
     def add_join_table(self, table: str):
+        """
+        Add a join table to the set of tables to insert data into.
+        :param table:
+        :return:
+        """
         if self.__toSet.__contains__(table):
             return self
         self.__toSet[table] = {}
@@ -26,7 +37,7 @@ class InsertBuilder(BaseBuilder):
 
     def table_set(self, table: str, column: str, value: Union[str, int, None]):
         """
-        Insert data in other table in one insert
+        Insert data into another table in one insert.
         :param table:
         :param column:
         :param value:
@@ -38,10 +49,19 @@ class InsertBuilder(BaseBuilder):
         return self
 
     def ignore(self, _ignore: bool = True):
+        """
+        Set whether to ignore errors during the insert.
+        :param _ignore:
+        :return:
+        """
         self.__ignore = _ignore
         return self
 
     def execute(self) -> bool:
+        """
+        Execute the insert query.
+        :return:
+        """
         cursor = self.tb.connect.get_available_cursor()
         result = cursor.execute(
             self.get_sql()
@@ -51,6 +71,10 @@ class InsertBuilder(BaseBuilder):
         return result
 
     def get_sql(self) -> str:
+        """
+        Get the SQL query string for the insert.
+        :return:
+        """
         for element in self.__jsonBuildings:
             self.__set_json(element[0], element[1])
         sql = ""
@@ -64,6 +88,12 @@ class InsertBuilder(BaseBuilder):
         return sql
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):
+        """
+        Set values using a JSON object.
+        :param json:
+        :param pop:
+        :return:
+        """
         if pop is None:
             pop = []
         key: str

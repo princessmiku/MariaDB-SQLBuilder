@@ -11,7 +11,17 @@ class Connector:
                   "get_sql() is still usable, read the wiki for more information." + "\033[0;0m\n")
 
     def table(self, name: str) -> TableBuilder:
+        """
+        Get the functions for building the sql in the selected table
+        :param name:
+        :return:
+        """
         return TableBuilder(self, name)
 
     def get_available_cursor(self):
+        """
+        This is a "dead end" for the execution functions. This will raise a NotImplementedError,
+        which is helpful for a better assignment of the error.
+        :return:
+        """
         raise NotImplementedError("This function is only available with a active connection")
