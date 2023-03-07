@@ -10,14 +10,28 @@ class ExistsBuilder(ConditionsBuilder):
         self.column_list = []
 
     def column(self, column: str):
+        """
+        Adds a column to the list of columns to select in the EXISTS subquery.
+        :param column:
+        :return:
+        """
         self.column_list.append(column)
         return self
 
     def columns(self, columns: str):
+        """
+        Adds multiple columns to the list of columns to select in the EXISTS subquery.
+        :param columns:
+        :return:
+        """
         self.column_list += columns.replace(", ", ",").split(",")
         return self
 
     def check_exists(self) -> bool:
+        """
+        Checks if a row exists in the table that matches the specified conditions.
+        :return:
+        """
         cursor = self.tb.connect.get_available_cursor()
         try:
             cursor.execute(
@@ -35,6 +49,10 @@ class ExistsBuilder(ConditionsBuilder):
         return bool(result[0])
 
     def get_sql(self) -> str:
+        """
+        Generates the SQL query string to check for the existence of a row in the table.
+        :return:
+        """
         if not self.column_list and not self._where_conditions:
             return f"SHOW TABLES LIKE '{self.tb.table}'"
         return f"SELECT EXISTS(SELECT {', '.join(self.column_list) if self.column_list else '*'} FROM {self.tb.table} " \
