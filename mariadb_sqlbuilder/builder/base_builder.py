@@ -21,7 +21,7 @@ def _transform_value_valid(value: Union[str, int]) -> str:
 
 class BaseBuilder(ABC):
 
-    def __init__(self, tb, **kwargs):
+    def __init__(self, tb):
         self.tb = tb
 
     @abstractmethod
@@ -35,7 +35,7 @@ class BaseBuilder(ABC):
 
 class ConditionsBuilder(BaseBuilder):
 
-    def __init__(self, tb, *args, **kwargs):
+    def __init__(self, tb, **kwargs):
         super().__init__(tb)
         if kwargs.__contains__("condition"):
             self.__conditions = kwargs["condition"].get_conditions()
