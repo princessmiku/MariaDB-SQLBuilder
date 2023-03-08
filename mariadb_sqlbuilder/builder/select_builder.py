@@ -22,7 +22,8 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         column = column.replace(", ", ",").split(",")
         columns = []
-        [columns.append(_get_tcn(join_table, c)) for c in column]
+        for c in column:
+            columns.append(_get_tcn(join_table, c))
         self.column += columns
         return self
 
@@ -34,7 +35,8 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         column = column.replace(", ", ",").split(",")
         columns = []
-        [columns.append(_get_tcn(self.tb.table, c)) for c in column]
+        for c in column:
+            columns.append(_get_tcn(self.tb.table, c))
         self.column += columns
         return self
 
