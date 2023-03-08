@@ -19,12 +19,12 @@ class DeleteBuilder(ConditionsBuilder):
         self.sure_not_use_conditions = im_sure
         return self
 
-    def execute(self) -> bool:
+    def execute(self):
         """
         Executes the DELETE SQL statement built by the builder.
         :return:
         """
-        if not self._where_conditions and not self.sure_not_use_conditions:
+        if not self.is_conditions() and not self.sure_not_use_conditions:
             raise PermissionError('Delete Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
