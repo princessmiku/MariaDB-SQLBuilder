@@ -127,7 +127,7 @@ class Connector:
         """
         cursor = self.get_available_cursor()
         cursor.execute(sql)
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.release_cursor(cursor)
 
     def execute_script(self, sql_script: str):
@@ -141,7 +141,7 @@ class Connector:
         cursor = self.get_available_cursor()
         for statement in split_script:
             cursor.execute(statement)
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.release_cursor(cursor)
 
     def execute_fetchone(self, sql: str):
