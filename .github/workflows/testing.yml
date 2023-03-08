@@ -27,7 +27,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pylint pylint-exit
           pylint --generate-rcfile > .pylintrc
-          echo "disable=R0913" >> .pylintrc # Ignore R0913  Too many arguments (?/5) (too-many-arguments)
+          echo "disable=R0913, C0103" >> .pylintrc # Ignore R0913  Too many arguments, C0103 Ignore snake_case
       - name: Pylint
         run: |
           pylint --rcfile=.pylintrc --recursive=y --output-format=text mariadb_sqlbuilder
