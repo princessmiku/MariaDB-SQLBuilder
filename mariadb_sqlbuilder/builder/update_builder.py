@@ -76,7 +76,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         sql = f"UPDATE {self.tb.table} " \
               f"{' '.join(self._joins) if self._joins else ''} " \
               f"SET " \
-              f"{', '.join(['%s = %s' % (key, value) for (key, value) in self.__toSet.items()])} " \
+              f"{', '.join([f'{key} = {value}' for (key, value) in self.__toSet.items()])} " \
               f"{self._get_where_sql()};"
         return sql
 
