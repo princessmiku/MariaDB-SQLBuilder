@@ -275,6 +275,13 @@ class ConditionsBuilder(BaseBuilder):
             return ""
         return "WHERE " + " ".join(self.__conditions)
 
+    def is_conditions(self) -> bool:
+        """
+        Returns if conditions or not
+        :return:
+        """
+        return True if self.__conditions else False
+
     @abstractmethod
     def get_sql(self) -> str:
         """
