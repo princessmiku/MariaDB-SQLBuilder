@@ -34,7 +34,6 @@ class BaseBuilder(ABC):
         Get the sql script that was generated
         :return:
         """
-        pass
 
     @property
     def tb(self):
@@ -296,4 +295,3 @@ class ConditionsBuilder(BaseBuilder):
         Get the sql script that was generated
         :return:
         """
-        pass

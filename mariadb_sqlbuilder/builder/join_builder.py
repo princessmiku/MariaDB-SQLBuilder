@@ -18,7 +18,6 @@ class _JoinBuilder(ABC):
 
     def __init__(self):
         self.from_table = ''
-        pass
 
     @abstractmethod
     def get_sql(self) -> str:
@@ -26,7 +25,6 @@ class _JoinBuilder(ABC):
         Abstract method that should be implemented by the subclasses.
         :return:
         """
-        pass
 
 
 class BaseJoinExtension:
@@ -104,7 +102,6 @@ class _ConditionsBuilder(_JoinBuilder):
         Abstract method that should be implemented by the subclasses.
         :return:
         """
-        pass
 
 
 class InnerJoinBuilder(_ConditionsBuilder):

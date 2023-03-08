@@ -45,4 +45,3 @@ class DeleteBuilder(ConditionsBuilder):
         """
         return f"DELETE FROM {self.tb.table} " \
             f"{self._get_where_sql()};"
-
