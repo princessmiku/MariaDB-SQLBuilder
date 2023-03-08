@@ -21,7 +21,7 @@ def _transform_value_valid(value: Union[str, int]) -> str:
 class BaseBuilder(ABC):
 
     def __init__(self, tb, **kwargs):
-        self.tb = tb
+        self._tb = tb
         self.__kwargs = kwargs
 
     @abstractmethod
@@ -31,6 +31,10 @@ class BaseBuilder(ABC):
         :return:
         """
         pass
+
+    @property
+    def tb(self):
+        return self._tb
 
 
 class ConditionsBuilder(BaseBuilder):
