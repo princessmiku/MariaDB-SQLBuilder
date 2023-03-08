@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-# -*-coding:UTF-8 -*
-
+"""
+The module is there to establish a connection to the database
+"""
 import mariadb
 
 from .builder import TableBuilder

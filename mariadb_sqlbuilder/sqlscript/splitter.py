@@ -1,3 +1,6 @@
+"""
+The module is there for a sql script to catch out the statements
+"""
 import shlex
 from typing import List
 

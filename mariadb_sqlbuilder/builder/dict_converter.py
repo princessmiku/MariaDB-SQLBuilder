@@ -1,3 +1,6 @@
+"""
+This module is there for parse sql fetches to a dict
+"""
 from typing import List, Dict
 
 

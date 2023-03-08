@@ -1,3 +1,6 @@
+"""
+This modul is there for build a sql delete query
+"""
 from .base_builder import ConditionsBuilder
 
 

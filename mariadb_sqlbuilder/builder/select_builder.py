@@ -1,3 +1,6 @@
+"""
+This modul is there for build a sql select query
+"""
 from .base_builder import ConditionsBuilder, _get_tcn
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
 from .join_builder import BaseJoinExtension

@@ -1,3 +1,6 @@
+"""
+This modul is there for the basic functions of all query's
+"""
 from abc import ABC, abstractmethod
 from typing import Union, Tuple
 

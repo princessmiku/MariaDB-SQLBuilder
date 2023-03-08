@@ -1,3 +1,6 @@
+"""
+This modul is there for handle table functions
+"""
 from typing import Union
 
 from .select_builder import SelectBuilder

@@ -1,3 +1,6 @@
+"""
+This modul is there to check your database of existing entry's
+"""
 import mariadb
 
 from .base_builder import ConditionsBuilder

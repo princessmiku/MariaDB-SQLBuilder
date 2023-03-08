@@ -1,3 +1,6 @@
+"""
+This modul is there for build a sql insert query
+"""
 from json import dumps
 from typing import Union, Dict, List
 
