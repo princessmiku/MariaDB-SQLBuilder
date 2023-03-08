@@ -31,6 +31,7 @@ class BaseJoinExtension:
         self.tb = tb
         self._join_builders = []
         self._joins = []
+        self.__kwargs = kwargs
 
     def join(self, join_builder: _JoinBuilder):
         """
@@ -54,6 +55,7 @@ class CrossJoinBuilder(_JoinBuilder):
         """
         super().__init__()
         self.table = table
+        self.__kwargs = kwargs
 
     def get_sql(self) -> str:
         """
