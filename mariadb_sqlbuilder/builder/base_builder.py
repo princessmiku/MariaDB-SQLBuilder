@@ -15,7 +15,8 @@ def _transform_value_valid(value: Union[str, int]) -> str:
         return "NULL"
     elif isinstance(value, int):
         return str(value)
-    return f"'{value}'"
+    else:
+        return f"'{value}'"
 
 
 class BaseBuilder(ABC):
