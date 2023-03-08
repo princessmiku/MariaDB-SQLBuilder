@@ -94,7 +94,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         join_keys = [x.table for x in self._join_builders]
         for key, value in json.items():
             if isinstance(value, dict):
-                if join_keys.__contains__(key) and not pop.__contains__(key):
+                if key in join_keys and not key in pop:
                     for sub_key, sub_value in value.items():
                         self.join_set(key, sub_key, sub_value)
 

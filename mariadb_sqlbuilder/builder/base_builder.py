@@ -37,7 +37,7 @@ class ConditionsBuilder(BaseBuilder):
 
     def __init__(self, tb, **kwargs):
         super().__init__(tb)
-        if kwargs.__contains__("condition"):
+        if "condition" in kwargs:
             self.__conditions = kwargs["condition"].get_conditions()
             self.__default_condition = kwargs["condition"].get_default_condition()
         else:
