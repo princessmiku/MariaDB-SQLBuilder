@@ -27,8 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install pylint pylint-exit
           pylint --generate-rcfile > .pylintrc
-          echo "disable=R0913, C0103, R1705" >> .pylintrc # Ignore R0913  
-          # Too many arguments, C0103 Ignore snake_case, R1705 i can't fix it
+          echo "disable=R0913, C0103, R1705, R0903" >> .pylintrc 
+          # Ignore R0913 Too many arguments
+          # C0103 Ignore snake_case
+          # R1705 i can't fix it
+          # R0903 its required to have classes with only one method
       - name: Pylint
         run: |
           pylint --rcfile=.pylintrc --recursive=y --output-format=text mariadb_sqlbuilder
