@@ -22,7 +22,7 @@ class UpsertBuilder(BaseBuilder):
         :param value:
         :return:
         """
-        if not self.__toSet.__contains__(self.tb.table):
+        if self.tb.table not in self.__toSet:
             self.__toSet[self.tb.table] = {}
         self.__toSet[self.tb.table][column] = _transform_value_valid(value)
         return self
@@ -33,7 +33,7 @@ class UpsertBuilder(BaseBuilder):
         :param table:
         :return:
         """
-        if self.__toSet.__contains__(table):
+        if table in self.__toSet:
             return self
         self.__toSet[table] = {}
         return self
@@ -46,7 +46,7 @@ class UpsertBuilder(BaseBuilder):
         :param value:
         :return:
         """
-        if not self.__toSet.__contains__(table):
+        if table not in self.__toSet:
             self.__toSet[table] = {}
         self.__toSet[table][column] = _transform_value_valid(value)
         return self
@@ -95,7 +95,7 @@ class UpsertBuilder(BaseBuilder):
         join_keys = [x for x in self.__toSet.keys()]
         for key, value in json.items():
             if isinstance(value, dict):
-                if join_keys.__contains__(key) and not pop.__contains__(key):
+                if key in join_keys and not key in pop:
                     for sub_key, sub_value in value.items():
                         self.table_set(key, sub_key, sub_value)
                 else:

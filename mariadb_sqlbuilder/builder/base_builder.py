@@ -20,8 +20,9 @@ def _transform_value_valid(value: Union[str, int]) -> str:
 
 class BaseBuilder(ABC):
 
-    def __init__(self, tb):
+    def __init__(self, tb, **kwargs):
         self.tb = tb
+        self.__kwargs = kwargs
 
     @abstractmethod
     def get_sql(self) -> str:

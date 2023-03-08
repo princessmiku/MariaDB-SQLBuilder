@@ -11,7 +11,7 @@ def __loop_convert_to_dict(mtb: str, columns: List[List[str]], values: List[any]
         if column[1] == "*":
             raise TypeError('Column * is not supported in this dict/json')
         if column[0] != mtb:
-            if not result.__contains__(column[0]):
+            if column[0] not in result:
                 result[column[0]] = {}
 
             result[column[0]][column[1]] = value
