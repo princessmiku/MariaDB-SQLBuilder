@@ -15,8 +15,7 @@ def _transform_value_valid(value: Union[str, int]) -> str:
         return "NULL"
     elif isinstance(value, int):
         return str(value)
-    else:
-        return f"'{value}'"
+    return f"'{value}'"
 
 
 class BaseBuilder(ABC):
@@ -213,10 +212,8 @@ class ConditionsBuilder(BaseBuilder):
         Adds an OR condition to the WHERE conditions.
         :return:
         """
-        if not self.__conditions:
-            return
-        elif self.__conditions[-1] == "OR":
-            return
+        if not self.__conditions or self.__conditions[-1] == "OR":
+            return self
         elif self.__conditions[-1] == "AND":
             self.__conditions.pop(-1)
         self.__conditions.append("OR")
@@ -227,10 +224,8 @@ class ConditionsBuilder(BaseBuilder):
         Adds an AND condition to the WHERE conditions.
         :return:
         """
-        if not self.__conditions:
-            return
-        elif self.__conditions[-1] == "AND":
-            return
+        if not self.__conditions or self.__conditions[-1] == "AND":
+            return self
         elif self.__conditions[-1] == "OR":
             self.__conditions.pop(-1)
         self.__conditions.append("AND")
