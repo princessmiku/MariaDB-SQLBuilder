@@ -101,7 +101,7 @@ class InsertBuilder(BaseBuilder):
             pop = []
         key: str
         value: any
-        join_keys = [x for x in self.__toSet.keys()]
+        join_keys = [x for x in self.__toSet]
         for key, value in json.items():
             if isinstance(value, dict):
                 if key in join_keys and not key in pop:

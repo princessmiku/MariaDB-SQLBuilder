@@ -74,7 +74,6 @@ class UpsertBuilder(BaseBuilder):
         _key: str
         _value: Dict[str, dict]
         for _key, _value in self.__toSet.items():
-
             sql += f"INSERT INTO " \
                    f"{_key} ({', '.join(_value.keys())}) VALUES ({', '.join(_value.values())})" \
                    f"ON DUPLICATE KEY UPDATE " \
@@ -92,7 +91,7 @@ class UpsertBuilder(BaseBuilder):
             pop = []
         key: str
         value: any
-        join_keys = [x for x in self.__toSet.keys()]
+        join_keys = [x for x in self.__toSet]
         for key, value in json.items():
             if isinstance(value, dict):
                 if key in join_keys and not key in pop:
