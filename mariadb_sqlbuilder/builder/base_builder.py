@@ -26,7 +26,6 @@ class BaseBuilder(ABC):
 
     def __init__(self, tb, **kwargs):
         self._tb = tb
-        self.__kwargs = kwargs
 
     @abstractmethod
     def get_sql(self) -> str:
