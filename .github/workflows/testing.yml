@@ -27,11 +27,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install pylint pylint-exit
           pylint --generate-rcfile > .pylintrc
-          echo "disable=R0913, C0103, R1705, R0903" >> .pylintrc 
+          echo "disable=R0913, C0103, R1705, R0903, W0613" >> .pylintrc 
           # Ignore R0913 Too many arguments
           # C0103 Ignore snake_case
           # R1705 i can't fix it
           # R0903 its required to have classes with only one method
+          # W0613 Unused argument 'kwargs' (unused-argument)
+          # i don't know if i'll need it in the course, 
+          # but i'd rather have it implemented than have to work it in at great expense
       - name: Pylint
         run: |
           pylint --rcfile=.pylintrc --recursive=y --output-format=text mariadb_sqlbuilder
