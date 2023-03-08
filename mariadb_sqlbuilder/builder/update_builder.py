@@ -9,6 +9,10 @@ from .join_builder import BaseJoinExtension
 
 
 class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         ConditionsBuilder.__init__(self, tb, **kwargs)

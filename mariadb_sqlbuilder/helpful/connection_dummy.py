@@ -6,6 +6,10 @@ from ..builder import TableBuilder
 
 
 class Connector:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, info_print: bool = True):
         if info_print:

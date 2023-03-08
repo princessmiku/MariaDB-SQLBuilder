@@ -7,6 +7,10 @@ from .join_builder import BaseJoinExtension
 
 
 class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, column, **kwargs):
         ConditionsBuilder.__init__(self, tb, **kwargs)

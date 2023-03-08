@@ -8,6 +8,10 @@ from .sqlscript.splitter import split_sql_script_in_parameters
 
 
 class Connector:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, host: str, user: str, password: str, database: str, *args, port: int = 3306,
                  pool_name: str = "sqlbuilder_pool",

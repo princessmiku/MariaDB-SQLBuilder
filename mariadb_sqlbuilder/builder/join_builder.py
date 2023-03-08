@@ -11,6 +11,10 @@ from .base_builder import _get_tcn
 
 
 class _JoinBuilder(ABC):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self):
         self.from_table = ''
@@ -26,6 +30,10 @@ class _JoinBuilder(ABC):
 
 
 class BaseJoinExtension:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         self.tb = tb
@@ -46,6 +54,10 @@ class BaseJoinExtension:
 
 
 class CrossJoinBuilder(_JoinBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, table: str, **kwargs):
         """
@@ -66,6 +78,11 @@ class CrossJoinBuilder(_JoinBuilder):
 
 
 class _ConditionsBuilder(_JoinBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
+
     def __init__(self, table: str):
         super().__init__()
         self.table = table
@@ -91,6 +108,10 @@ class _ConditionsBuilder(_JoinBuilder):
 
 
 class InnerJoinBuilder(_ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def get_sql(self) -> str:
         """
@@ -106,6 +127,10 @@ class InnerJoinBuilder(_ConditionsBuilder):
 
 
 class LeftJoinBuilder(_ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def get_sql(self) -> str:
         """
@@ -120,6 +145,10 @@ class LeftJoinBuilder(_ConditionsBuilder):
 
 
 class RightJoinBuilder(_ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def get_sql(self) -> str:
         """

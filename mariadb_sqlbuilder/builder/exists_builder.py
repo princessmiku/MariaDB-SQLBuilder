@@ -7,6 +7,10 @@ from .base_builder import ConditionsBuilder
 
 
 class ExistsBuilder(ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         super().__init__(tb, **kwargs)

@@ -19,6 +19,10 @@ def _transform_value_valid(value: Union[str, int]) -> str:
 
 
 class BaseBuilder(ABC):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         self._tb = tb
@@ -38,6 +42,10 @@ class BaseBuilder(ABC):
 
 
 class ConditionsBuilder(BaseBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         super().__init__(tb)

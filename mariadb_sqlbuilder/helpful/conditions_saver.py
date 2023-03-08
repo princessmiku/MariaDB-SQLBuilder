@@ -7,6 +7,10 @@ from builder.base_builder import ConditionsBuilder
 
 
 class _DummyTB:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, table: str):
         self.__table = table
@@ -21,6 +25,10 @@ class _DummyTB:
 
 
 class ConditionsSaver(ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, table: str, **kwargs):
         super().__init__(_DummyTB(table), **kwargs)
