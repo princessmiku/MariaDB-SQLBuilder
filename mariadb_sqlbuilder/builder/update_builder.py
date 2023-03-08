@@ -63,7 +63,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         if self.__subSets:
             for subset in self.__subSets:
                 cursor.execute(subset.get_sql())
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:

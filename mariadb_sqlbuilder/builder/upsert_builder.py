@@ -60,7 +60,7 @@ class UpsertBuilder(BaseBuilder):
         cursor.execute(
             self.get_sql()
         )
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:

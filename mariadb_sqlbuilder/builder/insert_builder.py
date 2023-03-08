@@ -69,7 +69,7 @@ class InsertBuilder(BaseBuilder):
         result = cursor.execute(
             self.get_sql()
         )
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.tb.connect.release_cursor(cursor)
         return result
 
