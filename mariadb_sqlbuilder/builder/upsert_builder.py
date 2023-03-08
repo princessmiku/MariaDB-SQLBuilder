@@ -78,7 +78,7 @@ class UpsertBuilder(BaseBuilder):
             sql += f"INSERT INTO " \
                    f"{_key} ({', '.join(_value.keys())}) VALUES ({', '.join(_value.values())})" \
                    f"ON DUPLICATE KEY UPDATE " \
-                   f"{', '.join(['%s = %s' % (key, value) for (key, value) in _value.items()])};"
+                   f"{', '.join([f'{key} = {value}' for (key, value) in _value.items()])};"
         return sql
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):
