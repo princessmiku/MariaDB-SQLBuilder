@@ -1,7 +1,15 @@
-from mariadb_sqlbuilder import TableBuilder
+"""
+This modul is there for fake a connection to a database,
+if you only want to use the sql query builder
+"""
+from ..builder import TableBuilder
 
 
 class Connector:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, info_print: bool = True):
         if info_print:

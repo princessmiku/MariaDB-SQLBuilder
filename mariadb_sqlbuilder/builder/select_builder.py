@@ -1,9 +1,16 @@
+"""
+This modul is there for build a sql select query
+"""
 from .base_builder import ConditionsBuilder, _get_tcn
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
 from .join_builder import BaseJoinExtension
 
 
 class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, column, **kwargs):
         ConditionsBuilder.__init__(self, tb, **kwargs)
@@ -19,7 +26,8 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         column = column.replace(", ", ",").split(",")
         columns = []
-        [columns.append(_get_tcn(join_table, c)) for c in column]
+        for c in column:
+            columns.append(_get_tcn(join_table, c))
         self.column += columns
         return self
 
@@ -31,7 +39,8 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         column = column.replace(", ", ",").split(",")
         columns = []
-        [columns.append(_get_tcn(self.tb.table, c)) for c in column]
+        for c in column:
+            columns.append(_get_tcn(self.tb.table, c))
         self.column += columns
         return self
 

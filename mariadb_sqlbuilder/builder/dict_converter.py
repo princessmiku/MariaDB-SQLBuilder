@@ -1,3 +1,6 @@
+"""
+This module is there for parse sql fetches to a dict
+"""
 from typing import List, Dict
 
 
@@ -8,7 +11,7 @@ def __loop_convert_to_dict(mtb: str, columns: List[List[str]], values: List[any]
         if column[1] == "*":
             raise TypeError('Column * is not supported in this dict/json')
         if column[0] != mtb:
-            if not result.__contains__(column[0]):
+            if column[0] not in result:
                 result[column[0]] = {}
 
             result[column[0]][column[1]] = value
@@ -46,7 +49,6 @@ def convert_to_dict_all(mtb: str, columns: List[str],
     columns: List[List[str]] = [column.split(".") for column in columns]
     # define types
     v: List[any]
-    value: any
     column: List[str]
     for v in values:
         result.append(__loop_convert_to_dict(mtb, columns, v))

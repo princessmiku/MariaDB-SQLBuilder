@@ -1,7 +1,15 @@
+"""
+This modul is there for build a sql delete query for
+delete stuff in your database
+"""
 from .base_builder import ConditionsBuilder
 
 
 class DeleteBuilder(ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         super().__init__(tb, **kwargs)
@@ -16,18 +24,18 @@ class DeleteBuilder(ConditionsBuilder):
         self.sure_not_use_conditions = im_sure
         return self
 
-    def execute(self) -> bool:
+    def execute(self):
         """
         Executes the DELETE SQL statement built by the builder.
         :return:
         """
-        if not self._where_conditions and not self.sure_not_use_conditions:
+        if not self.is_conditions() and not self.sure_not_use_conditions:
             raise PermissionError('Delete Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
             self.get_sql()
         )
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:
@@ -37,4 +45,3 @@ class DeleteBuilder(ConditionsBuilder):
         """
         return f"DELETE FROM {self.tb.table} " \
             f"{self._get_where_sql()};"
-

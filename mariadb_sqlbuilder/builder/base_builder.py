@@ -1,3 +1,6 @@
+"""
+This modul is there for the basic functions of all query's
+"""
 from abc import ABC, abstractmethod
 from typing import Union, Tuple
 
@@ -12,14 +15,17 @@ def _transform_value_valid(value: Union[str, int]) -> str:
         return "NULL"
     elif isinstance(value, int):
         return str(value)
-    else:
-        return f"'{value}'"
+    return f"'{value}'"
 
 
 class BaseBuilder(ABC):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
-        self.tb = tb
+        self._tb = tb
 
     @abstractmethod
     def get_sql(self) -> str:
@@ -27,14 +33,25 @@ class BaseBuilder(ABC):
         Get the sql script that was generated
         :return:
         """
-        pass
+
+    @property
+    def tb(self):
+        """
+        returns the table builder
+        :return:
+        """
+        return self._tb
 
 
 class ConditionsBuilder(BaseBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
-    def __init__(self, tb, *args, **kwargs):
+    def __init__(self, tb, **kwargs):
         super().__init__(tb)
-        if kwargs.__contains__("condition"):
+        if "condition" in kwargs:
             self.__conditions = kwargs["condition"].get_conditions()
             self.__default_condition = kwargs["condition"].get_default_condition()
         else:
@@ -210,10 +227,8 @@ class ConditionsBuilder(BaseBuilder):
         Adds an OR condition to the WHERE conditions.
         :return:
         """
-        if not self.__conditions:
-            return
-        elif self.__conditions[-1] == "OR":
-            return
+        if not self.__conditions or self.__conditions[-1] == "OR":
+            return self
         elif self.__conditions[-1] == "AND":
             self.__conditions.pop(-1)
         self.__conditions.append("OR")
@@ -224,10 +239,8 @@ class ConditionsBuilder(BaseBuilder):
         Adds an AND condition to the WHERE conditions.
         :return:
         """
-        if not self.__conditions:
-            return
-        elif self.__conditions[-1] == "AND":
-            return
+        if not self.__conditions or self.__conditions[-1] == "AND":
+            return self
         elif self.__conditions[-1] == "OR":
             self.__conditions.pop(-1)
         self.__conditions.append("AND")
@@ -272,10 +285,16 @@ class ConditionsBuilder(BaseBuilder):
             return ""
         return "WHERE " + " ".join(self.__conditions)
 
+    def is_conditions(self) -> bool:
+        """
+        Returns if conditions or not
+        :return:
+        """
+        return bool(self.__conditions)
+
     @abstractmethod
     def get_sql(self) -> str:
         """
         Get the sql script that was generated
         :return:
         """
-        pass

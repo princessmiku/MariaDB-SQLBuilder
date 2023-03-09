@@ -1,6 +1,6 @@
-#!/usr/bin/env python
-# -*-coding:UTF-8 -*
-
+"""
+The module is there to establish a connection to the database
+"""
 import mariadb
 
 from .builder import TableBuilder
@@ -8,6 +8,10 @@ from .sqlscript.splitter import split_sql_script_in_parameters
 
 
 class Connector:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, host: str, user: str, password: str, database: str, *args, port: int = 3306,
                  pool_name: str = "sqlbuilder_pool",
@@ -56,7 +60,7 @@ class Connector:
         cursor = self.available_cursor[0]
         try:
             self.available_cursor.remove(cursor)
-        except ValueError as err:
+        except ValueError:
             cursor = self.get_available_cursor()
         self.in_using_cursors.append(cursor)
         return cursor
@@ -127,7 +131,7 @@ class Connector:
         """
         cursor = self.get_available_cursor()
         cursor.execute(sql)
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.release_cursor(cursor)
 
     def execute_script(self, sql_script: str):
@@ -141,7 +145,7 @@ class Connector:
         cursor = self.get_available_cursor()
         for statement in split_script:
             cursor.execute(statement)
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.release_cursor(cursor)
 
     def execute_fetchone(self, sql: str):

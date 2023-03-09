@@ -1,3 +1,6 @@
+"""
+This modul is there for handle table functions
+"""
 from typing import Union
 
 from .select_builder import SelectBuilder
@@ -9,6 +12,10 @@ from .exists_builder import ExistsBuilder
 
 
 class TableBuilder:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, connect, table: str):
         self.connect = connect

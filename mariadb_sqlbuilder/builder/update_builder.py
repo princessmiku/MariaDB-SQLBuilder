@@ -1,3 +1,6 @@
+"""
+This modul is there for build a sql update query
+"""
 from json import dumps
 from typing import Union, Dict, List
 
@@ -6,6 +9,10 @@ from .join_builder import BaseJoinExtension
 
 
 class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         ConditionsBuilder.__init__(self, tb, **kwargs)
@@ -51,7 +58,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         Execute the update statement.
         :return:
         """
-        if not self._where_conditions and not self.sure_not_use_conditions:
+        if not self.is_conditions() and not self.sure_not_use_conditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
@@ -60,7 +67,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         if self.__subSets:
             for subset in self.__subSets:
                 cursor.execute(subset.get_sql())
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.tb.connect.release_cursor(cursor)
 
     def get_sql(self) -> str:
@@ -73,7 +80,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         sql = f"UPDATE {self.tb.table} " \
               f"{' '.join(self._joins) if self._joins else ''} " \
               f"SET " \
-              f"{', '.join(['%s = %s' % (key, value) for (key, value) in self.__toSet.items()])} " \
+              f"{', '.join([f'{key} = {value}' for (key, value) in self.__toSet.items()])} " \
               f"{self._get_where_sql()};"
         return sql
 
@@ -91,10 +98,9 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         join_keys = [x.table for x in self._join_builders]
         for key, value in json.items():
             if isinstance(value, dict):
-                if join_keys.__contains__(key) and not pop.__contains__(key):
+                if key in join_keys and not key in pop:
                     for sub_key, sub_value in value.items():
                         self.join_set(key, sub_key, sub_value)
-
                 else:
                     self.set(key, dumps(value))
             else:

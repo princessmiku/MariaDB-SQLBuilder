@@ -1,3 +1,6 @@
+"""
+This modul is there for build a sql insert query
+"""
 from json import dumps
 from typing import Union, Dict, List
 
@@ -5,6 +8,10 @@ from .base_builder import BaseBuilder, _transform_value_valid
 
 
 class InsertBuilder(BaseBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         super().__init__(tb, **kwargs)
@@ -19,7 +26,7 @@ class InsertBuilder(BaseBuilder):
         :param value:
         :return:
         """
-        if not self.__toSet.__contains__(self.tb.table):
+        if not self.tb.table in self.__toSet:
             self.__toSet[self.tb.table] = {}
         self.__toSet[self.tb.table][column] = _transform_value_valid(value)
         return self
@@ -30,7 +37,7 @@ class InsertBuilder(BaseBuilder):
         :param table:
         :return:
         """
-        if self.__toSet.__contains__(table):
+        if table in self.__toSet:
             return self
         self.__toSet[table] = {}
         return self
@@ -43,7 +50,7 @@ class InsertBuilder(BaseBuilder):
         :param value:
         :return:
         """
-        if not self.__toSet.__contains__(table):
+        if not table in self.__toSet:
             self.__toSet[table] = {}
         self.__toSet[table][column] = _transform_value_valid(value)
         return self
@@ -66,7 +73,7 @@ class InsertBuilder(BaseBuilder):
         result = cursor.execute(
             self.get_sql()
         )
-        cursor._connection.commit()
+        cursor.connection.commit()
         self.tb.connect.release_cursor(cursor)
         return result
 
@@ -98,10 +105,10 @@ class InsertBuilder(BaseBuilder):
             pop = []
         key: str
         value: any
-        join_keys = [x for x in self.__toSet.keys()]
+        join_keys = list(self.__toSet)
         for key, value in json.items():
             if isinstance(value, dict):
-                if join_keys.__contains__(key) and not pop.__contains__(key):
+                if key in join_keys and not key in pop:
                     for sub_key, sub_value in value.items():
                         self.table_set(key, sub_key, sub_value)
                 else:

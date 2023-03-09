@@ -1,6 +1,8 @@
 """
-    Maria DB SQL joins
-    https://mariadb.com/kb/en/joining-tables-with-join-clauses/
+This modul is there for build sql joins for your query
+
+Maria DB SQL joins
+https://mariadb.com/kb/en/joining-tables-with-join-clauses/
 
 """
 from abc import ABC, abstractmethod
@@ -9,10 +11,13 @@ from .base_builder import _get_tcn
 
 
 class _JoinBuilder(ABC):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self):
         self.from_table = ''
-        pass
 
     @abstractmethod
     def get_sql(self) -> str:
@@ -20,10 +25,13 @@ class _JoinBuilder(ABC):
         Abstract method that should be implemented by the subclasses.
         :return:
         """
-        pass
 
 
 class BaseJoinExtension:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, tb, **kwargs):
         self.tb = tb
@@ -43,6 +51,10 @@ class BaseJoinExtension:
 
 
 class CrossJoinBuilder(_JoinBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, table: str, **kwargs):
         """
@@ -62,6 +74,11 @@ class CrossJoinBuilder(_JoinBuilder):
 
 
 class _ConditionsBuilder(_JoinBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
+
     def __init__(self, table: str):
         super().__init__()
         self.table = table
@@ -83,10 +100,13 @@ class _ConditionsBuilder(_JoinBuilder):
         Abstract method that should be implemented by the subclasses.
         :return:
         """
-        pass
 
 
 class InnerJoinBuilder(_ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def get_sql(self) -> str:
         """
@@ -102,6 +122,10 @@ class InnerJoinBuilder(_ConditionsBuilder):
 
 
 class LeftJoinBuilder(_ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def get_sql(self) -> str:
         """
@@ -116,6 +140,10 @@ class LeftJoinBuilder(_ConditionsBuilder):
 
 
 class RightJoinBuilder(_ConditionsBuilder):
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def get_sql(self) -> str:
         """
