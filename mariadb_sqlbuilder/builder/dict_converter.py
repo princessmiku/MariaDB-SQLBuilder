@@ -49,7 +49,6 @@ def convert_to_dict_all(mtb: str, columns: List[str],
     columns: List[List[str]] = [column.split(".") for column in columns]
     # define types
     v: List[any]
-    value: any
     column: List[str]
     for v in values:
         result.append(__loop_convert_to_dict(mtb, columns, v))

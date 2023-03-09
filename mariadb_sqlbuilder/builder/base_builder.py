@@ -36,6 +36,10 @@ class BaseBuilder(ABC):
 
     @property
     def tb(self):
+        """
+        returns the table builder
+        :return:
+        """
         return self._tb
 
 
@@ -286,7 +290,7 @@ class ConditionsBuilder(BaseBuilder):
         Returns if conditions or not
         :return:
         """
-        return True if self.__conditions else False
+        return bool(self.__conditions)
 
     @abstractmethod
     def get_sql(self) -> str:

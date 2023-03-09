@@ -58,7 +58,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         Execute the update statement.
         :return:
         """
-        if not self._where_conditions and not self.sure_not_use_conditions:
+        if not self.is_conditions() and not self.sure_not_use_conditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connect.get_available_cursor()
         cursor.execute(
@@ -101,7 +101,6 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
                 if key in join_keys and not key in pop:
                     for sub_key, sub_value in value.items():
                         self.join_set(key, sub_key, sub_value)
-
                 else:
                     self.set(key, dumps(value))
             else:

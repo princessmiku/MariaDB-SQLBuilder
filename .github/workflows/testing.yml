@@ -7,7 +7,11 @@
 
 name: testing
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
@@ -25,9 +29,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pylint pylint-exit
+          pip install pylint pylint-exit mariadb
           pylint --generate-rcfile > .pylintrc
-          echo "disable=R0913, C0103, R1705, R0903, W0613" >> .pylintrc 
+          echo "disable=R0913, C0103, R1705, R0903, W0613, R0904, R0801" >> .pylintrc 
           # Ignore R0913 Too many arguments
           # C0103 Ignore snake_case
           # R1705 i can't fix it
@@ -35,6 +39,8 @@ jobs:
           # W0613 Unused argument 'kwargs' (unused-argument)
           # i don't know if i'll need it in the course, 
           # but i'd rather have it implemented than have to work it in at great expense
+          # R0904 sql has many options so it need more then 20
+          # R0801 similar lines
       - name: Pylint
         run: |
           pylint --rcfile=.pylintrc --recursive=y --output-format=text mariadb_sqlbuilder

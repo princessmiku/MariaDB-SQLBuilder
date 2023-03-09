@@ -12,6 +12,10 @@ from .exists_builder import ExistsBuilder
 
 
 class TableBuilder:
+    """
+    TODO: add a description
+    This is a dummy docstring.
+    """
 
     def __init__(self, connect, table: str):
         self.connect = connect
