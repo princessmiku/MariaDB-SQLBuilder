@@ -3,7 +3,7 @@ This modul is there for save conditions for multiple uses
 """
 from abc import abstractmethod
 
-from builder.base_builder import ConditionsBuilder
+from mariadb_sqlbuilder.builder.base_builder import ConditionsBuilder
 
 
 class _DummyTB:

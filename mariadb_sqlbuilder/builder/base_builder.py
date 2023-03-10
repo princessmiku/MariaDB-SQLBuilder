@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Union, Tuple, List
 
 from exepetions import BetweenValueIsBigger
-from ..helpful.arithmetic import Arithmetic
+from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 
 
 # get the name of a table column

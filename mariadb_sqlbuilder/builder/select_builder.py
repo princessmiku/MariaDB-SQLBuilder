@@ -1,6 +1,9 @@
 """
 This modul is there for build a sql select query
 """
+from typing import Union
+
+from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 from .base_builder import ConditionsBuilder, _get_tcn
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
 from .join_builder import BaseJoinExtension
@@ -12,36 +15,30 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
     This is a dummy docstring.
     """
 
-    def __init__(self, tb, column, **kwargs):
+    def __init__(self, tb, expressions: Union[str, list], *args, **kwargs):
         ConditionsBuilder.__init__(self, tb, **kwargs)
         BaseJoinExtension.__init__(self, tb, **kwargs)
-        self.column = [_get_tcn(self.tb.table, c) for c in column.replace(", ", ",").split(",")]
+        self._contains_arithmetic = False
+        self.expressions = []
+        self._loop_tb_expressions_add(self.tb.table, expressions, *args)
 
-    def join_select(self, join_table: str, column: str):
+    def join_select(self, join_table: str, expressions: Union[str, list], *args):
         """
         Adds a JOIN clause to the SELECT query with the provided table and column.
         :param join_table:
-        :param column:
+        :param expressions:
         :return:
         """
-        column = column.replace(", ", ",").split(",")
-        columns = []
-        for c in column:
-            columns.append(_get_tcn(join_table, c))
-        self.column += columns
+        self._loop_tb_expressions_add(join_table, expressions, *args)
         return self
 
-    def column_select(self, column: str):
+    def column_select(self, expressions: Union[str, list], *args):
         """
         Adds additional columns to the SELECT query.
-        :param column:
+        :param expressions:
         :return:
         """
-        column = column.replace(", ", ",").split(",")
-        columns = []
-        for c in column:
-            columns.append(_get_tcn(self.tb.table, c))
-        self.column += columns
+        self._loop_tb_expressions_add(self.tb.table, expressions, *args)
         return self
 
     def fetchone(self):
@@ -91,6 +88,29 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         Builds the SELECT query and returns it as a string.
         :return:
         """
-        return f"SELECT {', '.join(self.column)} FROM {self.tb.table} " \
+        return f"SELECT {', '.join(self.expressions)} FROM {self.tb.table} " \
                f"{' '.join(self._joins) if self._joins else ''} " \
             f"{self._get_where_sql()};"
+
+    def _loop_tb_expressions_add(self, tb: str, expressions: Union[str, Arithmetic], *args):
+        """
+        Handle different types of expressions and add it correctly in the expressions list
+        :param tb:
+        :param expressions:
+        :param args:
+        :return:
+        """
+        if isinstance(expressions, str):
+            self.expressions += [_get_tcn(tb, c) for c in expressions.replace(", ", ",").split(",")]
+        if isinstance(expressions, list) or args:
+            loop_expressions = []
+            if isinstance(expressions, list):
+                loop_expressions += expressions
+            if args:
+                loop_expressions += args
+            for expression in loop_expressions:
+                if isinstance(expression, Arithmetic):
+                    self._contains_arithmetic = True
+                    self.expressions.append(str(expression))
+                else:
+                    self.expressions.append(_get_tcn(self.tb.table, expression))
