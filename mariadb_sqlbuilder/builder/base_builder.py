@@ -78,7 +78,7 @@ class ConditionsBuilder(BaseBuilder):
                                      f"{_transform_value_valid(value)}")
         return self
 
-    def where_in(self, expression: Union[str, Arithmetic], checked_list: Tuple[str, int]):
+    def where_in(self, expression: Union[str, Arithmetic], checked_list: Tuple[str, int, float]):
         """
         Adds a WHERE condition for a list of checked values in a column.
         :param expression: a Column or an Arithmetic
@@ -92,7 +92,7 @@ class ConditionsBuilder(BaseBuilder):
             self.__conditions.append(f"{expression} IN {str(checked_list)}")
         return self
 
-    def where_in_not(self, expression: Union[str, Arithmetic], checked_list: Tuple[str, int]):
+    def where_in_not(self, expression: Union[str, Arithmetic], checked_list: Tuple[str, int, float]):
         """
         Adds a WHERE condition for a list of unchecked values in a column.
         :param expression: a Column or an Arithmetic
@@ -106,7 +106,7 @@ class ConditionsBuilder(BaseBuilder):
             self.__conditions.append(f"{expression} NOT IN {str(checked_list)}")
         return self
 
-    def like(self, expression: Union[str, Arithmetic], value: Union[str, int]):
+    def like(self, expression: Union[str, Arithmetic], value: Union[str, int, float]):
         """
         Adds a WHERE condition for a partial match of a column value.
         :param expression: a Column or an Arithmetic
@@ -124,7 +124,7 @@ class ConditionsBuilder(BaseBuilder):
             )
         return self
 
-    def like_not(self, expression: Union[str, Arithmetic], value: Union[str, int]):
+    def like_not(self, expression: Union[str, Arithmetic], value: Union[str, int, float]):
         """
         Adds a WHERE condition for a partial mismatch of a column value.
         :param expression: a Column or an Arithmetic

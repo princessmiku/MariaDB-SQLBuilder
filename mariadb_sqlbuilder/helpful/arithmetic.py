@@ -48,7 +48,7 @@ class Arithmetic:
         self.arithmetic_str += f" * {variable}"
         return self
 
-    def division(self, variable: Union[ArithmeticColumn, 'Arithmetic', int, float]):
+    def div(self, variable: Union[ArithmeticColumn, 'Arithmetic', int, float]):
         _check_type(variable)
         self.arithmetic_str += f" / {variable}"
         return self
