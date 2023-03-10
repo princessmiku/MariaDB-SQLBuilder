@@ -2,7 +2,7 @@
 This modul is there for the basic functions of all query's
 """
 from abc import ABC, abstractmethod
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 
 
 # get the name of a table column
@@ -58,7 +58,7 @@ class ConditionsBuilder(BaseBuilder):
             self.__conditions = []
             self.__default_condition = "AND"
 
-    def where(self, column: str, value: Union[str, int], filter_operator: str = "="):
+    def where(self, column: str, value: Union[str, int, float], filter_operator: str = "="):
         """
         Adds a WHERE condition for an exact match of a column value.
         :param column:
@@ -71,7 +71,7 @@ class ConditionsBuilder(BaseBuilder):
                                       f"{_transform_value_valid(value)}")
         return self
 
-    def where_in(self, column: str, checked_list: Tuple[str, int]):
+    def where_in(self, column: str, checked_list: List[str, int]):
         """
         Adds a WHERE condition for a list of checked values in a column.
         :param column:
@@ -82,7 +82,7 @@ class ConditionsBuilder(BaseBuilder):
         self.__conditions.append(f"{_get_tcn(self.tb.table, column)} IN {str(checked_list)}")
         return self
 
-    def where_in_not(self, column: str, checked_list: Tuple[str, int]):
+    def where_in_not(self, column: str, checked_list: List[str, int]):
         """
         Adds a WHERE condition for a list of unchecked values in a column.
         :param column:

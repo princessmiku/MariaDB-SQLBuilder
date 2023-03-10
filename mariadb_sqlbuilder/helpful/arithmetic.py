@@ -19,14 +19,16 @@ class ArithmeticColumn:
         return self._column
 
 
-def _check_type(variable: Union[ArithmeticColumn, 'Arithmetic', int, float, str]):
-    if not isinstance(variable, (ArithmeticColumn, Arithmetic, int, float, str)):
-        raise TypeError("Variable is not ")
+def _check_type(variable: Union[ArithmeticColumn, 'Arithmetic', int, float]):
+    if not isinstance(variable, (ArithmeticColumn, Arithmetic, int, float)):
+        raise TypeError(
+            "Variable is not a valid type, accept ArithmeticColumn, Arithmetic, int and float"
+        )
 
 
 class Arithmetic:
 
-    def __init__(self, variable: Union[ArithmeticColumn, 'Arithmetic', int, float, str]):
+    def __init__(self, variable: Union[ArithmeticColumn, 'Arithmetic', int, float]):
         if not isinstance(variable, (ArithmeticColumn, int, float)):
             raise
         self.arithmetic_str = str(variable)
@@ -51,7 +53,7 @@ class Arithmetic:
         self.arithmetic_str += f" / {variable}"
         return self
 
-    def mod(self,  variable: Union[ArithmeticColumn, 'Arithmetic', int, float]):
+    def mod(self, variable: Union[ArithmeticColumn, 'Arithmetic', int, float]):
         _check_type(variable)
         self.arithmetic_str += f" % {variable}"
         return self
