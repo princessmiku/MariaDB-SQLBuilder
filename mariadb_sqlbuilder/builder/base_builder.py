@@ -4,6 +4,7 @@ This modul is there for the basic functions of all query's
 from abc import ABC, abstractmethod
 from typing import Union, Tuple, List
 
+from exepetions import BetweenValueIsBigger
 from helpful.arithmetic import Arithmetic
 
 
@@ -141,7 +142,8 @@ class ConditionsBuilder(BaseBuilder):
             )
         return self
 
-    def between(self, expression: Union[str, Arithmetic], value1: Union[str, int], value2: Union[str, int]):
+    def between(self, expression: Union[str, Arithmetic],
+                value1: Union[str, int], value2: Union[str, int, float]):
         """
         Adds a WHERE condition for a range of values in a column.
         :param expression: a Column or an Arithmetic
@@ -150,6 +152,9 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
+        if isinstance(value1, (int, float)) and isinstance(value2, (int, float)):
+            if value1 > value2:
+                raise BetweenValueIsBigger("Value 1 is bigger then value 2")
         if isinstance(expression, str):
             self.__conditions.append(
                 f"{_get_tcn(self.tb.table, expression)} "
@@ -164,7 +169,8 @@ class ConditionsBuilder(BaseBuilder):
             )
         return self
 
-    def between_not(self, expression: Union[str, Arithmetic], value1: Union[str, int], value2: Union[str, int]):
+    def between_not(self, expression: Union[str, Arithmetic],
+                    value1: Union[str, int, float], value2: Union[str, int, float]):
         """
         Adds a WHERE condition for a range of values not in a column.
         :param expression: a Column or an Arithmetic
@@ -173,6 +179,9 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
+        if isinstance(value1, (int, float)) and isinstance(value2, (int, float)):
+            if value1 > value2:
+                raise BetweenValueIsBigger("Value 1 is bigger then value 2")
         if isinstance(expression, str):
             self.__conditions.append(
                 f"{_get_tcn(self.tb.table, expression)} "
