@@ -60,7 +60,3 @@ class Arithmetic:
 
     def __str__(self):
         return f"({self.arithmetic_str})"
-
-
-print(Arithmetic(1234).add(12).sub(Arithmetic(ArithmeticColumn("user", "money")).sub(20)))
-
