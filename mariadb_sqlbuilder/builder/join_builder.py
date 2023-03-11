@@ -121,7 +121,7 @@ class InnerJoinBuilder(_ConditionsBuilder):
         conditions = []
         for con in self.conditions:
             conditions.append(
-                f"{_get_tcn_without_validator(self.from_table, con[0])} = "
+                f"{_get_tcn_without_validator(self.from_table, con[0])} = " +
                 f"{_get_tcn_without_validator(self.table, con[1])}"
             )
         return f"INNER JOIN {self.table} ON {' AND '.join(conditions)} "
@@ -141,7 +141,7 @@ class LeftJoinBuilder(_ConditionsBuilder):
         conditions = []
         for con in self.conditions:
             conditions.append(
-            f"{_get_tcn_without_validator(self.from_table, con[0])} = "
+            f"{_get_tcn_without_validator(self.from_table, con[0])} = " +
             f"{_get_tcn_without_validator(self.table, con[1])}")
         return f"Left JOIN {self.table} ON {' AND '.join(conditions)} "
 
@@ -160,7 +160,7 @@ class RightJoinBuilder(_ConditionsBuilder):
         conditions = []
         for con in self.conditions:
             conditions.append(
-                f"{_get_tcn_without_validator(self.from_table, con[0])} = "
+                f"{_get_tcn_without_validator(self.from_table, con[0])} = " +
                 f"{_get_tcn_without_validator(self.table, con[1])}"
             )
         return f"RIGHT JOIN {self.table} ON {' AND '.join(conditions)} "
