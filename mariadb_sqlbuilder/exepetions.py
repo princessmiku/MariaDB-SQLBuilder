@@ -46,3 +46,15 @@ class ValidatorUnknown(Exception):
     """
     If is an error unexpectedly, because it shouldn't be possible
     """
+
+
+class ValidatorTableNotFound(Exception):
+    """
+    If a table not registered in the validator system
+    """
+
+
+class ValidatorColumnNotFound(Exception):
+    """
+    If a Column of a table not registered in the validator system
+    """

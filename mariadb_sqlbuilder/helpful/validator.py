@@ -16,7 +16,7 @@ from uuid import UUID
 from _decimal import Decimal
 
 from mariadb_sqlbuilder.exepetions import InvalidColumnType, ValidatorType, ValidatorLength, ValidatorUnknown, \
-    ValidatorRange
+    ValidatorRange, ValidatorTableNotFound, ValidatorColumnNotFound
 
 
 class _Column:
@@ -225,3 +225,25 @@ class Validator:
                 f"WHERE TABLE_NAME = N'{table}' and TABLE_SCHEMA = N'{self._conn.schema}';"
             )
             print(table, columns)
+
+    def check_table_exists(self, table: str):
+        if table in self.__tables:
+            return
+        raise ValidatorTableNotFound(
+            f"Table {table} not found. Check upper- and lowercase. If you change the database "
+            "while the system is running, regenerate the validator"
+        )
+
+    def check_column_exists(self, table: str, column: str):
+        self.check_table_exists(table)
+        if column in self.__structure[table]:
+            return
+        raise ValidatorColumnNotFound(
+            f"The column {column} in the table {table} not found. "
+            f"Check upper- and lowercase. If you change the database "
+            "while the system is running, regenerate the validator"
+        )
+
+    def check_value_type(self, table: str, colum: str, value: any):
+        self.check_column_exists(table, colum)
+        return self.__structure[table][colum].check(value)
