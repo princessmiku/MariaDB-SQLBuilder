@@ -4,6 +4,7 @@ This modul is there for build a sql update query
 from json import dumps
 from typing import Union, Dict, List
 
+from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 from .base_builder import ConditionsBuilder, _get_tcn, _transform_value_valid
 from .join_builder import BaseJoinExtension
 
@@ -23,7 +24,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.__subSets = []
         self.__jsonBuildings = []
 
-    def set(self, column, value: Union[str, int, None]):
+    def set(self, column, value: Union[str, int, None, Arithmetic]):
         """
         Set a value for a column in the table to update.
         :param column:
@@ -33,7 +34,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.__toSet[_get_tcn(self.tb.table, column)] = _transform_value_valid(value)
         return self
 
-    def join_set(self, join_table: str, join_column: str, value: [Union[str, int, None]]):
+    def join_set(self, join_table: str, join_column: str, value: Union[str, int, None, Arithmetic]):
         """
         Set a value for a column in a join table.
         :param join_table:

@@ -1,6 +1,13 @@
 Update data in the Database
 
 # First
+
+### Excepted Types in set
+- String
+- Integer
+- Arithmetic
+
+
 ## Example
 ```python
 connection.table("myTable").update()
@@ -9,8 +16,8 @@ connection.table("myTable").update()
 # Repeatable
 - [all of conditions builder](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Conditions)
 - [all of base join extention](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Base-Join-Extention)
-- `set(column: str, value: Union[str, int, None])` - set the data of a specific column
-- `join_set(join_table: str, join_column: str, value: [Union[str, int, None]])` - set the data of a specific column of a join table, but you have to specify the table of the join from which you want to set the column.
+- `set(column: str, value)` - set the data of a specific column
+- `join_set(join_table: str, join_column: str, value)` - set the data of a specific column of a join table, but you have to specify the table of the join from which you want to set the column.
 - `im_sure_im_not_use_conditions()` - security so that you do not unknowingly overwrite everything
 - `set_json(self, json: Dict[str, any], pop: List[str] = None)` - set data with a valid json, witch you can example get it with a select. Sub dict will default insert as a join, so do not forget when it is time to set a join builder. `Pop`- pop keys from the json, if you have joins in select that not should insert in a table.
 

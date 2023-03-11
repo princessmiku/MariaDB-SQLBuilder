@@ -4,7 +4,7 @@ This modul is there for the basic functions of all query's
 from abc import ABC, abstractmethod
 from typing import Union, Tuple, List
 
-from exepetions import BetweenValueIsBigger
+from mariadb_sqlbuilder.exepetions import BetweenValueIsBigger
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 
 
@@ -16,7 +16,7 @@ def _get_tcn(table: str, column: str) -> str:
 def _transform_value_valid(value: Union[str, int]) -> str:
     if value is None:
         return "NULL"
-    elif isinstance(value, int):
+    elif isinstance(value, (int, Arithmetic)):
         return str(value)
     return f"'{value}'"
 

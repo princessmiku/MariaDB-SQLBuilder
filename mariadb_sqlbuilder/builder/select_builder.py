@@ -3,6 +3,7 @@ This modul is there for build a sql select query
 """
 from typing import Union
 
+from mariadb_sqlbuilder.exepetions import JsonNotSupported
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 from .base_builder import ConditionsBuilder, _get_tcn
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
@@ -60,7 +61,11 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         Executes the SELECT query and returns the first row of the result in a JSON format.
         :return:
         """
-        return convert_to_dict_single(self.tb.table, self.column, self.fetchone())
+        if self._contains_arithmetic:
+            raise JsonNotSupported(
+                "This query contains arithmetics, they are not supported in json returns"
+            )
+        return convert_to_dict_single(self.tb.table, self.expressions, self.fetchone())
 
     def fetchall(self):
         """
@@ -81,7 +86,11 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         Executes the SELECT query and returns all the rows of the result in a JSON format.
         :return:
         """
-        return convert_to_dict_all(self.tb.table, self.column, self.fetchall())
+        if self._contains_arithmetic:
+            raise JsonNotSupported(
+                "This query contains arithmetics, they are not supported in json returns"
+            )
+        return convert_to_dict_all(self.tb.table, self.expressions, self.fetchall())
 
     def get_sql(self) -> str:
         """
