@@ -16,8 +16,8 @@ def _get_tcn(tb, column: str) -> str:
     return tb.table + "." + column
 
 
-def _get_tcn_without_validator(tb, column: str) -> str:
-    return tb.table + "." + column
+def _get_tcn_without_validator(table: str, column: str) -> str:
+    return table + "." + column
 
 
 def _get_tcn_validator(table: str, column: str, validator: Validator) -> str:
