@@ -5,7 +5,7 @@ from typing import Union
 
 from mariadb_sqlbuilder.exepetions import JsonNotSupported
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
-from .base_builder import ConditionsBuilder, _get_tcn, _get_tcn_validator
+from .base_builder import ConditionsBuilder, _get_tcn_validator
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
 from .join_builder import BaseJoinExtension
 
@@ -110,7 +110,10 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         :return:
         """
         if isinstance(expressions, str):
-            self.expressions += [_get_tcn_validator(tb, c, self.tb.validator) for c in expressions.replace(", ", ",").split(",")]
+            self.expressions += [
+                _get_tcn_validator(tb, c, self.tb.validator)
+                for c in expressions.replace(", ", ",").split(",")
+            ]
         if isinstance(expressions, list) or args:
             loop_expressions = []
             if isinstance(expressions, list):

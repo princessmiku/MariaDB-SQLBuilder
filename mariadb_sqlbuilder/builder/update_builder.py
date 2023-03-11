@@ -5,7 +5,7 @@ from json import dumps
 from typing import Union, Dict, List
 
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
-from .base_builder import ConditionsBuilder, _get_tcn, _transform_value_valid, _get_tcn_validator, \
+from .base_builder import ConditionsBuilder, _transform_value_valid, \
     _get_tcn_without_validator
 from .join_builder import BaseJoinExtension
 

@@ -82,6 +82,10 @@ class TableBuilder:
 
     @property
     def validator(self) -> Validator:
+        """
+        Returns the current validator
+        :return:
+        """
         return self.__connector.validator
 
     @property
