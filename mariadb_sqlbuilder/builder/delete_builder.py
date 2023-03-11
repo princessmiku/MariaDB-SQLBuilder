@@ -31,12 +31,12 @@ class DeleteBuilder(ConditionsBuilder):
         """
         if not self.is_conditions() and not self.sure_not_use_conditions:
             raise PermissionError('Delete Builder: You are not sure enough not to use where')
-        cursor = self.tb.connect.get_available_cursor()
+        cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
             self.get_sql()
         )
         cursor.connection.commit()
-        self.tb.connect.release_cursor(cursor)
+        self.tb.connector.release_cursor(cursor)
 
     def get_sql(self) -> str:
         """

@@ -39,7 +39,7 @@ class ExistsBuilder(ConditionsBuilder):
         Checks if a row exists in the table that matches the specified conditions.
         :return:
         """
-        cursor = self.tb.connect.get_available_cursor()
+        cursor = self.tb.connector.get_available_cursor()
         try:
             cursor.execute(
                 self.get_sql()
@@ -49,8 +49,9 @@ class ExistsBuilder(ConditionsBuilder):
             if "Unknown column" in err.args[0]:
                 result = (0,)
             else:
+                self.tb.connector.release_cursor(cursor)
                 raise mariadb.OperationalError(err)
-        self.tb.connect.release_cursor(cursor)
+        self.tb.connector.release_cursor(cursor)
         if result is None:
             return False
         return bool(result[0])

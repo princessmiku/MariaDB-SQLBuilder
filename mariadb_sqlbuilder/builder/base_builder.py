@@ -4,12 +4,25 @@ This modul is there for the basic functions of all query's
 from abc import ABC, abstractmethod
 from typing import Union, Tuple
 
+from helpful.validator import Validator
 from mariadb_sqlbuilder.exepetions import BetweenValueIsBigger
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 
 
 # get the name of a table column
-def _get_tcn(table: str, column: str) -> str:
+def _get_tcn(tb, column: str) -> str:
+    if tb.validator:
+        tb.validator.check_column_exists(tb.table, column)
+    return tb.table + "." + column
+
+
+def _get_tcn_without_validator(tb, column: str) -> str:
+    return tb.table + "." + column
+
+
+def _get_tcn_validator(table: str, column: str, validator: Validator) -> str:
+    if validator:
+        validator.check_column_exists(table, column)
     return table + "." + column
 
 
@@ -72,7 +85,7 @@ class ConditionsBuilder(BaseBuilder):
         """
         self.__check_if_or_and()
         if isinstance(expression, str):
-            self.__conditions.append(f"{_get_tcn(self.tb.table, expression)} {filter_operator} "
+            self.__conditions.append(f"{_get_tcn(self.tb, expression)} {filter_operator} "
                                           f"{_transform_value_valid(value)}")
         else:
             self.__conditions.append(f"{expression} {filter_operator} "
@@ -90,7 +103,7 @@ class ConditionsBuilder(BaseBuilder):
         self.__check_if_or_and()
         if isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb.table, expression)} IN {str(checked_list)}"
+                f"{_get_tcn(self.tb, expression)} IN {str(checked_list)}"
             )
         else:
             self.__conditions.append(
@@ -109,7 +122,7 @@ class ConditionsBuilder(BaseBuilder):
         self.__check_if_or_and()
         if isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb.table, expression)} NOT IN {str(checked_list)}"
+                f"{_get_tcn(self.tb, expression)} NOT IN {str(checked_list)}"
             )
         else:
             self.__conditions.append(
@@ -127,7 +140,7 @@ class ConditionsBuilder(BaseBuilder):
         self.__check_if_or_and()
         if isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb.table, expression)} LIKE {_transform_value_valid(value)}"
+                f"{_get_tcn(self.tb, expression)} LIKE {_transform_value_valid(value)}"
             )
         else:
             self.__conditions.append(
@@ -145,7 +158,7 @@ class ConditionsBuilder(BaseBuilder):
         self.__check_if_or_and()
         if isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb.table, expression)} NOT LIKE {_transform_value_valid(value)}"
+                f"{_get_tcn(self.tb, expression)} NOT LIKE {_transform_value_valid(value)}"
             )
         else:
             self.__conditions.append(
@@ -168,7 +181,7 @@ class ConditionsBuilder(BaseBuilder):
                 raise BetweenValueIsBigger("Value 1 is bigger then value 2")
         if isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb.table, expression)} "
+                f"{_get_tcn(self.tb, expression)} "
                 f"BETWEEN {_transform_value_valid(value1)} "
                 f"AND {_transform_value_valid(value2)}"
             )
@@ -195,7 +208,7 @@ class ConditionsBuilder(BaseBuilder):
                 raise BetweenValueIsBigger("Value 1 is bigger then value 2")
         if isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb.table, expression)} "
+                f"{_get_tcn(self.tb, expression)} "
                 f"NOT BETWEEN {_transform_value_valid(value1)} "
                 f"AND {_transform_value_valid(value2)}"
             )
@@ -214,7 +227,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} IS NOT NULL")
+        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS NOT NULL")
         return self
 
     def is_null(self, column: str):
@@ -224,7 +237,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} IS NULL")
+        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS NULL")
         return self
 
     def is_true(self, column: str):
@@ -234,7 +247,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} IS TRUE")
+        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS TRUE")
         return self
 
     def is_not_true(self, column: str):
@@ -244,7 +257,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} IS NOT TRUE")
+        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS NOT TRUE")
         return self
 
     def is_false(self, column: str):
@@ -254,7 +267,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} IS FALSE")
+        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS FALSE")
         return self
 
     def is_not_false(self, column: str):
@@ -264,7 +277,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} IS NOT FALSE")
+        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS NOT FALSE")
         return self
 
     def __check_if_or_and(self):

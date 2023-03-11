@@ -3,6 +3,7 @@ This modul is there for handle table functions
 """
 from typing import Union
 
+from helpful.validator import Validator
 from .select_builder import SelectBuilder
 from .update_builder import UpdateBuilder
 from .insert_builder import InsertBuilder
@@ -17,9 +18,10 @@ class TableBuilder:
     This is a dummy docstring.
     """
 
-    def __init__(self, connect, table: str):
-        self.connect = connect
-        self.table = table
+    def __init__(self, connector, table: str):
+        connector.validator.check_table_exists(table)
+        self.__connector = connector
+        self.__table = table
 
     def select(self, expressions: Union[str, list], *args, **kwargs) -> SelectBuilder:
         """
@@ -69,3 +71,23 @@ class TableBuilder:
         :return:
         """
         return ExistsBuilder(self, **kwargs)
+
+    @property
+    def table(self):
+        """
+        Protect the table for changes
+        :return:
+        """
+        return self.__table
+
+    @property
+    def validator(self) -> Validator:
+        return self.__connector.validator
+
+    @property
+    def connector(self):
+        """
+        Protect the connector for changes
+        :return:
+        """
+        return self.__connector
