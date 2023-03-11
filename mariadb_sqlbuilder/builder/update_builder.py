@@ -5,7 +5,8 @@ from json import dumps
 from typing import Union, Dict, List
 
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
-from .base_builder import ConditionsBuilder, _get_tcn, _transform_value_valid
+from .base_builder import ConditionsBuilder, _transform_value_valid, \
+    _get_tcn_without_validator
 from .join_builder import BaseJoinExtension
 
 
@@ -31,7 +32,8 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         :param value:
         :return:
         """
-        self.__toSet[_get_tcn(self.tb.table, column)] = _transform_value_valid(value)
+        self.tb.validator.check_value_type(self.tb.table, column, value)
+        self.__toSet[_get_tcn_without_validator(self.tb, column)] = _transform_value_valid(value)
         return self
 
     def join_set(self, join_table: str, join_column: str, value: Union[str, int, None, Arithmetic]):
@@ -42,7 +44,10 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         :param value:
         :return:
         """
-        self.__toSet[_get_tcn(join_table, join_column)] = _transform_value_valid(value)
+        self.tb.validator.check_value_type(join_table, join_column, value)
+        self.__toSet[
+            _get_tcn_without_validator(join_table, join_column)
+        ] = _transform_value_valid(value)
         return self
 
     def im_sure_im_not_use_conditions(self, im_sure: bool = True):
@@ -61,7 +66,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         if not self.is_conditions() and not self.sure_not_use_conditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
-        cursor = self.tb.connect.get_available_cursor()
+        cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
             self.get_sql()
         )
@@ -69,7 +74,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
             for subset in self.__subSets:
                 cursor.execute(subset.get_sql())
         cursor.connection.commit()
-        self.tb.connect.release_cursor(cursor)
+        self.tb.connector.release_cursor(cursor)
 
     def get_sql(self) -> str:
         """

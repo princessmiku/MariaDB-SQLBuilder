@@ -28,6 +28,7 @@ class InsertBuilder(BaseBuilder):
         """
         if not self.tb.table in self.__toSet:
             self.__toSet[self.tb.table] = {}
+        self.tb.validator.check_value_type(self.tb.table, column, value)
         self.__toSet[self.tb.table][column] = _transform_value_valid(value)
         return self
 
@@ -52,6 +53,7 @@ class InsertBuilder(BaseBuilder):
         """
         if not table in self.__toSet:
             self.__toSet[table] = {}
+        self.tb.validator.check_value_type(table, column, value)
         self.__toSet[table][column] = _transform_value_valid(value)
         return self
 
@@ -69,12 +71,12 @@ class InsertBuilder(BaseBuilder):
         Execute the insert query.
         :return:
         """
-        cursor = self.tb.connect.get_available_cursor()
+        cursor = self.tb.connector.get_available_cursor()
         result = cursor.execute(
             self.get_sql()
         )
         cursor.connection.commit()
-        self.tb.connect.release_cursor(cursor)
+        self.tb.connector.release_cursor(cursor)
         return result
 
     def get_sql(self) -> str:

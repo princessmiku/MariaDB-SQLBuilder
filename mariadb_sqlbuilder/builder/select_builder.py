@@ -5,7 +5,7 @@ from typing import Union
 
 from mariadb_sqlbuilder.exepetions import JsonNotSupported
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
-from .base_builder import ConditionsBuilder, _get_tcn
+from .base_builder import ConditionsBuilder, _get_tcn_validator
 from .dict_converter import convert_to_dict_single, convert_to_dict_all
 from .join_builder import BaseJoinExtension
 
@@ -47,13 +47,13 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         Executes the SELECT query and returns the first row of the result.
         :return:
         """
-        cursor = self.tb.connect.getAvailableCursor()
+        cursor = self.tb.connector.getAvailableCursor()
         cursor.execute(
             self.get_sql()
         )
         result = cursor.fetchone()
         cursor.connection.commit()
-        self.tb.connect.makeCursorAvailable(cursor)
+        self.tb.connector.makeCursorAvailable(cursor)
         return result
 
     def fetchone_json(self):
@@ -72,13 +72,13 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         Executes the SELECT query and returns all the rows of the result.
         :return:
         """
-        cursor = self.tb.connect.get_available_cursor()
+        cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
             self.get_sql()
         )
         result = cursor.fetchall()
         cursor.connection.commit()
-        self.tb.connect.release_cursor(cursor)
+        self.tb.connector.release_cursor(cursor)
         return result
 
     def fetchall_json(self):
@@ -110,7 +110,10 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         :return:
         """
         if isinstance(expressions, str):
-            self.expressions += [_get_tcn(tb, c) for c in expressions.replace(", ", ",").split(",")]
+            self.expressions += [
+                _get_tcn_validator(tb, c, self.tb.validator)
+                for c in expressions.replace(", ", ",").split(",")
+            ]
         if isinstance(expressions, list) or args:
             loop_expressions = []
             if isinstance(expressions, list):
@@ -122,4 +125,4 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
                     self._contains_arithmetic = True
                     self.expressions.append(str(expression))
                 else:
-                    self.expressions.append(_get_tcn(self.tb.table, expression))
+                    self.expressions.append(_get_tcn_validator(tb, expression, self.tb.validator))

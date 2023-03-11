@@ -26,6 +26,7 @@ class UpsertBuilder(BaseBuilder):
         :param value:
         :return:
         """
+        self.tb.validator.check_value_type(self.tb.table, column, value)
         if self.tb.table not in self.__toSet:
             self.__toSet[self.tb.table] = {}
         self.__toSet[self.tb.table][column] = _transform_value_valid(value)
@@ -50,6 +51,7 @@ class UpsertBuilder(BaseBuilder):
         :param value:
         :return:
         """
+        self.tb.validator.check_value_type(table, column, value)
         if table not in self.__toSet:
             self.__toSet[table] = {}
         self.__toSet[table][column] = _transform_value_valid(value)
@@ -60,12 +62,12 @@ class UpsertBuilder(BaseBuilder):
         Execute the UpsertBuilder object's SQL query and commit the changes.
         :return:
         """
-        cursor = self.tb.connect.get_available_cursor()
+        cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
             self.get_sql()
         )
         cursor.connection.commit()
-        self.tb.connect.release_cursor(cursor)
+        self.tb.connector.release_cursor(cursor)
 
     def get_sql(self) -> str:
         """

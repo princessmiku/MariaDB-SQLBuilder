@@ -16,8 +16,9 @@ class _JoinBuilder(ABC):
     This is a dummy docstring.
     """
 
-    def __init__(self):
+    def __init__(self, table: str):
         self.from_table = ''
+        self.table: str = table
 
     @abstractmethod
     def get_sql(self) -> str:
@@ -45,6 +46,12 @@ class BaseJoinExtension:
         :return:
         """
         join_builder.from_table = self._tb.table
+        self._tb.validator.check_table_exists(join_builder.table)
+        if isinstance(join_builder, _ConditionsBuilder):
+            join_builder: _ConditionsBuilder
+            for condition in join_builder.conditions:
+                self._tb.validator.check_column_exists(self._tb, condition[0])
+                self._tb.validator.check_column_exists(join_builder.table, condition[1])
         self._join_builders.append(join_builder)
         self._joins.append(join_builder.get_sql())
         return self
@@ -62,8 +69,7 @@ class CrossJoinBuilder(_JoinBuilder):
         :param table:
         :param kwargs:
         """
-        super().__init__()
-        self.table = table
+        super().__init__(table)
 
     def get_sql(self) -> str:
         """
@@ -80,8 +86,7 @@ class _ConditionsBuilder(_JoinBuilder):
     """
 
     def __init__(self, table: str):
-        super().__init__()
-        self.table = table
+        super().__init__(table)
         self.conditions = []
 
     def condition(self, column_from_table: str, column_join_table: str):
