@@ -15,3 +15,21 @@ class JsonNotSupported(Exception):
     If Json not supported, in example if you use Arithmetic, there's
     no name for that key
     """
+
+
+class InvalidColumnType(Exception):
+    """
+    If a type of Column not supported in the validator system
+    """
+
+
+class ValidatorType(Exception):
+    """
+    The python type of the given value are not a supported type
+    of the column
+    """
+
+class ValidatorLength(Exception):
+    """
+    The length of the value is not in the allowed length of the column
+    """

@@ -3,6 +3,7 @@ The module is there to establish a connection to the database
 """
 import mariadb
 
+from .helpful.validator import Validator
 from .builder import TableBuilder
 from .sqlscript.splitter import split_sql_script_in_parameters
 
@@ -15,7 +16,8 @@ class Connector:
 
     def __init__(self, host: str, user: str, password: str, database: str, *args, port: int = 3306,
                  pool_name: str = "sqlbuilder_pool",
-                 pool_size: int = 3, pool_reset_connection: bool = False, **kwargs):
+                 pool_size: int = 3, pool_reset_connection: bool = False,
+                 use_validator: bool = True, **kwargs):
         self.connections = mariadb.ConnectionPool(
             pool_name=pool_name,
             pool_size=pool_size,
@@ -28,6 +30,7 @@ class Connector:
             *args,
             **kwargs
         )
+        self.__schema = database
         self.connections_list: list = []
         self.in_using_cursors = []
         self.available_cursor: list = []
@@ -39,6 +42,9 @@ class Connector:
             self.connections_list.append(conn)
             self.available_cursor.append(conn.cursor())
             i += 1
+        self.__validator = None
+        if use_validator:
+            self.__validator = Validator(self)
 
     def table(self, name: str) -> TableBuilder:
         """
@@ -171,3 +177,11 @@ class Connector:
         result = cursor.fetchall()
         self.release_cursor(cursor)
         return result
+
+    @property
+    def schema(self):
+        return self.__schema
+
+    @property
+    def validator(self) -> Validator:
+        return self.__validator
