@@ -9,15 +9,15 @@ The default condition for the query is `AND`, `OR` is possible
 - `default_and()`
 - `default_or()`
 ## WHERE
-- `where(column: str, value: Union[str, int], filter_operator: str)`
-- `where_in(column: str, checkedList: tuple[str, int])`
-- `where_in_not(column: str, checkedList: tuple[str, int])`
+- `where(expression: Union[str, Arithmetic], expression: Union[str, int], filter_operator: str)`
+- `where_in(expression: Union[str, Arithmetic], checkedList: tuple[str, int, float])`
+- `where_in_not(expression: Union[str, Arithmetic], checkedList: tuple[str, int, float])`
 ## Like
-- `like(column: str, value: Union[str, int])`
-- `like_not(column: str, value: Union[str, int])`
+- `like(expression: Union[str, Arithmetic], value: Union[str, int, float])`
+- `like_not(expression: Union[str, Arithmetic], value: Union[str, int, float])`
 ## Between
-- `between(column: str, value1: Union[str, int], value2: Union[str, int])`
-- `between_not(column: str, value1: Union[str, int], value2: Union[str, int])`
+- `between(expression: Union[str, Arithmetic], value1: Union[str, int], value2: Union[str, int, float])`
+- `between_not(expression: Union[str, Arithmetic], value1: Union[str, int], value2: Union[str, int, float])`
 ## NULL and Booleans
 - `is_null(column: str)`
 - `is_not_null(column: str)`

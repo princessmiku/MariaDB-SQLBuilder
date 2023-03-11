@@ -4,6 +4,9 @@ This modul is there for the basic functions of all query's
 from abc import ABC, abstractmethod
 from typing import Union, Tuple
 
+from mariadb_sqlbuilder.exepetions import BetweenValueIsBigger
+from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
+
 
 # get the name of a table column
 def _get_tcn(table: str, column: str) -> str:
@@ -13,7 +16,7 @@ def _get_tcn(table: str, column: str) -> str:
 def _transform_value_valid(value: Union[str, int]) -> str:
     if value is None:
         return "NULL"
-    elif isinstance(value, int):
+    elif isinstance(value, (int, Arithmetic)):
         return str(value)
     return f"'{value}'"
 
@@ -58,97 +61,150 @@ class ConditionsBuilder(BaseBuilder):
             self.__conditions = []
             self.__default_condition = "AND"
 
-    def where(self, column: str, value: Union[str, int], filter_operator: str = "="):
+    def where(self, expression: Union[str, Arithmetic],
+              value: Union[str, int, float], filter_operator: str = "="):
         """
         Adds a WHERE condition for an exact match of a column value.
-        :param column:
+        :param expression: a Column or an Arithmetic
         :param value:
         :param filter_operator:
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} {filter_operator} "
-                                      f"{_transform_value_valid(value)}")
+        if isinstance(expression, str):
+            self.__conditions.append(f"{_get_tcn(self.tb.table, expression)} {filter_operator} "
+                                          f"{_transform_value_valid(value)}")
+        else:
+            self.__conditions.append(f"{expression} {filter_operator} "
+                                     f"{_transform_value_valid(value)}")
         return self
 
-    def where_in(self, column: str, checked_list: Tuple[str, int]):
+    def where_in(self, expression: Union[str, Arithmetic],
+                 checked_list: Tuple[str, int, float]):
         """
         Adds a WHERE condition for a list of checked values in a column.
-        :param column:
+        :param expression: a Column or an Arithmetic
         :param checked_list:
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} IN {str(checked_list)}")
+        if isinstance(expression, str):
+            self.__conditions.append(
+                f"{_get_tcn(self.tb.table, expression)} IN {str(checked_list)}"
+            )
+        else:
+            self.__conditions.append(
+                f"{expression} IN {str(checked_list)}"
+            )
         return self
 
-    def where_in_not(self, column: str, checked_list: Tuple[str, int]):
+    def where_in_not(self, expression: Union[str, Arithmetic],
+                     checked_list: Tuple[str, int, float]):
         """
         Adds a WHERE condition for a list of unchecked values in a column.
-        :param column:
+        :param expression: a Column or an Arithmetic
         :param checked_list:
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb.table, column)} NOT IN {str(checked_list)}")
+        if isinstance(expression, str):
+            self.__conditions.append(
+                f"{_get_tcn(self.tb.table, expression)} NOT IN {str(checked_list)}"
+            )
+        else:
+            self.__conditions.append(
+                f"{expression} NOT IN {str(checked_list)}"
+            )
         return self
 
-    def like(self, column: str, value: Union[str, int]):
+    def like(self, expression: Union[str, Arithmetic], value: Union[str, int, float]):
         """
         Adds a WHERE condition for a partial match of a column value.
-        :param column:
+        :param expression: a Column or an Arithmetic
         :param value:
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(
-            f"{_get_tcn(self.tb.table, column)} LIKE {_transform_value_valid(value)}"
-        )
+        if isinstance(expression, str):
+            self.__conditions.append(
+                f"{_get_tcn(self.tb.table, expression)} LIKE {_transform_value_valid(value)}"
+            )
+        else:
+            self.__conditions.append(
+                f"{expression} LIKE {_transform_value_valid(value)}"
+            )
         return self
 
-    def like_not(self, column: str, value: Union[str, int]):
+    def like_not(self, expression: Union[str, Arithmetic], value: Union[str, int, float]):
         """
         Adds a WHERE condition for a partial mismatch of a column value.
-        :param column:
+        :param expression: a Column or an Arithmetic
         :param value:
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(
-            f"{_get_tcn(self.tb.table, column)} NOT LIKE {_transform_value_valid(value)}"
-        )
+        if isinstance(expression, str):
+            self.__conditions.append(
+                f"{_get_tcn(self.tb.table, expression)} NOT LIKE {_transform_value_valid(value)}"
+            )
+        else:
+            self.__conditions.append(
+                f"{expression} NOT LIKE {_transform_value_valid(value)}"
+            )
         return self
 
-    def between(self, column: str, value1: Union[str, int], value2: Union[str, int]):
+    def between(self, expression: Union[str, Arithmetic],
+                value1: Union[str, int], value2: Union[str, int, float]):
         """
         Adds a WHERE condition for a range of values in a column.
-        :param column:
+        :param expression: a Column or an Arithmetic
         :param value1:
         :param value2:
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(
-            f"{_get_tcn(self.tb.table, column)} "
-            f"BETWEEN {_transform_value_valid(value1)} "
-            f"AND {_transform_value_valid(value2)}"
-        )
+        if isinstance(value1, (int, float)) and isinstance(value2, (int, float)):
+            if value1 > value2:
+                raise BetweenValueIsBigger("Value 1 is bigger then value 2")
+        if isinstance(expression, str):
+            self.__conditions.append(
+                f"{_get_tcn(self.tb.table, expression)} "
+                f"BETWEEN {_transform_value_valid(value1)} "
+                f"AND {_transform_value_valid(value2)}"
+            )
+        else:
+            self.__conditions.append(
+                f"{expression} "
+                f"BETWEEN {_transform_value_valid(value1)} "
+                f"AND {_transform_value_valid(value2)}"
+            )
         return self
 
-    def between_not(self, column: str, value1: Union[str, int], value2: Union[str, int]):
+    def between_not(self, expression: Union[str, Arithmetic],
+                    value1: Union[str, int, float], value2: Union[str, int, float]):
         """
         Adds a WHERE condition for a range of values not in a column.
-        :param column:
+        :param expression: a Column or an Arithmetic
         :param value1:
         :param value2:
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(
-            f"{_get_tcn(self.tb.table, column)} "
-            f"NOT BETWEEN {_transform_value_valid(value1)} "
-            f"AND {_transform_value_valid(value2)}"
-        )
+        if isinstance(value1, (int, float)) and isinstance(value2, (int, float)):
+            if value1 > value2:
+                raise BetweenValueIsBigger("Value 1 is bigger then value 2")
+        if isinstance(expression, str):
+            self.__conditions.append(
+                f"{_get_tcn(self.tb.table, expression)} "
+                f"NOT BETWEEN {_transform_value_valid(value1)} "
+                f"AND {_transform_value_valid(value2)}"
+            )
+        else:
+            self.__conditions.append(
+                f"{expression} "
+                f"NOT BETWEEN {_transform_value_valid(value1)} "
+                f"AND {_transform_value_valid(value2)}"
+            )
         return self
 
     def is_not_null(self, column: str):

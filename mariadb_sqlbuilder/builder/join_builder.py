@@ -34,7 +34,7 @@ class BaseJoinExtension:
     """
 
     def __init__(self, tb, **kwargs):
-        self.tb = tb
+        self._tb = tb
         self._join_builders = []
         self._joins = []
 
@@ -44,7 +44,7 @@ class BaseJoinExtension:
         :param join_builder:
         :return:
         """
-        join_builder.from_table = self.tb.table
+        join_builder.from_table = self._tb.table
         self._join_builders.append(join_builder)
         self._joins.append(join_builder.get_sql())
         return self

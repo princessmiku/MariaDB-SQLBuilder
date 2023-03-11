@@ -21,14 +21,14 @@ class TableBuilder:
         self.connect = connect
         self.table = table
 
-    def select(self, column: str, **kwargs) -> SelectBuilder:
+    def select(self, expressions: Union[str, list], *args, **kwargs) -> SelectBuilder:
         """
         Returns a SelectBuilder instance to build a SELECT query.
-        :param column:
+        :param expressions:
         :param kwargs:
         :return:
         """
-        return SelectBuilder(self, column, **kwargs)
+        return SelectBuilder(self, expressions, *args, **kwargs)
 
     def update(self, **kwargs) -> UpdateBuilder:
         """

@@ -2,7 +2,7 @@
 This modul is there for fake a connection to a database,
 if you only want to use the sql query builder
 """
-from ..builder import TableBuilder
+from mariadb_sqlbuilder.builder import TableBuilder
 
 
 class Connector:

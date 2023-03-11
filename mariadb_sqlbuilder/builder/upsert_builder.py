@@ -4,6 +4,7 @@ This modul is there for build a sql upsert query
 from json import dumps
 from typing import Union, Dict, List
 
+from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 from .base_builder import BaseBuilder, _transform_value_valid
 
 
@@ -15,11 +16,10 @@ class UpsertBuilder(BaseBuilder):
 
     def __init__(self, tb, **kwargs):
         super().__init__(tb, **kwargs)
-        self.tb = tb
         self.__toSet = {}
         self.__jsonBuildings = []
 
-    def set(self, column: str, value: Union[str, int, None]):
+    def set(self, column: str, value: Union[str, int, None, Arithmetic]):
         """
         Set a column value for the current table.
         :param column:
@@ -42,7 +42,7 @@ class UpsertBuilder(BaseBuilder):
         self.__toSet[table] = {}
         return self
 
-    def table_set(self, table: str, column: str, value: Union[str, int, None]):
+    def table_set(self, table: str, column: str, value: Union[str, int, None, Arithmetic]):
         """
         Set a column value for a specific table.
         :param table:
