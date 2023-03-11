@@ -9,20 +9,22 @@ It checks
 - if the value type the required type of the column
 
 """
+import re
 from datetime import datetime
 from typing import List, Tuple
 from uuid import UUID
 
 from _decimal import Decimal
 
-from mariadb_sqlbuilder.exepetions import InvalidColumnType, ValidatorType, ValidatorLength, ValidatorUnknown, \
-    ValidatorRange, ValidatorTableNotFound, ValidatorColumnNotFound
+from mariadb_sqlbuilder.exepetions import InvalidColumnType, ValidatorType,\
+    ValidatorLength, ValidatorUnknown, ValidatorRange, ValidatorTableNotFound,\
+    ValidatorColumnNotFound
 
 
 class _Column:
 
     def __init__(self, name: str, data_type: str, length: int, nullable: bool,
-                 unsigned: bool, collation_name: str):
+                 unsigned: bool, character_set_name: str):
         self.name = name
         self.nullable = nullable
         self.range: Tuple[int, int] = (0, 0)
@@ -30,7 +32,7 @@ class _Column:
         self.unsigned = unsigned
         self.data_type_name = data_type
         self.data_type: any = None
-        self.collation_name = collation_name
+        self.character_set_name = character_set_name
         if data_type in ["varchar", "text"]:
             self.data_type = str
         elif data_type in ["int", "bigint", "smallint", "mediumint", "tinyint"]:
@@ -122,7 +124,7 @@ class _Column:
                     self.length = 255
             elif data_type == "varchar":
                 if length == 0:
-                    if "utf8" in collation_name:
+                    if "utf8" in character_set_name:
                         self.length = 21844
                     else:
                         self.length = 65532
@@ -157,6 +159,11 @@ class _Column:
         :param value:
         :return:
         """
+        if value is None and not self.nullable:
+            raise ValidatorType("The given value is None, but the accepted"
+                                "value can't be None")
+        if value is None:
+            return True
         if not isinstance(value, self.data_type):
             raise ValidatorType(
                 f"The type ({type(value)}) of the given value do "
@@ -177,7 +184,7 @@ class _Column:
             elif self.data_type_name in [
                 "blob", "tinyblob", "mediumblob", "longblob"
             ]:
-                length = len(value.encode(self.collation_name))
+                length = len(value.encode(self.character_set_name))
                 if length > self.length:
                     raise ValidatorLength(
                         f"The bytes of the string ({length}) "
@@ -220,10 +227,22 @@ class Validator:
         for table in self.__tables:
             self.__structure[table] = {}
             columns = conn.execute_fetchmany(
-                "SELECT COLUMN_NAME, COLUMN_TYPE " +
+                "SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, CHARACTER_SET_NAME " +
                 "FROM information_schema.COLUMNS " +
                 f"WHERE TABLE_NAME = N'{table}' and TABLE_SCHEMA = N'{self._conn.schema}';"
             )
+            for column in columns:
+                data_type = column[1].split("(")[0] \
+                    if "(" in column[1] else column[1].split(" ")[0]
+                match = re.search('\((\d+)\)', column[1])
+                if match:
+                    length = int(match.group(1))
+                else:
+                    length = 0
+                unsigned = True if "unsigned" in column[1] else False
+                self.__structure[table][column[0]] = _Column(
+                    column[0], data_type, length, column[2], unsigned, column[3]
+                )
             print(table, columns)
 
     def check_table_exists(self, table: str):
