@@ -29,7 +29,14 @@ class ValidatorType(Exception):
     of the column
     """
 
+
 class ValidatorLength(Exception):
     """
     The length of the value is not in the allowed length of the column
+    """
+
+
+class ValidatorUnknown(Exception):
+    """
+    If is an error unexpectedly, because it shouldn't be possible
     """

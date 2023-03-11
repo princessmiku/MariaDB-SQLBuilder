@@ -15,7 +15,7 @@ from uuid import UUID
 
 from _decimal import Decimal
 
-from mariadb_sqlbuilder.exepetions import InvalidColumnType
+from mariadb_sqlbuilder.exepetions import InvalidColumnType, ValidatorType, ValidatorLength, ValidatorUnknown
 
 
 class _Column:
@@ -28,6 +28,8 @@ class _Column:
         self.length = length
         self.unsigned = unsigned
         self.data_type_name = data_type
+        self.data_type: any = None
+        self.collation_name = collation_name
         if data_type in ["varchar", "text"]:
             self.data_type = str
         elif data_type in ["int", "bigint", "smallint", "mediumint", "tinyint"]:
@@ -142,13 +144,48 @@ class _Column:
         elif data_type in ["enum"]:
             # Why i do not a checking
             # https://mariadb.com/kb/en/enum/
-            self.data_type = List[str]
+            self.data_type = list
         else:
             raise InvalidColumnType(
                 f"The column '{name}' has an unsupported validator type -> {data_type}"
             )
 
-    #def check(self, value: any):
+    def check(self, value: any) -> bool:
+        """
+        Check if a value match the type requirements of the column
+        :param value:
+        :return:
+        """
+        if not isinstance(value, self.data_type):
+            raise ValidatorType(
+                f"The type ({type(value)}) of the given value do "
+                f"not match the column type {self.data_type}."
+            )
+        if self.data_type == str:
+            value: str
+            if self.data_type_name in [
+                "text", "tinytext", "mediumtext", "longtext, varchar, char"
+            ]:
+                length = len(value)
+                if length > self.length:
+                    raise ValidatorLength(
+                        f"The length of the string ({length}) "
+                        f"is bigger then the allowed length of {self.length}"
+                    )
+                return True
+            elif self.data_type_name in [
+                "blob", "tinyblob", "mediumblob", "longblob"
+            ]:
+                length = len(value.encode(self.collation_name))
+                if length > self.length:
+                    raise ValidatorLength(
+                        f"The bytes of the string ({length}) "
+                        f"is bigger then the allowed bytes of {self.length}"
+                    )
+                return True
+            elif self.data_type_name in ["inet4", "inet6"]:
+                return True
+            raise ValidatorUnknown("Oh... there is an internal problem with the type system")
 
 
 class Validator:
