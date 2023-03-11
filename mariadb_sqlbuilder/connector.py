@@ -180,11 +180,23 @@ class Connector:
 
     @property
     def schema(self):
+        """
+        Returns the current schema, where you select your tables
+        :return:
+        """
         return self.__schema
 
     def recreate_validator(self):
+        """
+        Recreate the validator for table changes
+        :return:
+        """
         self.__validator = Validator(self)
 
     @property
     def validator(self) -> Validator:
+        """
+        Returns the current used validator
+        :return:
+        """
         return self.__validator

@@ -22,6 +22,10 @@ from mariadb_sqlbuilder.exepetions import InvalidColumnType, ValidatorType,\
 
 
 class _Column:
+    """
+    This class contains all need data for checking if a value
+    possible to add it in the database
+    """
 
     def __init__(self, name: str, data_type: str, length: int, nullable: bool,
                  unsigned: bool, character_set_name: str):
@@ -223,6 +227,10 @@ class _Column:
 
 
 class Validator:
+    """
+    This class is for checking the existing of tables, columns and the
+    right value types
+    """
 
     def __init__(self, conn):
         self._conn = conn
@@ -252,6 +260,11 @@ class Validator:
             )
 
     def check_table_exists(self, table: str):
+        """
+        Check if the table exists, if not it raise an error
+        :param table:
+        :return:
+        """
         if table in self.__structure:
             return
         raise ValidatorTableNotFound(
@@ -260,6 +273,13 @@ class Validator:
         )
 
     def check_column_exists(self, table: str, column: str):
+        """
+        Check if the table and the column exists,
+        if not it raise an error.
+        :param table:
+        :param column:
+        :return:
+        """
         self.check_table_exists(table)
         if column in self.__structure[table]:
             return
@@ -270,9 +290,23 @@ class Validator:
         )
 
     def check_value_type(self, table: str, colum: str, value: any):
+        """
+        Check if the given value the correct accepted type of the column,
+        its also check if the table and column exists.
+        If not it raise an error.
+        :param table:
+        :param colum:
+        :param value:
+        :return:
+        """
         self.check_column_exists(table, colum)
         return self.__structure[table][colum].check(value)
 
     @property
     def structure(self):
-        return self.__structure
+        """
+        Return the dictionary of the current structure.
+        Helpful vor debugging
+        :return:
+        """
+        return self.__structure.copy()
