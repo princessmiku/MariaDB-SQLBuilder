@@ -7,7 +7,7 @@ https://mariadb.com/kb/en/joining-tables-with-join-clauses/
 """
 from abc import ABC, abstractmethod
 
-from .base_builder import _get_tcn
+from .base_builder import _get_tcn_without_validator
 
 
 class _JoinBuilder(ABC):
@@ -50,7 +50,7 @@ class BaseJoinExtension:
         if isinstance(join_builder, _ConditionsBuilder):
             join_builder: _ConditionsBuilder
             for condition in join_builder.conditions:
-                self._tb.validator.check_column_exists(self._tb, condition[0])
+                self._tb.validator.check_column_exists(self._tb.table, condition[0])
                 self._tb.validator.check_column_exists(join_builder.table, condition[1])
         self._join_builders.append(join_builder)
         self._joins.append(join_builder.get_sql())
@@ -121,7 +121,8 @@ class InnerJoinBuilder(_ConditionsBuilder):
         conditions = []
         for con in self.conditions:
             conditions.append(
-                f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}"
+                f"{_get_tcn_without_validator(self.from_table, con[0])} = "
+                f"{_get_tcn_without_validator(self.table, con[1])}"
             )
         return f"INNER JOIN {self.table} ON {' AND '.join(conditions)} "
 
@@ -140,7 +141,8 @@ class LeftJoinBuilder(_ConditionsBuilder):
         conditions = []
         for con in self.conditions:
             conditions.append(
-            f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}")
+            f"{_get_tcn_without_validator(self.from_table, con[0])} = "
+            f"{_get_tcn_without_validator(self.table, con[1])}")
         return f"Left JOIN {self.table} ON {' AND '.join(conditions)} "
 
 
@@ -158,6 +160,7 @@ class RightJoinBuilder(_ConditionsBuilder):
         conditions = []
         for con in self.conditions:
             conditions.append(
-                f"{_get_tcn(self.from_table, con[0])} = {_get_tcn(self.table, con[1])}"
+                f"{_get_tcn_without_validator(self.from_table, con[0])} = "
+                f"{_get_tcn_without_validator(self.table, con[1])}"
             )
         return f"RIGHT JOIN {self.table} ON {' AND '.join(conditions)} "
