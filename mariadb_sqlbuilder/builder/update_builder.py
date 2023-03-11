@@ -45,7 +45,9 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         :return:
         """
         self.tb.validator.check_value_type(join_table, join_column, value)
-        self.__toSet[_get_tcn_without_validator(join_table, join_column)] = _transform_value_valid(value)
+        self.__toSet[
+            _get_tcn_without_validator(join_table, join_column)
+        ] = _transform_value_valid(value)
         return self
 
     def im_sure_im_not_use_conditions(self, im_sure: bool = True):
