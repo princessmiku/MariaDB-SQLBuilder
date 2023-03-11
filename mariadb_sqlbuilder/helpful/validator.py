@@ -10,7 +10,7 @@ It checks
 
 """
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Tuple
 from uuid import UUID
 
@@ -35,7 +35,7 @@ class _Column:
         self.character_set_name = character_set_name
         if data_type in ["varchar", "text"]:
             self.data_type = str
-        elif data_type in ["int", "bigint", "smallint", "mediumint", "tinyint"]:
+        elif data_type in ["int", "bigint", "smallint", "mediumint", "tinyint", "year"]:
             self.data_type = int
             if data_type == "int":
                 if unsigned:
@@ -92,6 +92,8 @@ class _Column:
                         self.range = (-int("9" * length), int("9" * length))
                     else:
                         self.range = (-128, 127)
+            elif data_type == "year":
+                self.range = (4, 4)
         elif data_type in ["decimal"]:
             self.data_type = Decimal
         elif data_type in ["float", "double"]:
@@ -142,8 +144,10 @@ class _Column:
                     self.length = 255
         elif data_type in ["uuid"]:
             self.data_type = UUID
-        elif data_type in ["date", "datetime", "timestamp", "time", "year"]:
+        elif data_type in ["date", "datetime", "timestamp"]:
             self.data_type = datetime
+        elif data_type in ["time"]:
+            self.data_type = timedelta
         elif data_type in ["enum"]:
             # Why i do not a checking
             # https://mariadb.com/kb/en/enum/
@@ -172,7 +176,7 @@ class _Column:
         if self.data_type == str:
             value: str
             if self.data_type_name in [
-                "text", "tinytext", "mediumtext", "longtext, varchar, char"
+                "text", "tinytext", "mediumtext", "longtext", "varchar", "char"
             ]:
                 length = len(value)
                 if length > self.length:
@@ -196,7 +200,7 @@ class _Column:
             raise ValidatorUnknown("Oh... there is an internal problem with the type system")
         elif self.data_type == int:
             value: int
-            if not self.range[0] < value < self.range[1]:
+            if not self.range[0] <= value <= self.range[1]:
                 raise ValidatorRange(
                     f"Your number ({str(value)}) is not in the range of the supported type {str(self.range)}."
                 )
@@ -206,6 +210,8 @@ class _Column:
         elif self.data_type == UUID:
             return True
         elif self.data_type == datetime:
+            return True
+        elif self.data_type == timedelta:
             return True
         elif self.data_type == list and self.name == "enum":
             if not all(isinstance(val, str) for val in value):
@@ -221,32 +227,32 @@ class Validator:
     def __init__(self, conn):
         self._conn = conn
         tables: List[List[str]] = conn.execute_fetchmany("SHOW tables;")
-        self.__tables: List[str] = [table[0] for table in tables]
+        tables: List[str] = [table[0] for table in tables]
         self.__structure = {}
         table: str
-        for table in self.__tables:
-            self.__structure[table] = {}
-            columns = conn.execute_fetchmany(
-                "SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, CHARACTER_SET_NAME " +
-                "FROM information_schema.COLUMNS " +
-                f"WHERE TABLE_NAME = N'{table}' and TABLE_SCHEMA = N'{self._conn.schema}';"
+        table_join = "'" + "', '".join(tables) + "'"
+        columns = conn.execute_fetchmany(
+            "SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, CHARACTER_SET_NAME, TABLE_NAME " +
+            "FROM information_schema.COLUMNS " +
+            f"WHERE TABLE_NAME IN ({table_join}) and TABLE_SCHEMA = N'{self._conn.schema}';"
+        )
+        for column in columns:
+            if not column[4] in self.__structure:
+                self.__structure[column[4]] = {}
+            data_type = column[1].split("(")[0] \
+                if "(" in column[1] else column[1].split(" ")[0]
+            match = re.search('\((\d+)\)', column[1])
+            if match:
+                length = int(match.group(1))
+            else:
+                length = 0
+            unsigned = True if "unsigned" in column[1] else False
+            self.__structure[column[4]][column[0]] = _Column(
+                column[0], data_type, length, column[2], unsigned, column[3]
             )
-            for column in columns:
-                data_type = column[1].split("(")[0] \
-                    if "(" in column[1] else column[1].split(" ")[0]
-                match = re.search('\((\d+)\)', column[1])
-                if match:
-                    length = int(match.group(1))
-                else:
-                    length = 0
-                unsigned = True if "unsigned" in column[1] else False
-                self.__structure[table][column[0]] = _Column(
-                    column[0], data_type, length, column[2], unsigned, column[3]
-                )
-            print(table, columns)
 
     def check_table_exists(self, table: str):
-        if table in self.__tables:
+        if table in self.__structure:
             return
         raise ValidatorTableNotFound(
             f"Table {table} not found. Check upper- and lowercase. If you change the database "
@@ -266,3 +272,7 @@ class Validator:
     def check_value_type(self, table: str, colum: str, value: any):
         self.check_column_exists(table, colum)
         return self.__structure[table][colum].check(value)
+
+    @property
+    def structure(self):
+        return self.__structure

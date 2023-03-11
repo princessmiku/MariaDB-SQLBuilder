@@ -182,6 +182,9 @@ class Connector:
     def schema(self):
         return self.__schema
 
+    def recreate_validator(self):
+        self.__validator = Validator(self)
+
     @property
     def validator(self) -> Validator:
         return self.__validator
