@@ -2,7 +2,7 @@
 This modul is there for the basic functions of all query's
 """
 from abc import ABC, abstractmethod
-from typing import Union, Tuple, List
+from typing import Union, Tuple
 
 from mariadb_sqlbuilder.exepetions import BetweenValueIsBigger
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic

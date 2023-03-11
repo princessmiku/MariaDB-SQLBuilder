@@ -1,8 +1,6 @@
 """
 This modul is there for save conditions for multiple uses
 """
-from abc import abstractmethod
-
 from mariadb_sqlbuilder.builder.base_builder import ConditionsBuilder
 
 
