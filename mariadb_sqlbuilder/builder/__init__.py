@@ -3,7 +3,7 @@ This modul is there for handle table functions
 """
 from typing import Union
 
-from helpful.validator import Validator
+from mariadb_sqlbuilder.helpful.validator import Validator
 from .select_builder import SelectBuilder
 from .update_builder import UpdateBuilder
 from .insert_builder import InsertBuilder

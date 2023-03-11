@@ -4,7 +4,7 @@ This modul is there for the basic functions of all query's
 from abc import ABC, abstractmethod
 from typing import Union, Tuple
 
-from helpful.validator import Validator
+from mariadb_sqlbuilder.helpful.validator import Validator
 from mariadb_sqlbuilder.exepetions import BetweenValueIsBigger
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 
