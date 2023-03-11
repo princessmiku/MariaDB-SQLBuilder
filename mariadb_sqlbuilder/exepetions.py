@@ -36,6 +36,12 @@ class ValidatorLength(Exception):
     """
 
 
+class ValidatorRange(Exception):
+    """
+    If a Number not in the allowed range
+    """
+
+
 class ValidatorUnknown(Exception):
     """
     If is an error unexpectedly, because it shouldn't be possible

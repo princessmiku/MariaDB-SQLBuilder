@@ -15,7 +15,8 @@ from uuid import UUID
 
 from _decimal import Decimal
 
-from mariadb_sqlbuilder.exepetions import InvalidColumnType, ValidatorType, ValidatorLength, ValidatorUnknown
+from mariadb_sqlbuilder.exepetions import InvalidColumnType, ValidatorType, ValidatorLength, ValidatorUnknown, \
+    ValidatorRange
 
 
 class _Column:
@@ -186,6 +187,26 @@ class _Column:
             elif self.data_type_name in ["inet4", "inet6"]:
                 return True
             raise ValidatorUnknown("Oh... there is an internal problem with the type system")
+        elif self.data_type == int:
+            value: int
+            if not self.range[0] < value < self.range[1]:
+                raise ValidatorRange(
+                    f"Your number ({str(value)}) is not in the range of the supported type {str(self.range)}."
+                )
+            return True
+        elif self.data_type == float:
+            return True
+        elif self.data_type == UUID:
+            return True
+        elif self.data_type == datetime:
+            return True
+        elif self.data_type == list and self.name == "enum":
+            if not all(isinstance(val, str) for val in value):
+                raise ValidatorType(
+                    "An enum only accept strings"
+                )
+            return True
+        raise ValidatorUnknown("Internal error with the column types, 404 not found")
 
 
 class Validator:
