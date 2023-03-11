@@ -61,7 +61,8 @@ class ConditionsBuilder(BaseBuilder):
             self.__conditions = []
             self.__default_condition = "AND"
 
-    def where(self, expression: Union[str, Arithmetic], value: Union[str, int, float], filter_operator: str = "="):
+    def where(self, expression: Union[str, Arithmetic],
+              value: Union[str, int, float], filter_operator: str = "="):
         """
         Adds a WHERE condition for an exact match of a column value.
         :param expression: a Column or an Arithmetic
@@ -87,9 +88,13 @@ class ConditionsBuilder(BaseBuilder):
         """
         self.__check_if_or_and()
         if isinstance(expression, str):
-            self.__conditions.append(f"{_get_tcn(self.tb.table, expression)} IN {str(checked_list)}")
+            self.__conditions.append(
+                f"{_get_tcn(self.tb.table, expression)} IN {str(checked_list)}"
+            )
         else:
-            self.__conditions.append(f"{expression} IN {str(checked_list)}")
+            self.__conditions.append(
+                f"{expression} IN {str(checked_list)}"
+            )
         return self
 
     def where_in_not(self, expression: Union[str, Arithmetic], checked_list: Tuple[str, int, float]):
@@ -101,9 +106,13 @@ class ConditionsBuilder(BaseBuilder):
         """
         self.__check_if_or_and()
         if isinstance(expression, str):
-            self.__conditions.append(f"{_get_tcn(self.tb.table, expression)} NOT IN {str(checked_list)}")
+            self.__conditions.append(
+                f"{_get_tcn(self.tb.table, expression)} NOT IN {str(checked_list)}"
+            )
         else:
-            self.__conditions.append(f"{expression} NOT IN {str(checked_list)}")
+            self.__conditions.append(
+                f"{expression} NOT IN {str(checked_list)}"
+            )
         return self
 
     def like(self, expression: Union[str, Arithmetic], value: Union[str, int, float]):
