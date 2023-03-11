@@ -79,7 +79,8 @@ class ConditionsBuilder(BaseBuilder):
                                      f"{_transform_value_valid(value)}")
         return self
 
-    def where_in(self, expression: Union[str, Arithmetic], checked_list: Tuple[str, int, float]):
+    def where_in(self, expression: Union[str, Arithmetic],
+                 checked_list: Tuple[str, int, float]):
         """
         Adds a WHERE condition for a list of checked values in a column.
         :param expression: a Column or an Arithmetic
@@ -97,7 +98,8 @@ class ConditionsBuilder(BaseBuilder):
             )
         return self
 
-    def where_in_not(self, expression: Union[str, Arithmetic], checked_list: Tuple[str, int, float]):
+    def where_in_not(self, expression: Union[str, Arithmetic],
+                     checked_list: Tuple[str, int, float]):
         """
         Adds a WHERE condition for a list of unchecked values in a column.
         :param expression: a Column or an Arithmetic
