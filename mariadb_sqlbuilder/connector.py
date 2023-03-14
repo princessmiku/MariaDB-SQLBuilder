@@ -1,11 +1,14 @@
 """
 The module is there to establish a connection to the database
 """
+from typing import Union
+
 import mariadb
 
-from .helpful.validator import Validator
-from .builder import TableBuilder
-from .sqlscript.splitter import split_sql_script_in_parameters
+from mariadb_sqlbuilder.helpful.validator_dummy import ValidatorDummy
+from mariadb_sqlbuilder.helpful.validator import Validator
+from mariadb_sqlbuilder.builder import TableBuilder
+from mariadb_sqlbuilder.sqlscript.splitter import split_sql_script_in_parameters
 
 
 class Connector:
@@ -45,6 +48,8 @@ class Connector:
         self.__validator = None
         if use_validator:
             self.__validator = Validator(self)
+        else:
+            self.__validator = ValidatorDummy(self)
 
     def table(self, name: str) -> TableBuilder:
         """
@@ -179,7 +184,7 @@ class Connector:
         return result
 
     @property
-    def schema(self):
+    def schema(self) -> str:
         """
         Returns the current schema, where you select your tables
         :return:
@@ -194,7 +199,7 @@ class Connector:
         self.__validator = Validator(self)
 
     @property
-    def validator(self) -> Validator:
+    def validator(self) -> Union[Validator, ValidatorDummy]:
         """
         Returns the current used validator
         :return:
