@@ -47,13 +47,13 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         Executes the SELECT query and returns the first row of the result.
         :return:
         """
-        cursor = self.tb.connector.getAvailableCursor()
+        cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
             self.get_sql()
         )
         result = cursor.fetchone()
         cursor.connection.commit()
-        self.tb.connector.makeCursorAvailable(cursor)
+        self.tb.connector.release_cursor(cursor)
         return result
 
     def fetchone_json(self):

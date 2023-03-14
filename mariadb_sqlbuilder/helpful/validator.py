@@ -217,6 +217,8 @@ class _Column:
             return True
         elif self.data_type == timedelta:
             return True
+        elif self.data_type == Decimal:
+            return True
         elif self.data_type == list and self.name == "enum":
             if not all(isinstance(val, str) for val in value):
                 raise ValidatorType(

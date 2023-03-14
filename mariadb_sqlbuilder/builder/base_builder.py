@@ -2,6 +2,7 @@
 This modul is there for the basic functions of all query's
 """
 from abc import ABC, abstractmethod
+from datetime import timedelta
 from typing import Union, Tuple
 
 from mariadb_sqlbuilder.helpful.validator import Validator
@@ -26,11 +27,17 @@ def _get_tcn_validator(table: str, column: str, validator: Validator) -> str:
     return table + "." + column
 
 
-def _transform_value_valid(value: Union[str, int]) -> str:
+def _transform_value_valid(value: Union[str, int, bool, ]) -> str:
     if value is None:
         return "NULL"
+    elif isinstance(value, bool):
+        return "TRUE" if value else "FALSE"
     elif isinstance(value, (int, Arithmetic)):
         return str(value)
+    elif isinstance(value, timedelta):
+        if "," in str(value):
+            return f"'{str(value).split(', ')[1]}'"
+        return f"'{value}'"
     return f"'{value}'"
 
 

@@ -1,8 +1,11 @@
 """
 This modul is there for build a sql update query
 """
+from datetime import timedelta, datetime
 from json import dumps
 from typing import Union, Dict, List
+
+from _decimal import Decimal
 
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
 from .base_builder import ConditionsBuilder, _transform_value_valid, \
@@ -25,7 +28,8 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.__subSets = []
         self.__jsonBuildings = []
 
-    def set(self, column, value: Union[str, int, None, Arithmetic]):
+    def set(self, column, value: Union[str, int, float, bool,
+        Arithmetic, timedelta, datetime, Decimal]):
         """
         Set a value for a column in the table to update.
         :param column:
@@ -36,7 +40,8 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.__toSet[_get_tcn_without_validator(self.tb, column)] = _transform_value_valid(value)
         return self
 
-    def join_set(self, join_table: str, join_column: str, value: Union[str, int, None, Arithmetic]):
+    def join_set(self, join_table: str, join_column: str, value: Union[str, int, float, bool,
+        Arithmetic, timedelta, datetime, Decimal]):
         """
         Set a value for a column in a join table.
         :param join_table:
