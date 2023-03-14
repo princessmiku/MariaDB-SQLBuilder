@@ -39,15 +39,6 @@ class ValidatorDummy:
         """
 
     @property
-    def schema(self) -> str:
-        """
-        It's only a dummy function,
-        its return's the schema name "MariaDBSQLBuilder"
-        :return:
-        """
-        return "MariaDBSQLBuilder"
-
-    @property
     def structure(self):
         """
         It's only a dummy function

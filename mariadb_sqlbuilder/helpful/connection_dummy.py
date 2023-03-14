@@ -37,6 +37,15 @@ class Connector:
         raise NotImplementedError("This function is only available with a active connection")
 
     @property
+    def schema(self) -> str:
+        """
+        It's only a dummy function,
+        its return's the schema name "MariaDBSQLBuilder"
+        :return:
+        """
+        return "MariaDBSQLBuilder"
+
+    @property
     def validator(self) -> ValidatorDummy:
         """
         Returns the current used validator
