@@ -23,7 +23,6 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         self.expressions = []
         self._loop_tb_expressions_add(self.tb.table, expressions, *args)
         self._limit = None
-        self._offset = None
 
     def join_select(self, join_table: str, expressions: Union[str, list], *args):
         """
@@ -101,8 +100,11 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         :param offset:
         :return:
         """
-        self._limit = count
-        self._offset = offset
+        self._limit = ""
+        if count:
+            self._limit += " LIMIT " + str(count)
+            if offset:
+                self._limit += " OFFSET " + str(offset)
         return self
 
     def get_sql(self) -> str:
@@ -110,14 +112,9 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         Builds the SELECT query and returns it as a string.
         :return:
         """
-        limit = ""
-        if self._limit:
-            limit += " LIMIT " + str(self._limit)
-            if self._offset:
-                limit += " OFFSET " + str(self._offset)
         return f"SELECT {', '.join(self.expressions)} FROM {self.tb.table} " \
                f"{' '.join(self._joins) if self._joins else ''} " \
-            f"{self._get_where_sql()}{limit};"
+            f"{self._get_where_sql()}{self.limit};"
 
     def _loop_tb_expressions_add(self, tb: str, expressions: Union[str, Arithmetic], *args):
         """
