@@ -22,6 +22,8 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         self._contains_arithmetic = False
         self.expressions = []
         self._loop_tb_expressions_add(self.tb.table, expressions, *args)
+        self._limit = None
+        self._offset = None
 
     def join_select(self, join_table: str, expressions: Union[str, list], *args):
         """
@@ -92,14 +94,29 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
             )
         return convert_to_dict_all(self.tb.table, self.expressions, self.fetchall())
 
+    def limit(self, count: int, offset: int = 0):
+        """
+        Set a max fetching limit
+        :param count:
+        :param offset:
+        :return:
+        """
+        self._limit = count
+        self._offset = offset
+
     def get_sql(self) -> str:
         """
         Builds the SELECT query and returns it as a string.
         :return:
         """
+        limit = ""
+        if self._limit:
+            limit += " LIMIT " + str(self._limit)
+            if self._offset:
+                limit += " OFFSET " + str(self._offset)
         return f"SELECT {', '.join(self.expressions)} FROM {self.tb.table} " \
                f"{' '.join(self._joins) if self._joins else ''} " \
-            f"{self._get_where_sql()};"
+            f"{self._get_where_sql()}{limit};"
 
     def _loop_tb_expressions_add(self, tb: str, expressions: Union[str, Arithmetic], *args):
         """
