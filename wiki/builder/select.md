@@ -67,7 +67,8 @@ conn.table("myTable").select("name, age, email")
 - [all of base join extention](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Base-Join-Extention)
 
 - `join_select(join_table: str, expression)` - Works like in step ["first"](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Select#first), it is only added to the existing column, but you have to specify the table of the join from which you want to select the column.
-- `column_select(expression):` - Works like in step ["first"](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Select#first), it is only added to the existing column
+- `column_select(expression)` - Works like in step ["first"](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Select#first), it is only added to the existing column
+- ``limit(count: int, offset: int = 0)`` - Set a maximum select limit, default all, offset default 0 -> Repeat useless
 
 # Endpoints
 

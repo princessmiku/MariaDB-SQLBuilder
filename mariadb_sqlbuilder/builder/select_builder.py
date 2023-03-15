@@ -103,6 +103,7 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         self._limit = count
         self._offset = offset
+        return self
 
     def get_sql(self) -> str:
         """
