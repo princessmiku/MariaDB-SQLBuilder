@@ -114,7 +114,7 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         return f"SELECT {', '.join(self.expressions)} FROM {self.tb.table} " \
                f"{' '.join(self._joins) if self._joins else ''} " \
-            f"{self._get_where_sql()}{self.limit};"
+            f"{self._get_where_sql()}{self._limit};"
 
     def _loop_tb_expressions_add(self, tb: str, expressions: Union[str, Arithmetic], *args):
         """
