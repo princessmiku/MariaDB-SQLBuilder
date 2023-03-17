@@ -37,7 +37,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         :return:
         """
         self.tb.validator.check_value_type(self.tb.table, column, value)
-        self.__toSet[_get_tcn_without_validator(self.tb, column)] = _transform_value_valid(value)
+        self.__toSet[_get_tcn_without_validator(self.tb.table, column)] = _transform_value_valid(value)
         return self
 
     def join_set(self, join_table: str, join_column: str, value: Union[str, int, float, bool,
@@ -128,3 +128,6 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         self.__jsonBuildings.append([json, pop])
         return self
+
+    def __str__(self):
+        return self.get_sql()

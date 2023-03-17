@@ -164,3 +164,6 @@ class RightJoinBuilder(_ConditionsBuilder):
                 f"{_get_tcn_without_validator(self.table, con[1])}"
             )
         return f"RIGHT JOIN {self.table} ON {' AND '.join(conditions)} "
+
+    def __str__(self):
+        return self.get_sql()

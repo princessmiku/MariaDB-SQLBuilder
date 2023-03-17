@@ -1,6 +1,7 @@
 """
 The module is there to establish a connection to the database
 """
+
 from typing import Union
 
 import mariadb

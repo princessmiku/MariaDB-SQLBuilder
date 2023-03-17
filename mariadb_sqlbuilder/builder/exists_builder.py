@@ -67,3 +67,6 @@ class ExistsBuilder(ConditionsBuilder):
                f"{', '.join(self.column_list) if self.column_list else '*'} " \
                f"FROM {self.tb.table} " \
                f"{self._get_where_sql()};"
+
+    def __str__(self):
+        return self.get_sql()

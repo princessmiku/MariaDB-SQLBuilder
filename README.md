@@ -13,6 +13,23 @@ Too lazy to write SQL? Then use the SQL Builder to make your life easier!
 MariaDB SQL Builder is a simple way to use SQL.
 Use your own SQL or use the integrated SQL Builder tool.
 
+### MariaDB license
+
+This library uses MariaDB Connector/Python, which is released under the terms of the GPLv2 license. For more 
+information, please see the [license file in the repository](https://github.com/mariadb-corporation/mariadb-connector-python/blob/1.1/LICENSE).
+
+# What is new in 1.0.0?
+
+- Checking table names and column names of right spelling
+- Checking inserted data of the correct type
+- Add Arithmetic functions
+- Convert more types in the correct saving string / integer
+- Saving conditions for multiple using
+- Pylint checking of the most of the code
+- Dummy Connector, if you won't use it with a connection
+- sub selects
+- Rename Connect to Connector
+
 # [Install](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Installation)
 Install the package with pip
 ``pip install mariadb-sqlbuilder``
