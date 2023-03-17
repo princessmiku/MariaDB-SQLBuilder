@@ -8,6 +8,7 @@ from typing import Union, Tuple
 from mariadb_sqlbuilder.helpful.validator import Validator
 from mariadb_sqlbuilder.exepetions import BetweenValueIsBigger
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
+from mariadb_sqlbuilder.helpful import subquery_operator as suop
 
 
 # get the name of a table column
@@ -82,12 +83,14 @@ class ConditionsBuilder(BaseBuilder):
             self.__default_condition = "AND"
 
     def where(self, expression: Union[str, Arithmetic, tuple],
-              value: Union[str, int, float, 'SelectBuilder'], filter_operator: str = "="):
+              value: Union[str, int, float, 'SelectBuilder'], filter_operator: str = "=",
+              *, subquery_operator: str = ''):
         """
         Adds a WHERE condition for an exact match of a column value.
         :param expression: a Column or an Arithmetic
         :param value:
         :param filter_operator:
+        :param subquery_operator:
         :return:
         """
         self.__check_if_or_and()
@@ -96,14 +99,24 @@ class ConditionsBuilder(BaseBuilder):
             self.__conditions.append(f"{_get_tcn(self.tb, expression)} {filter_operator} "
                                           f"{_transform_value_valid(value)}")
         elif isinstance(value, SelectBuilder):
+            if subquery_operator != '' and subquery_operator not in [
+                suop.ALL, suop.ANY, suop.EXISTS
+            ]:
+                raise TypeError(
+                    'Unsupported subquery operator'
+                )
+
             if isinstance(expression, tuple):
-                expression_list_str: str = '(' + ', '.join([_get_tcn(self.tb, expr) for expr in expression]) + ')'
+                expression_list_str: str = '(' + ', '.join(
+                    [_get_tcn(self.tb, expr) for expr in expression]
+                ) + ')'
             elif isinstance(expression, str):
                 expression_list_str: str = _get_tcn(self.tb, expression)
             else:
                 expression_list_str: str = str(expression)
-            print(f"{expression_list_str} {filter_operator} ({value.get_sql()})")
-            self.__conditions.append(f"{expression_list_str} {filter_operator} ({value.get_sql()})")
+            self.__conditions.append(
+                f"{expression_list_str} {filter_operator} {subquery_operator}({value.get_sql()})"
+            )
         else:
             self.__conditions.append(f"{expression} {filter_operator} "
                                      f"{_transform_value_valid(value)}")
@@ -125,7 +138,9 @@ class ConditionsBuilder(BaseBuilder):
             )
         elif isinstance(value, SelectBuilder):
             if isinstance(expression, tuple):
-                expression_list_str: str = '(' + ', '.join([_get_tcn(self.tb, expr) for expr in expression]) + ')'
+                expression_list_str: str = '(' + ', '.join(
+                    [_get_tcn(self.tb, expr) for expr in expression]
+                ) + ')'
             elif isinstance(expression, str):
                 expression_list_str: str = _get_tcn(self.tb, expression)
             else:
@@ -153,7 +168,9 @@ class ConditionsBuilder(BaseBuilder):
             )
         elif isinstance(value, SelectBuilder):
             if isinstance(expression, tuple):
-                expression_list_str: str = '(' + ', '.join([_get_tcn(self.tb, expr) for expr in expression]) + ')'
+                expression_list_str: str = '(' + ', '.join(
+                    [_get_tcn(self.tb, expr) for expr in expression]
+                ) + ')'
             elif isinstance(expression, str):
                 expression_list_str: str = _get_tcn(self.tb, expression)
             else:
