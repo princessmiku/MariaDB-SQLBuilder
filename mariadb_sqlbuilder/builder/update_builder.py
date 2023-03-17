@@ -128,3 +128,6 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         self.__jsonBuildings.append([json, pop])
         return self
+
+    def __str__(self):
+        return self.get_sql()

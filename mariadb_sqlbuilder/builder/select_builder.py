@@ -22,7 +22,7 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         self._contains_arithmetic = False
         self.expressions = []
         self._loop_tb_expressions_add(self.tb.table, expressions, *args)
-        self._limit = None
+        self._limit = ""
 
     def join_select(self, join_table: str, expressions: Union[str, list], *args):
         """
@@ -141,3 +141,6 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
                     self.expressions.append(str(expression))
                 else:
                     self.expressions.append(_get_tcn_validator(tb, expression, self.tb.validator))
+
+    def __str__(self):
+        return self.get_sql()
