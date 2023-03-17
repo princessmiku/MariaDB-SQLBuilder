@@ -41,6 +41,8 @@ class Arithmetic:
         ArithmeticColumn, 'Arithmetic', int, float, 'SelectBuilder'
     ]):
         _check_type(variable)
+        if str(variable).endswith(";"):
+            variable = str(variable)[:-1]
         self.arithmetic_str += f" + {variable}"
         return self
 
@@ -48,6 +50,8 @@ class Arithmetic:
         ArithmeticColumn, 'Arithmetic', int, float, 'SelectBuilder'
     ]):
         _check_type(variable)
+        if str(variable).endswith(";"):
+            variable = str(variable)[:-1]
         self.arithmetic_str += f" - {variable}"
         return self
 
@@ -55,6 +59,8 @@ class Arithmetic:
         ArithmeticColumn, 'Arithmetic', int, float, 'SelectBuilder'
     ]):
         _check_type(variable)
+        if str(variable).endswith(";"):
+            variable = str(variable)[:-1]
         self.arithmetic_str += f" * {variable}"
         return self
 
@@ -62,6 +68,8 @@ class Arithmetic:
         ArithmeticColumn, 'Arithmetic', int, float, 'SelectBuilder'
     ]):
         _check_type(variable)
+        if str(variable).endswith(";"):
+            variable = str(variable)[:-1]
         self.arithmetic_str += f" / {variable}"
         return self
 
@@ -69,6 +77,8 @@ class Arithmetic:
         ArithmeticColumn, 'Arithmetic', int, float, 'SelectBuilder'
     ]):
         _check_type(variable)
+        if str(variable).endswith(";"):
+            variable = str(variable)[:-1]
         self.arithmetic_str += f" % {variable}"
         return self
 

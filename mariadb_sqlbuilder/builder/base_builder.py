@@ -114,7 +114,7 @@ class ConditionsBuilder(BaseBuilder):
             else:
                 expression_list_str: str = str(expression)
             self.__conditions.append(
-                f"{expression_list_str} {filter_operator} {subquery_operator}({value.get_sql()})"
+                f"{expression_list_str} {filter_operator} {subquery_operator}({value.get_sql()[:-1]})"
             )
         elif isinstance(expression, str):
             self.__conditions.append(f"{_get_tcn(self.tb, expression)} {filter_operator} "
@@ -143,7 +143,7 @@ class ConditionsBuilder(BaseBuilder):
                 expression_list_str: str = _get_tcn(self.tb, expression)
             else:
                 expression_list_str: str = str(expression)
-            self.__conditions.append(f"{expression_list_str} IN ({value.get_sql()})")
+            self.__conditions.append(f"{expression_list_str} IN ({value.get_sql()[:-1]})")
         elif isinstance(expression, str):
             self.__conditions.append(
                 f"{_get_tcn(self.tb, expression)} IN {str(value)}"
@@ -173,7 +173,7 @@ class ConditionsBuilder(BaseBuilder):
                 expression_list_str: str = _get_tcn(self.tb, expression)
             else:
                 expression_list_str: str = str(expression)
-            self.__conditions.append(f"{expression_list_str} IN ({value.get_sql()})")
+            self.__conditions.append(f"{expression_list_str} IN ({value.get_sql()[:-1]})")
 
         elif isinstance(expression, str):
             self.__conditions.append(
@@ -238,11 +238,11 @@ class ConditionsBuilder(BaseBuilder):
         from .select_builder import SelectBuilder
         if isinstance(expression, str):
             if isinstance(value1, SelectBuilder):
-                value1 = f"({value1.get_sql()})"
+                value1 = f"({value1.get_sql()[:-1]})"
             else:
                 value1 = _transform_value_valid(value1)
             if isinstance(value2, SelectBuilder):
-                value2 = f"({value2.get_sql()})"
+                value2 = f"({value2.get_sql()[:-1]})"
             else:
                 value2 = _transform_value_valid(value2)
             self.__conditions.append(
@@ -275,11 +275,11 @@ class ConditionsBuilder(BaseBuilder):
         from .select_builder import SelectBuilder
         if isinstance(expression, str):
             if isinstance(value1, SelectBuilder):
-                value1 = f"({value1.get_sql()})"
+                value1 = f"({value1.get_sql()[:-1]})"
             else:
                 value1 = _transform_value_valid(value1)
             if isinstance(value2, SelectBuilder):
-                value2 = f"({value2.get_sql()})"
+                value2 = f"({value2.get_sql()[:-1]})"
             else:
                 value2 = _transform_value_valid(value2)
             self.__conditions.append(
