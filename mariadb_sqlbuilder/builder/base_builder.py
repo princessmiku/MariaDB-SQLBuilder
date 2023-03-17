@@ -2,7 +2,7 @@
 This modul is there for the basic functions of all query's
 """
 from abc import ABC, abstractmethod
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Union, Tuple
 
 from mariadb_sqlbuilder.helpful.validator import Validator
@@ -39,6 +39,8 @@ def _transform_value_valid(value: Union[str, int, bool]) -> str:
         if "," in str(value):
             return f"'{str(value).split(', ')[1]}'"
         return f"'{value}'"
+    elif isinstance(value, datetime):
+        return "'" + value.strftime("%m-%d-%Y %H:%i:%s") + "'"
     return f"'{value}'"
 
 
@@ -95,10 +97,7 @@ class ConditionsBuilder(BaseBuilder):
         """
         self.__check_if_or_and()
         from .select_builder import SelectBuilder
-        if isinstance(expression, str):
-            self.__conditions.append(f"{_get_tcn(self.tb, expression)} {filter_operator} "
-                                          f"{_transform_value_valid(value)}")
-        elif isinstance(value, SelectBuilder):
+        if isinstance(value, SelectBuilder):
             if subquery_operator != '' and subquery_operator not in [
                 suop.ALL, suop.ANY, suop.EXISTS
             ]:
@@ -117,6 +116,9 @@ class ConditionsBuilder(BaseBuilder):
             self.__conditions.append(
                 f"{expression_list_str} {filter_operator} {subquery_operator}({value.get_sql()})"
             )
+        elif isinstance(expression, str):
+            self.__conditions.append(f"{_get_tcn(self.tb, expression)} {filter_operator} "
+                                          f"{_transform_value_valid(value)}")
         else:
             self.__conditions.append(f"{expression} {filter_operator} "
                                      f"{_transform_value_valid(value)}")
@@ -132,11 +134,7 @@ class ConditionsBuilder(BaseBuilder):
         """
         self.__check_if_or_and()
         from .select_builder import SelectBuilder
-        if isinstance(expression, str):
-            self.__conditions.append(
-                f"{_get_tcn(self.tb, expression)} IN {str(value)}"
-            )
-        elif isinstance(value, SelectBuilder):
+        if isinstance(value, SelectBuilder):
             if isinstance(expression, tuple):
                 expression_list_str: str = '(' + ', '.join(
                     [_get_tcn(self.tb, expr) for expr in expression]
@@ -146,6 +144,10 @@ class ConditionsBuilder(BaseBuilder):
             else:
                 expression_list_str: str = str(expression)
             self.__conditions.append(f"{expression_list_str} IN ({value.get_sql()})")
+        elif isinstance(expression, str):
+            self.__conditions.append(
+                f"{_get_tcn(self.tb, expression)} IN {str(value)}"
+            )
         else:
             self.__conditions.append(
                 f"{expression} IN {str(value)}"
@@ -162,11 +164,7 @@ class ConditionsBuilder(BaseBuilder):
         """
         self.__check_if_or_and()
         from .select_builder import SelectBuilder
-        if isinstance(expression, str):
-            self.__conditions.append(
-                f"{_get_tcn(self.tb, expression)} NOT IN {str(value)}"
-            )
-        elif isinstance(value, SelectBuilder):
+        if isinstance(value, SelectBuilder):
             if isinstance(expression, tuple):
                 expression_list_str: str = '(' + ', '.join(
                     [_get_tcn(self.tb, expr) for expr in expression]
@@ -176,6 +174,11 @@ class ConditionsBuilder(BaseBuilder):
             else:
                 expression_list_str: str = str(expression)
             self.__conditions.append(f"{expression_list_str} IN ({value.get_sql()})")
+
+        elif isinstance(expression, str):
+            self.__conditions.append(
+                f"{_get_tcn(self.tb, expression)} NOT IN {str(value)}"
+            )
         else:
             self.__conditions.append(
                 f"{expression} NOT IN {str(value)}"
