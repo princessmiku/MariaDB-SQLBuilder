@@ -8,8 +8,9 @@ version: 2
 # Set the version of Python and other tools you might need
 build:
   os: ubuntu-22.04
-  python:
-    version: 3.7
+  tools:
+    python: "3.7"
+    # add any other tools you need for your project build
 
 # Optionally declare the Python requirements required to build your docs
 python:
