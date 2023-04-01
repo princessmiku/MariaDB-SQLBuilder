@@ -16,8 +16,8 @@ build:
 python:
   install:
     - requirements: requirements.txt
-
+    
 # Skip the installation of dependencies during build
 # since mariadb-connector-c is not available on PyPI
 install:
-  skip: true
+  - skip: true
