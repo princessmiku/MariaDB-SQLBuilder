@@ -1,0 +1,27 @@
+name: Update Wiki on Release
+on:
+  release:
+    types: [released]
+
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update && \
+          sudo apt-get install -y python3-pip && \
+          pip3 install mkdocs mkdocs-material
+
+      - name: Build Wiki
+        run: |
+          mkdocs build --clean
+
+      - name: Update Wiki
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./wiki
