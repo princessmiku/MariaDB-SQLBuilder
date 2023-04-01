@@ -2,6 +2,7 @@ name: Update Wiki on Release
 on:
   release:
     types: [released]
+  workflow_dispatch:
 
 jobs:
   update-wiki:
