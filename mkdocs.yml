@@ -1,0 +1,36 @@
+site_name: My Wiki
+docs_dir: wiki
+nav:
+  - Home: home.md
+  - Installation: installation.md
+  - Setup: setup.md
+  - General Usage: general-usage.md
+  - Builder:
+      - Base Join Extension: builder/base-join-extension.md
+      - Conditions: builder/conditions.md
+      - Delete: builder/delete.md
+      - Exists: builder/exists.md
+      - Insert: builder/insert.md
+      - Join: builder/join.md
+      - Select: builder/select.md
+      - Update: builder/update.md
+      - Upsert: builder/upsert.md
+  - Explanation AND and OR: explanation-and-and-or.md
+  - Custom SQL: custom-sql.md
+  - JSON: json-dictionary.md
+  - Helpful:
+    - Arithmetic: helpful/arithmetic.md
+    - Save conditions: helpful/conditions_saver.md
+    - Dummy connection: helpful/dummy-connection.md
+    - Filter operators: helpful/filter-operator.md
+theme:
+  name: material
+  palette:
+    primary: teal
+    accent: amber
+  font:
+    text: 'Open Sans'
+    code: 'Roboto Mono'
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.details
