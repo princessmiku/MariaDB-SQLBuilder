@@ -29,19 +29,23 @@ def _get_tcn_validator(table: str, column: str, validator: Validator) -> str:
 
 
 def _transform_value_valid(value: Union[str, int, bool]) -> str:
+    value_as_str: str = ""
     if value is None:
-        return "NULL"
+        value_as_str = "NULL"
     elif isinstance(value, bool):
-        return "TRUE" if value else "FALSE"
+        value_as_str = "TRUE" if value else "FALSE"
     elif isinstance(value, (int, Arithmetic)):
-        return str(value)
+        value_as_str = str(value)
     elif isinstance(value, timedelta):
         if "," in str(value):
-            return f"'{str(value).split(', ')[1]}'"
-        return f"'{value}'"
+            value_as_str = f"'{str(value).split(', ')[1]}'"
+        else:
+            value_as_str = f"'{value}'"
     elif isinstance(value, datetime):
-        return "'" + value.strftime("%m-%d-%Y %H:%i:%s") + "'"
-    return f"'{value}'"
+        value_as_str = "'" + value.strftime("%m-%d-%Y %H:%i:%s") + "'"
+    else:
+        value_as_str = f"'{value}'"
+    return value_as_str
 
 
 class BaseBuilder(ABC):
@@ -114,7 +118,8 @@ class ConditionsBuilder(BaseBuilder):
             else:
                 expression_list_str: str = str(expression)
             self.__conditions.append(
-                f"{expression_list_str} {filter_operator} {subquery_operator}({value.get_sql()[:-1]})"
+                f"{expression_list_str} {filter_operator} "
+                f"{subquery_operator}({value.get_sql()[:-1]})"
             )
         elif isinstance(expression, str):
             self.__conditions.append(f"{_get_tcn(self.tb, expression)} {filter_operator} "

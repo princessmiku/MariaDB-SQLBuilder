@@ -31,8 +31,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install pylint pylint-exit
           pylint --generate-rcfile > .pylintrc
-          echo "disable=R0913, C0103, R1705, R0903, W0613, R0904, R0801, E0401" >> .pylintrc 
-          # Ignore R0913 Too many arguments
+          echo "disable=R0913, C0103, R1705, R0903, W0613, R0904, R0801, E0401, C0415, R0401" >> .pylintrc 
+          # Ignore R0913 Too many arguments, required on init
           # C0103 Ignore snake_case
           # R1705 i can't fix it
           # R0903 its required to have classes with only one method
@@ -42,6 +42,8 @@ jobs:
           # R0904 sql has many options so it need more then 20
           # R0801 similar lines
           # E0401 Github can't install mariadb as a pip package
+          # C0415: Import outside toplevel, import required for class checking, else is a cyclic import error
+          # R0401: See C0415
       - name: Pylint
         run: |
           pylint --rcfile=.pylintrc --recursive=y --output-format=text mariadb_sqlbuilder
