@@ -37,9 +37,7 @@ class _Column:
         self.data_type_name = data_type
         self.data_type: any = None
         self.character_set_name = character_set_name
-        if data_type in ["varchar", "text"]:
-            self.data_type = str
-        elif data_type in ["int", "bigint", "smallint", "mediumint", "tinyint", "year"]:
+        if data_type in ["int", "bigint", "smallint", "mediumint", "tinyint", "year"]:
             self.data_type = int
             if data_type == "int":
                 if unsigned:
@@ -146,6 +144,8 @@ class _Column:
             elif data_type == "tinyblob":
                 if length == 0:
                     self.length = 255
+            else:
+                raise TypeError('Not found')
         elif data_type in ["uuid"]:
             self.data_type = UUID
         elif data_type in ["date", "datetime", "timestamp"]:

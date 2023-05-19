@@ -4,7 +4,7 @@ from setuptools import setup
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 
 setup(
     name='MariaDB-SQLBuilder',
@@ -26,7 +26,7 @@ setup(
     keywords=['database', 'mariadb', 'sql', 'builder', 'script builder', 'mariadb sql', 'orm'],
     python_requires='>=3.7.0',
     install_requires=[
-        "mariadb>=1.1.4",
+        "mariadb>=1.1.6",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.7",
