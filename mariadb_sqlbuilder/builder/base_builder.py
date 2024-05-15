@@ -28,7 +28,7 @@ def _get_tcn_validator(table: str, column: str, validator: Validator) -> str:
     return table + "." + column
 
 
-def _transform_value_valid(value: Union[str, int, bool]) -> str:
+def _transform_value_valid(value: Union[str, int, bool], allow_injection: bool = False) -> str:
     value_as_str: str = ""
     if value is None:
         value_as_str = "NULL"
@@ -38,13 +38,26 @@ def _transform_value_valid(value: Union[str, int, bool]) -> str:
         value_as_str = str(value)
     elif isinstance(value, timedelta):
         if "," in str(value):
-            value_as_str = f"'{str(value).split(', ')[1]}'"
+            if allow_injection:
+                value_as_str = f"'{str(value).split(', ')[1]}'"
+            else:
+                value_as_str = f"{str(value).split(', ')[1]}"
         else:
-            value_as_str = f"'{value}'"
+            if allow_injection:
+                value_as_str = f"'{value}'"
+            else:
+                value_as_str = f"{value}"
     elif isinstance(value, datetime):
-        value_as_str = "'" + value.strftime("%m-%d-%Y %H:%i:%s") + "'"
+        if allow_injection:
+            value_as_str = "'" + value.strftime("%Y-%m-%d %H:%M:%S") + "'"
+        else:
+            print(value)
+            value_as_str = value.strftime("%Y-%m-%d %H:%M:%S")
     else:
-        value_as_str = f"'{value}'"
+        if allow_injection:
+            value_as_str = f"'{value}'"
+        else:
+            value_as_str = f"{value}"
     return value_as_str
 
 
@@ -56,6 +69,7 @@ class BaseBuilder(ABC):
 
     def __init__(self, tb, **kwargs):
         self._tb = tb
+        self._allow_injection = kwargs.get("allow_injection", False)
 
     @abstractmethod
     def get_sql(self) -> str:
@@ -71,6 +85,10 @@ class BaseBuilder(ABC):
         :return:
         """
         return self._tb
+
+    @property
+    def allow_injection(self):
+        return self._allow_injection
 
 
 class ConditionsBuilder(BaseBuilder):
