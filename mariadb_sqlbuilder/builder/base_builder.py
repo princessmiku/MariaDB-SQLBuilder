@@ -3,7 +3,7 @@ This modul is there for the basic functions of all query's
 """
 from abc import ABC, abstractmethod
 from datetime import timedelta, datetime
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 
 from mariadb_sqlbuilder.helpful.validator import Validator
 from mariadb_sqlbuilder.exepetions import BetweenValueIsBigger
@@ -28,7 +28,8 @@ def _get_tcn_validator(table: str, column: str, validator: Validator) -> str:
     return table + "." + column
 
 
-def _transform_value_valid(value: Union[str, int, bool], allow_injection: bool = False) -> str:
+def _transform_value_valid(value: Union[str, int, bool]) -> str:
+    print("THIS FUNCTION IS NO LONGER NEEDED")
     value_as_str: str = ""
     if value is None:
         value_as_str = "NULL"
@@ -38,25 +39,13 @@ def _transform_value_valid(value: Union[str, int, bool], allow_injection: bool =
         value_as_str = str(value)
     elif isinstance(value, timedelta):
         if "," in str(value):
-            if allow_injection:
-                value_as_str = f"'{str(value).split(', ')[1]}'"
-            else:
-                value_as_str = f"{str(value).split(', ')[1]}"
-        else:
-            if allow_injection:
-                value_as_str = f"'{value}'"
-            else:
-                value_as_str = f"{value}"
-    elif isinstance(value, datetime):
-        if allow_injection:
-            value_as_str = "'" + value.strftime("%Y-%m-%d %H:%M:%S.%f") + "'"
-        else:
-            value_as_str = value.strftime("%Y-%m-%d %H:%M:%S.%f")
-    else:
-        if allow_injection:
-            value_as_str = f"'{value}'"
+            value_as_str = f"{str(value).split(', ')[1]}"
         else:
             value_as_str = f"{value}"
+    elif isinstance(value, datetime):
+        value_as_str = value.strftime("%Y-%m-%d %H:%M:%S.%f")
+    else:
+        value_as_str = f"{value}"
     return value_as_str
 
 
@@ -68,7 +57,7 @@ class BaseBuilder(ABC):
 
     def __init__(self, tb, **kwargs):
         self._tb = tb
-        self._allow_injection = kwargs.get("allow_injection", False)
+        self._values_for_execute = []
 
     @abstractmethod
     def get_sql(self) -> str:
@@ -86,8 +75,8 @@ class BaseBuilder(ABC):
         return self._tb
 
     @property
-    def allow_injection(self):
-        return self._allow_injection
+    def values_for_execute(self):
+        return self._values_for_execute.copy()
 
 
 class ConditionsBuilder(BaseBuilder):
@@ -104,6 +93,14 @@ class ConditionsBuilder(BaseBuilder):
         else:
             self.__conditions = []
             self.__default_condition = "AND"
+
+    def _as_conditions_dict(self, sql, values: Union[List, any] = None):
+        if values is None:
+            values = []
+        return {
+            "sql": sql,
+            "values": [values] if not isinstance(values, list) else values,
+        }
 
     def where(self, expression: Union[str, Arithmetic, tuple],
               value: Union[str, int, float, 'SelectBuilder'], filter_operator: str = "=",
@@ -125,7 +122,6 @@ class ConditionsBuilder(BaseBuilder):
                 raise TypeError(
                     'Unsupported subquery operator'
                 )
-
             if isinstance(expression, tuple):
                 expression_list_str: str = '(' + ', '.join(
                     [_get_tcn(self.tb, expr) for expr in expression]
@@ -134,16 +130,27 @@ class ConditionsBuilder(BaseBuilder):
                 expression_list_str: str = _get_tcn(self.tb, expression)
             else:
                 expression_list_str: str = str(expression)
-            self.__conditions.append(
+            sql_script = value.get_sql()[:-1]
+            sql_values = value.values_for_execute
+            self.__conditions.append(self._as_conditions_dict(
                 f"{expression_list_str} {filter_operator} "
-                f"{subquery_operator}({value.get_sql()[:-1]})"
-            )
+                f"{subquery_operator}({sql_script})",
+                sql_values
+            ))
         elif isinstance(expression, str):
-            self.__conditions.append(f"{_get_tcn(self.tb, expression)} {filter_operator} "
-                                          f"{_transform_value_valid(value)}")
+            self.__conditions.append(
+                self._as_conditions_dict(
+                    f"{_get_tcn(self.tb, expression)} {filter_operator} ?",
+                    value
+                )
+            )
         else:
-            self.__conditions.append(f"{expression} {filter_operator} "
-                                     f"{_transform_value_valid(value)}")
+            self.__conditions.append(
+                self._as_conditions_dict(
+                    f"{expression} {filter_operator} ?",
+                    value
+                )
+            )
         return self
 
     def where_in(self, expression: Union[str, Arithmetic, tuple],
@@ -165,14 +172,20 @@ class ConditionsBuilder(BaseBuilder):
                 expression_list_str: str = _get_tcn(self.tb, expression)
             else:
                 expression_list_str: str = str(expression)
-            self.__conditions.append(f"{expression_list_str} IN ({value.get_sql()[:-1]})")
+
+            sql_script = value.get_sql()[:-1]
+            sql_values = value.values_for_execute
+            self.__conditions.append(self._as_conditions_dict(f"{expression_list_str} IN ({sql_script})", sql_values))
         elif isinstance(expression, str):
-            self.__conditions.append(
-                f"{_get_tcn(self.tb, expression)} IN {str(value)}"
+            self.__conditions.append(self._as_conditions_dict(
+                f"{_get_tcn(self.tb, expression)} IN ?", str(value))
             )
         else:
             self.__conditions.append(
-                f"{expression} IN {str(value)}"
+                self._as_conditions_dict(
+                    f"{expression} IN ?)",
+                    str(value)
+                )
             )
         return self
 
@@ -195,15 +208,24 @@ class ConditionsBuilder(BaseBuilder):
                 expression_list_str: str = _get_tcn(self.tb, expression)
             else:
                 expression_list_str: str = str(expression)
-            self.__conditions.append(f"{expression_list_str} IN ({value.get_sql()[:-1]})")
+            sql_script = value.get_sql()[:-1]
+            sql_values = value.values_for_execute
+
+            self.__conditions.append(self._as_conditions_dict(f"{expression_list_str} IN ({sql_script})", sql_values))
 
         elif isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb, expression)} NOT IN {str(value)}"
+                self._as_conditions_dict(
+                    f"{_get_tcn(self.tb, expression)} NOT IN ?",
+                    str(value)
+                )
             )
         else:
             self.__conditions.append(
-                f"{expression} NOT IN {str(value)}"
+                self._as_conditions_dict(
+                    f"{expression} NOT IN ?",
+                    str(value)
+                )
             )
         return self
 
@@ -217,11 +239,11 @@ class ConditionsBuilder(BaseBuilder):
         self.__check_if_or_and()
         if isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb, expression)} LIKE {_transform_value_valid(value)}"
+                self._as_conditions_dict(f"{_get_tcn(self.tb, expression)} LIKE ?", value)
             )
         else:
             self.__conditions.append(
-                f"{expression} LIKE {_transform_value_valid(value)}"
+                self._as_conditions_dict(f"{expression} LIKE ?", value)
             )
         return self
 
@@ -235,11 +257,11 @@ class ConditionsBuilder(BaseBuilder):
         self.__check_if_or_and()
         if isinstance(expression, str):
             self.__conditions.append(
-                f"{_get_tcn(self.tb, expression)} NOT LIKE {_transform_value_valid(value)}"
+                self._as_conditions_dict(f"{_get_tcn(self.tb, expression)} NOT LIKE ?", value)
             )
         else:
             self.__conditions.append(
-                f"{expression} NOT LIKE {_transform_value_valid(value)}"
+                self._as_conditions_dict(f"{expression} NOT LIKE ?", value)
             )
         return self
 
@@ -267,16 +289,16 @@ class ConditionsBuilder(BaseBuilder):
                 value2 = f"({value2.get_sql()[:-1]})"
             else:
                 value2 = _transform_value_valid(value2)
-            self.__conditions.append(
+            self.__conditions.append(self._as_conditions_dict(
                 f"{_get_tcn(self.tb, expression)} "
-                f"BETWEEN {value1} "
-                f"AND {value2}"
+                f"BETWEEN ? "
+                f"AND ?", [value1, value2])
             )
         else:
-            self.__conditions.append(
+            self.__conditions.append(self._as_conditions_dict(
                 f"{expression} "
-                f"BETWEEN {_transform_value_valid(value1)} "
-                f"AND {_transform_value_valid(value2)}"
+                f"BETWEEN ? "
+                f"AND ?", [value1, value2])
             )
         return self
 
@@ -304,16 +326,16 @@ class ConditionsBuilder(BaseBuilder):
                 value2 = f"({value2.get_sql()[:-1]})"
             else:
                 value2 = _transform_value_valid(value2)
-            self.__conditions.append(
-                f"{_get_tcn(self.tb, expression)} "
-                f"NOT BETWEEN {value1} "
-                f"AND {value2}"
-            )
+                self.__conditions.append(self._as_conditions_dict(
+                    f"{_get_tcn(self.tb, expression)} "
+                    f"NOT BETWEEN ? "
+                    f"AND ?", [value1, value2])
+                )
         else:
-            self.__conditions.append(
+            self.__conditions.append(self._as_conditions_dict(
                 f"{expression} "
-                f"NOT BETWEEN {_transform_value_valid(value1)} "
-                f"AND {_transform_value_valid(value2)}"
+                f"NOT BETWEEN ? "
+                f"AND ?", [value1, value2])
             )
         return self
 
@@ -324,7 +346,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS NOT NULL")
+        self.__conditions.append(self._as_conditions_dict(f"{_get_tcn(self.tb, column)} IS NOT NULL"))
         return self
 
     def is_null(self, column: str):
@@ -334,7 +356,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS NULL")
+        self.__conditions.append(self._as_conditions_dict(f"{_get_tcn(self.tb, column)} IS NULL"))
         return self
 
     def is_true(self, column: str):
@@ -344,7 +366,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS TRUE")
+        self.__conditions.append(self._as_conditions_dict(f"{_get_tcn(self.tb, column)} IS TRUE"))
         return self
 
     def is_not_true(self, column: str):
@@ -354,7 +376,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS NOT TRUE")
+        self.__conditions.append(self._as_conditions_dict(f"{_get_tcn(self.tb, column)} IS NOT TRUE"))
         return self
 
     def is_false(self, column: str):
@@ -364,7 +386,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS FALSE")
+        self.__conditions.append(self._as_conditions_dict(f"{_get_tcn(self.tb, column)} IS FALSE"))
         return self
 
     def is_not_false(self, column: str):
@@ -374,7 +396,7 @@ class ConditionsBuilder(BaseBuilder):
         :return:
         """
         self.__check_if_or_and()
-        self.__conditions.append(f"{_get_tcn(self.tb, column)} IS NOT FALSE")
+        self.__conditions.append(self._as_conditions_dict(f"{_get_tcn(self.tb, column)} IS NOT FALSE"))
         return self
 
     def __check_if_or_and(self):
@@ -386,7 +408,7 @@ class ConditionsBuilder(BaseBuilder):
         if not self.__conditions:
             return
         if self.__conditions[-1] not in ["AND", "OR"]:
-            self.__conditions.append(self.__default_condition)
+            self.__conditions.append(self._as_conditions_dict(self.__default_condition))
 
     def OR(self):
         """
@@ -397,7 +419,7 @@ class ConditionsBuilder(BaseBuilder):
             return self
         elif self.__conditions[-1] == "AND":
             self.__conditions.pop(-1)
-        self.__conditions.append("OR")
+        self.__conditions.append(self._as_conditions_dict("OR"))
         return self
 
     def AND(self):
@@ -409,7 +431,7 @@ class ConditionsBuilder(BaseBuilder):
             return self
         elif self.__conditions[-1] == "OR":
             self.__conditions.pop(-1)
-        self.__conditions.append("AND")
+        self.__conditions.append(self._as_conditions_dict("AND"))
         return self
 
     def default_and(self):
@@ -449,7 +471,11 @@ class ConditionsBuilder(BaseBuilder):
         """
         if not self.__conditions:
             return ""
-        return "WHERE " + " ".join(self.__conditions)
+        statements = []
+        for con in self.__conditions:
+            statements.append(con["sql"])
+            self._values_for_execute += con["values"]
+        return "WHERE " + " ".join(statements)
 
     def is_conditions(self) -> bool:
         """
