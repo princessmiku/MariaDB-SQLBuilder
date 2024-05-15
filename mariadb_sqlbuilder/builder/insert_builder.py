@@ -4,7 +4,7 @@ This modul is there for build a sql insert query
 from json import dumps
 from typing import Union, Dict, List
 
-from .base_builder import BaseBuilder, _transform_value_valid
+from .base_builder import BaseBuilder
 
 
 class InsertBuilder(BaseBuilder):
@@ -18,6 +18,7 @@ class InsertBuilder(BaseBuilder):
         self.__ignore = False
         self.__toSet = {}
         self.__jsonBuildings = []
+        self.__values_for_execute= []
 
     def set(self, column: str, value: Union[str, int, None]):
         """
@@ -29,7 +30,7 @@ class InsertBuilder(BaseBuilder):
         if not self.tb.table in self.__toSet:
             self.__toSet[self.tb.table] = {}
         self.tb.validator.check_value_type(self.tb.table, column, value)
-        self.__toSet[self.tb.table][column] = _transform_value_valid(value)
+        self.__toSet[self.tb.table][column] = value
         return self
 
     def add_join_table(self, table: str):
@@ -54,7 +55,7 @@ class InsertBuilder(BaseBuilder):
         if not table in self.__toSet:
             self.__toSet[table] = {}
         self.tb.validator.check_value_type(table, column, value)
-        self.__toSet[table][column] = _transform_value_valid(value)
+        self.__toSet[table][column] = value
         return self
 
     def ignore(self, _ignore: bool = True):
@@ -72,8 +73,10 @@ class InsertBuilder(BaseBuilder):
         :return:
         """
         cursor = self.tb.connector.get_available_cursor()
+        sql_script = self.get_sql()
         result = cursor.execute(
-            self.get_sql()
+            sql_script,
+            self.values_for_execute
         )
         cursor.connection.commit()
         self.tb.connector.release_cursor(cursor)
@@ -84,6 +87,7 @@ class InsertBuilder(BaseBuilder):
         Get the SQL query string for the insert.
         :return:
         """
+        self._values_for_execute.clear()
         for element in self.__jsonBuildings:
             self.__set_json(element[0], element[1])
         sql = ""
@@ -92,8 +96,9 @@ class InsertBuilder(BaseBuilder):
         for key, value in self.__toSet.items():
             if not value:
                 continue
+            self._values_for_execute += value.values()
             sql += f"INSERT {'IGNORE ' if self.__ignore else ''}INTO " \
-                   f"{key} ({', '.join(value.keys())}) VALUES ({', '.join(value.values())});"
+                   f"{key} {'(' + ', '.join(value.keys()) + ') VALUES (' + ', '.join(['?'] * len(value.values())) + ')'};"
         return sql
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):
