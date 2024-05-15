@@ -12,6 +12,8 @@ from .base_builder import ConditionsBuilder, _transform_value_valid, \
     _get_tcn_without_validator
 from .join_builder import BaseJoinExtension
 
+_qs = "?"
+
 
 class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
     """
@@ -27,6 +29,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.sure_not_use_conditions = False
         self.__subSets = []
         self.__jsonBuildings = []
+        self.__values_for_execute = []
 
     def set(self, column, value: Union[str, int, float, bool,
         Arithmetic, timedelta, datetime, Decimal]):
@@ -39,7 +42,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.tb.validator.check_value_type(self.tb.table, column, value)
         self.__toSet[
             _get_tcn_without_validator(self.tb.table, column)
-        ] = _transform_value_valid(value)
+        ] = _transform_value_valid(value, self.allow_injection)
         return self
 
     def join_set(self, join_table: str, join_column: str, value: Union[str, int, float, bool,
@@ -54,7 +57,7 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         self.tb.validator.check_value_type(join_table, join_column, value)
         self.__toSet[
             _get_tcn_without_validator(join_table, join_column)
-        ] = _transform_value_valid(value)
+        ] = _transform_value_valid(value, self.allow_injection)
         return self
 
     def im_sure_im_not_use_conditions(self, im_sure: bool = True):
@@ -74,28 +77,50 @@ class UpdateBuilder(ConditionsBuilder, BaseJoinExtension):
         if not self.is_conditions() and not self.sure_not_use_conditions:
             raise PermissionError('Update Builder: You are not sure enough not to use where')
         cursor = self.tb.connector.get_available_cursor()
-        cursor.execute(
-            self.get_sql()
-        )
+        sql_script = self.get_sql()
+        if self.allow_injection is True:
+            result = cursor.execute(
+                sql_script
+            )
+        else:
+            result = cursor.execute(
+                sql_script,
+                self.values_for_execute
+            )
         if self.__subSets:
             for subset in self.__subSets:
                 cursor.execute(subset.get_sql())
         cursor.connection.commit()
         self.tb.connector.release_cursor(cursor)
 
+    def _get_value_string(self):
+        elements = []
+        for key, value in self.__toSet.items():
+            if self.allow_injection is True:
+                elements.append(key + ' = ' + value)
+            else:
+                elements.append(key + ' = ?')
+                self.__values_for_execute.append(value)
+        return ', '.join(elements) + ' '
+
     def get_sql(self) -> str:
         """
         Get the SQL statement to execute.
         :return:
         """
+        self.__values_for_execute.clear()  # clear the execution values
         for element in self.__jsonBuildings:
             self.__set_json(element[0], element[1])
-        sql = f"UPDATE {self.tb.table} " \
-              f"{' '.join(self._joins) if self._joins else ''} " \
-              f"SET " \
-              f"{', '.join([f'{key} = {value}' for (key, value) in self.__toSet.items()])} " \
-              f"{self._get_where_sql()};"
+
+        sql = ((f"UPDATE {self.tb.table} "
+               f"{' '.join(self._joins) if self._joins else ''} "
+               f"SET ") + self._get_value_string() +
+               f" {self._get_where_sql()};")
         return sql
+
+    @property
+    def values_for_execute(self):
+        return self.__values_for_execute.copy()
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):
         """
