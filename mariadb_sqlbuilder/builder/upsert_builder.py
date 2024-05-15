@@ -8,7 +8,7 @@ from typing import Union, Dict, List
 from _decimal import Decimal
 
 from mariadb_sqlbuilder.helpful.arithmetic import Arithmetic
-from .base_builder import BaseBuilder, _transform_value_valid
+from .base_builder import BaseBuilder
 
 
 class UpsertBuilder(BaseBuilder):
@@ -33,7 +33,7 @@ class UpsertBuilder(BaseBuilder):
         self.tb.validator.check_value_type(self.tb.table, column, value)
         if self.tb.table not in self.__toSet:
             self.__toSet[self.tb.table] = {}
-        self.__toSet[self.tb.table][column] = _transform_value_valid(value)
+        self.__toSet[self.tb.table][column] = value
         return self
 
     def add_join_table(self, table: str):
@@ -59,7 +59,7 @@ class UpsertBuilder(BaseBuilder):
         self.tb.validator.check_value_type(table, column, value)
         if table not in self.__toSet:
             self.__toSet[table] = {}
-        self.__toSet[table][column] = _transform_value_valid(value)
+        self.__toSet[table][column] = value
         return self
 
     def execute(self):
@@ -69,7 +69,8 @@ class UpsertBuilder(BaseBuilder):
         """
         cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
-            self.get_sql()
+            self.get_sql(),
+            self.values_for_execute
         )
         cursor.connection.commit()
         self.tb.connector.release_cursor(cursor)
@@ -79,16 +80,19 @@ class UpsertBuilder(BaseBuilder):
         Get the SQL query string for the UpsertBuilder object.
         :return:
         """
+        self._values_for_execute.clear()
         for element in self.__jsonBuildings:
             self.__set_json(element[0], element[1])
         sql = ""
         _key: str
         _value: Dict[str, dict]
         for _key, _value in self.__toSet.items():
+            self._values_for_execute += _value.values()  # first add is for INSERT values
+            self._values_for_execute += _value.values()  # second add is for on duplicate values
             sql += f"INSERT INTO " \
-                   f"{_key} ({', '.join(_value.keys())}) VALUES ({', '.join(_value.values())})" \
+                   f"{_key} ({', '.join(_value.keys())}) VALUES ({', '.join(['?'] * len(_value.values()))}) " \
                    f"ON DUPLICATE KEY UPDATE " \
-                   f"{', '.join([f'{key} = {value}' for (key, value) in _value.items()])};"
+                   f"{', '.join([f'{key} = ?' for key in _value.keys()])};"
         return sql
 
     def __set_json(self, json: Dict[str, any], pop: List[str] = None):

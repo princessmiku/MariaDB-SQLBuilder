@@ -6,29 +6,15 @@
 [![Python - ^3.7](https://img.shields.io/badge/Python-^3.7-blue)](https://www.python.org/)
 [![Downloads](https://pepy.tech/badge/mariadb-sqlbuilder)](https://pepy.tech/project/mariadb-sqlbuilder)
 
-## Warning! Update 1.0 change many functions and variable names to the pep8 standard
+## Security fix 1.1
 
-Too lazy to write SQL? Then use the SQL Builder to make your life easier!
-
-MariaDB SQL Builder is a simple way to use SQL.
-Use your own SQL or use the integrated SQL Builder tool.
+If you are interested, the content is below
 
 ### MariaDB license
 
 This library uses MariaDB Connector/Python, which is released under the terms of the GPLv2 license. For more 
 information, please see the [license file in the repository](https://github.com/mariadb-corporation/mariadb-connector-python/blob/1.1/LICENSE).
 
-# What is new in 1.0.0?
-
-- Checking table names and column names of right spelling
-- Checking inserted data of the correct type
-- Add Arithmetic functions
-- Convert more types in the correct saving string / integer
-- Saving conditions for multiple using
-- Pylint checking of the most of the code
-- Dummy Connector, if you won't use it with a connection
-- sub selects
-- Rename Connect to Connector
 
 # [Install](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Installation)
 Install the package with pip
@@ -73,6 +59,35 @@ For all Details and how to use
 - **[Delete](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Builder---Delete)**
 - **[CustomSQL](https://github.com/princessmiku/MariaDB-SQLBuilder/wiki/Custom-SQL)**
 
+
+## Content of the fix
+
+I have found a security problem. Variables should be given directly
+to the cursor instead of writing them to the SQL. This prevents SQL injections.
+
+By changing the avoidance of sql injection, the function “get_sql()” now returns “?”
+at the points where variables were before.
+
+To get the variables back, there is now “values_for_execute”, which contains the variables in the correct order.
+The variables are returned in the type as they are stored. 
+String as string, integer as integer, datetime as datetime...
+
+**Example**
+
+- ``conn.table().update().values_for_execute``
+- ``conn.table().select().values_for_execute``
+
+The variables are used in the statements where I suspect the possibility of SQL injection.
+
+- Setting variables
+- Where to query (conditions)
+
+Setting keys or table names, for example, is normally not something a user should do, 
+so they are written to SQL as normal.
+
+I learned a lot while working on other projects. 
+This has given me some knowledge about security. 
+So I thought it was right to apply this to old projects as well.
 
 ----------------------------------------------------------------
 

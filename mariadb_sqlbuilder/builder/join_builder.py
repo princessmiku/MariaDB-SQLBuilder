@@ -3,7 +3,6 @@ This modul is there for build sql joins for your query
 
 Maria DB SQL joins
 https://mariadb.com/kb/en/joining-tables-with-join-clauses/
-
 """
 from abc import ABC, abstractmethod
 
