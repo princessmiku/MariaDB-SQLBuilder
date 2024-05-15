@@ -49,10 +49,9 @@ def _transform_value_valid(value: Union[str, int, bool], allow_injection: bool =
                 value_as_str = f"{value}"
     elif isinstance(value, datetime):
         if allow_injection:
-            value_as_str = "'" + value.strftime("%Y-%m-%d %H:%M:%S") + "'"
+            value_as_str = "'" + value.strftime("%Y-%m-%d %H:%M:%S.%f") + "'"
         else:
-            print(value)
-            value_as_str = value.strftime("%Y-%m-%d %H:%M:%S")
+            value_as_str = value.strftime("%Y-%m-%d %H:%M:%S.%f")
     else:
         if allow_injection:
             value_as_str = f"'{value}'"
