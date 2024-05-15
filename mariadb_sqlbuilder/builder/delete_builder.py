@@ -33,7 +33,8 @@ class DeleteBuilder(ConditionsBuilder):
             raise PermissionError('Delete Builder: You are not sure enough not to use where')
         cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
-            self.get_sql()
+            self.get_sql(),
+            self.values_for_execute
         )
         cursor.connection.commit()
         self.tb.connector.release_cursor(cursor)

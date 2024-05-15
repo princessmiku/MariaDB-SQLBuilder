@@ -42,7 +42,8 @@ class ExistsBuilder(ConditionsBuilder):
         cursor = self.tb.connector.get_available_cursor()
         try:
             cursor.execute(
-                self.get_sql()
+                self.get_sql(),
+                self.values_for_execute
             )
             result = cursor.fetchone()
         except mariadb.OperationalError as err:

@@ -50,7 +50,8 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
-            self.get_sql()
+            self.get_sql(),
+            self.values_for_execute
         )
         result = cursor.fetchone()
         cursor.connection.commit()
@@ -75,7 +76,8 @@ class SelectBuilder(ConditionsBuilder, BaseJoinExtension):
         """
         cursor = self.tb.connector.get_available_cursor()
         cursor.execute(
-            self.get_sql()
+            self.get_sql(),
+            self.values_for_execute
         )
         result = cursor.fetchall()
         cursor.connection.commit()
