@@ -154,7 +154,11 @@ class ConditionsBuilder(BaseBuilder):
 
             sql_script = value.get_sql()[:-1]
             sql_values = value.values_for_execute
-            self.__conditions.append(self._as_conditions_dict(f"{expression_list_str} IN ({sql_script})", sql_values))
+            self.__conditions.append(
+                self._as_conditions_dict(
+                    f"{expression_list_str} IN ({sql_script})", sql_values
+                )
+            )
         elif isinstance(expression, str):
             self.__conditions.append(self._as_conditions_dict(
                 f"{_get_tcn(self.tb, expression)} IN ?", str(value))
@@ -190,7 +194,11 @@ class ConditionsBuilder(BaseBuilder):
             sql_script = value.get_sql()[:-1]
             sql_values = value.values_for_execute
 
-            self.__conditions.append(self._as_conditions_dict(f"{expression_list_str} IN ({sql_script})", sql_values))
+            self.__conditions.append(
+                self._as_conditions_dict(
+                    f"{expression_list_str} IN ({sql_script})", sql_values
+                )
+            )
 
         elif isinstance(expression, str):
             self.__conditions.append(
@@ -263,11 +271,11 @@ class ConditionsBuilder(BaseBuilder):
             if isinstance(value1, SelectBuilder):
                 value1 = f"({value1.get_sql()[:-1]})"
             else:
-                value1 = _transform_value_valid(value1)
+                value1 = value1
             if isinstance(value2, SelectBuilder):
                 value2 = f"({value2.get_sql()[:-1]})"
             else:
-                value2 = _transform_value_valid(value2)
+                value2 = value2
             self.__conditions.append(self._as_conditions_dict(
                 f"{_get_tcn(self.tb, expression)} "
                 f"BETWEEN ? "
@@ -300,16 +308,16 @@ class ConditionsBuilder(BaseBuilder):
             if isinstance(value1, SelectBuilder):
                 value1 = f"({value1.get_sql()[:-1]})"
             else:
-                value1 = _transform_value_valid(value1)
+                value1 = value1
             if isinstance(value2, SelectBuilder):
                 value2 = f"({value2.get_sql()[:-1]})"
             else:
-                value2 = _transform_value_valid(value2)
-                self.__conditions.append(self._as_conditions_dict(
-                    f"{_get_tcn(self.tb, expression)} "
-                    f"NOT BETWEEN ? "
-                    f"AND ?", [value1, value2])
-                )
+                value2 = value2
+            self.__conditions.append(self._as_conditions_dict(
+                f"{_get_tcn(self.tb, expression)} "
+                f"NOT BETWEEN ? "
+                f"AND ?", [value1, value2])
+            )
         else:
             self.__conditions.append(self._as_conditions_dict(
                 f"{expression} "
